@@ -3,20 +3,26 @@ package org.lasarimanstudios.escapedungeon;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class Main implements ApplicationListener {
 	Texture backgroundTexture;
+	Texture characterTexture;
 	SpriteBatch spriteBatch;
 	FitViewport viewport;
+	Sprite characterSprite;
 
 	@Override
 	public void create() {
 		backgroundTexture = new Texture("test.png");
+		characterTexture = new Texture("character.png");
 		spriteBatch = new SpriteBatch();
-		viewport = new FitViewport(8, 5);
+		characterSprite = new Sprite(characterTexture);
+		characterSprite.setSize(5, 5);
+		viewport = new FitViewport(80, 50);
 	}
 
 	@Override
@@ -32,6 +38,7 @@ public class Main implements ApplicationListener {
 	}
 
 	private void input() {
+
 	}
 
 	private void logic() {
@@ -47,6 +54,7 @@ public class Main implements ApplicationListener {
 		float worldHeight = viewport.getWorldHeight();
 
 		spriteBatch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
+		characterSprite.draw(spriteBatch);
 
 		spriteBatch.end();
 	}
