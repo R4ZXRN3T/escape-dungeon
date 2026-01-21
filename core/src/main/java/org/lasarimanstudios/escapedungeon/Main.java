@@ -1,6 +1,8 @@
 package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -38,7 +40,32 @@ public class Main implements ApplicationListener {
 	}
 
 	private void input() {
+		float speed = 22f;
+		float delta = Gdx.graphics.getDeltaTime();
 
+		float multiplier = 2f/3f;
+
+		if (Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.S)) {
+			characterSprite.translateX(speed * delta * multiplier);
+			characterSprite.translateY(-speed * delta * multiplier);
+		} else if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.W)) {
+			characterSprite.translateX(-speed * delta * multiplier);
+			characterSprite.translateY(speed * delta * multiplier);
+		} else if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.D)) {
+			characterSprite.translateX(speed * delta * multiplier);
+			characterSprite.translateY(speed * delta * multiplier);
+		} else if (Gdx.input.isKeyPressed(Input.Keys.S) && Gdx.input.isKeyPressed(Input.Keys.A)) {
+			characterSprite.translateX(-speed * delta * multiplier);
+			characterSprite.translateY(-speed * delta * multiplier);
+		} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+			characterSprite.translateX(speed * delta);
+		} else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+			characterSprite.translateX(-speed * delta);
+		} else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+			characterSprite.translateY(speed * delta);
+		} else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+			characterSprite.translateY(-speed * delta);
+		}
 	}
 
 	private void logic() {
