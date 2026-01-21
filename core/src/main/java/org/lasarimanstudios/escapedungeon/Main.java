@@ -57,7 +57,10 @@ public class Main implements ApplicationListener {
 		} else if (Gdx.input.isKeyPressed(Input.Keys.S) && Gdx.input.isKeyPressed(Input.Keys.A)) {
 			characterSprite.translateX(-speed * delta * multiplier);
 			characterSprite.translateY(-speed * delta * multiplier);
-		} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.S) && Gdx.input.isKeyPressed(Input.Keys.W)) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) {
+		}
+		else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			characterSprite.translateX(speed * delta);
 		} else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 			characterSprite.translateX(-speed * delta);
