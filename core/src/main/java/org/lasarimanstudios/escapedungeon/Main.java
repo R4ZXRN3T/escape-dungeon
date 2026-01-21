@@ -14,15 +14,19 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class Main implements ApplicationListener {
 	Texture backgroundTexture;
 	Texture characterTexture;
+	Texture wallTexture;
 	SpriteBatch spriteBatch;
 	FitViewport viewport;
 	Sprite characterSprite;
+	Sprite wallSprite;
 
 	@Override
 	public void create() {
 		backgroundTexture = new Texture("test.png");
 		characterTexture = new Texture("character.png");
+		wallTexture = new Texture("wall.png");
 		spriteBatch = new SpriteBatch();
+		wallSprite = new Sprite(wallTexture);
 		characterSprite = new Sprite(characterTexture);
 		characterSprite.setSize(5, 5);
 		viewport = new FitViewport(80, 50);
@@ -80,6 +84,8 @@ public class Main implements ApplicationListener {
 
 		characterSprite.setX(MathUtils.clamp(characterSprite.getX(), 0, worldWidth - characterWidth));
 		characterSprite.setY(MathUtils.clamp(characterSprite.getY(), 0, worldHeight - characterHeight));
+
+
 	}
 
 	private void draw() {
