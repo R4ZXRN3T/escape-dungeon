@@ -3,4 +3,4 @@
 build/
 core/build/
 lwjgl3/build/
-gdx-liftoff-1.14.0.3.jar
+*.jar
