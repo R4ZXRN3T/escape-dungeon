@@ -1,9 +1,10 @@
 package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -15,26 +16,41 @@ public class Main implements ApplicationListener {
 	SpriteBatch spriteBatch;
 	FitViewport viewport;
 	Character characterSprite;
-	Sprite wallSprite;
+	Camera camera;
 
 	@Override
 	public void create() {
-		backgroundTexture = new Texture("test.png");
-		wallTexture = new Texture("wall.png");
+		backgroundTexture = new Texture(Gdx.files.internal("test.png"));
+		wallTexture = new Texture(Gdx.files.internal("wall.png"));
 		spriteBatch = new SpriteBatch();
-		wallSprite = new Sprite(wallTexture);
-		characterSprite = new Character("character.png", 5, 5);
+
 		viewport = new FitViewport(80, 50);
+		camera = viewport.getCamera();
+		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
+		characterSprite = new Character("character.png", 5, 5);
+
+		float x = (viewport.getWorldWidth() - characterSprite.getWidth()) * 0.5f;
+		float y = (viewport.getWorldHeight() - characterSprite.getHeight()) * 0.5f;
+		characterSprite.setPosition(x, y);
+
+		camera.update();
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
+		camera.update();
 	}
 
 	@Override
 	public void render() {
-		characterSprite.run();
+		viewport.apply();
+		camera.update();
+		spriteBatch.setProjectionMatrix(camera.combined);
+
+		characterSprite.run(viewport);
+
 		logic();
 		draw();
 	}
@@ -51,31 +67,28 @@ public class Main implements ApplicationListener {
 
 	private void draw() {
 		ScreenUtils.clear(Color.BLACK);
-		viewport.apply();
-		spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
-		spriteBatch.begin();
 
+		spriteBatch.begin();
 		float worldWidth = viewport.getWorldWidth();
 		float worldHeight = viewport.getWorldHeight();
-
 		spriteBatch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
 		characterSprite.draw(spriteBatch);
-
 		spriteBatch.end();
 	}
 
 	@Override
 	public void pause() {
-
 	}
 
 	@Override
 	public void resume() {
-
 	}
 
 	@Override
 	public void dispose() {
-
+		spriteBatch.dispose();
+		backgroundTexture.dispose();
+		wallTexture.dispose();
+		characterSprite.getTexture().dispose();
 	}
 }
