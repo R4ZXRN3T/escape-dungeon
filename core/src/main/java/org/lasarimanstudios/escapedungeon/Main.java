@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -43,8 +44,11 @@ public class Main implements ApplicationListener {
 		float speed = 22f;
 		float delta = Gdx.graphics.getDeltaTime();
 
-		float multiplier = 2f/3f;
+		float multiplier = 2f / 3f;
 
+		if ((Gdx.input.isKeyPressed(Input.Keys.S) && Gdx.input.isKeyPressed(Input.Keys.W)) || (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D))) {
+			return;
+		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.S)) {
 			characterSprite.translateX(speed * delta * multiplier);
 			characterSprite.translateY(-speed * delta * multiplier);
@@ -57,10 +61,7 @@ public class Main implements ApplicationListener {
 		} else if (Gdx.input.isKeyPressed(Input.Keys.S) && Gdx.input.isKeyPressed(Input.Keys.A)) {
 			characterSprite.translateX(-speed * delta * multiplier);
 			characterSprite.translateY(-speed * delta * multiplier);
-		} else if (Gdx.input.isKeyPressed(Input.Keys.S) && Gdx.input.isKeyPressed(Input.Keys.W)) {
-		} else if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) {
-		}
-		else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+		} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			characterSprite.translateX(speed * delta);
 		} else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 			characterSprite.translateX(-speed * delta);
@@ -72,6 +73,13 @@ public class Main implements ApplicationListener {
 	}
 
 	private void logic() {
+		float worldWidth = viewport.getWorldWidth();
+		float worldHeight = viewport.getWorldHeight();
+		float characterWidth = characterSprite.getWidth();
+		float characterHeight = characterSprite.getHeight();
+
+		characterSprite.setX(MathUtils.clamp(characterSprite.getX(), 0, worldWidth - characterWidth));
+		characterSprite.setY(MathUtils.clamp(characterSprite.getY(), 0, worldHeight - characterHeight));
 	}
 
 	private void draw() {
