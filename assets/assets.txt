@@ -1,3 +1,0 @@
-characters/character.png
-maps/test.png
-objects/wall.png

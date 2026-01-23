@@ -23,15 +23,15 @@ public class Main implements ApplicationListener {
 
 	@Override
 	public void create() {
-		backgroundTexture = new Texture(Gdx.files.internal("maps/test.png"));
+		backgroundTexture = new Texture(Gdx.files.internal("textures/maps/test.png"));
 		spriteBatch = new SpriteBatch();
 
 		viewport = new FitViewport(80, 50);
 		camera = viewport.getCamera();
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		characterSprite = new Character("characters/character.png", 5, 5);
-		wallSprite = new Wall("objects/wall.png", 20, 20, 20, 20);
+		characterSprite = new Character("textures/characters/character.png", 5, 5);
+		wallSprite = new Wall("textures/objects/wall.png", 20, 20, 20, 20);
 
 		float x = (viewport.getWorldWidth() - characterSprite.getWidth()) * 0.5f;
 		float y = (viewport.getWorldHeight() - characterSprite.getHeight()) * 0.5f;
@@ -63,6 +63,11 @@ public class Main implements ApplicationListener {
 		float worldHeight = viewport.getWorldHeight();
 		float characterWidth = characterSprite.getWidth();
 		float characterHeight = characterSprite.getHeight();
+		float wallWidth = wallSprite.getWidth();
+		float wallHeight = wallSprite.getHeight();
+
+		characterSprite.setX(MathUtils.clamp(characterSprite.getX(), 0, wallWidth - characterWidth));
+		characterSprite.setY(MathUtils.clamp(characterSprite.getY(), 0, wallHeight - characterHeight));
 
 		characterSprite.setX(MathUtils.clamp(characterSprite.getX(), 0, worldWidth - characterWidth));
 		characterSprite.setY(MathUtils.clamp(characterSprite.getY(), 0, worldHeight - characterHeight));
