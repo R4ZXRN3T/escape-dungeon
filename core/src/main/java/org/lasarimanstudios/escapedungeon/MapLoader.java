@@ -13,6 +13,12 @@ public class MapLoader {
 
 		String background = mapJson.getString("background");
 
+		Array<Wall> wallArray = getWalls(mapJson);
+
+		return new Map(background, wallArray);
+	}
+
+	private static Array<Wall> getWalls(JSONObject mapJson) {
 		Array<Wall> wallArray = new Array<>();
 
 		for (Object wallValueObject : mapJson.getJSONArray("walls")) {
@@ -25,6 +31,6 @@ public class MapLoader {
 			wallArray.add(new Wall(wallTexture, wallWidth, wallHeight, wallPosX, wallPosy));
 		}
 
-		return new Map(background, wallArray);
+		return wallArray;
 	}
 }
