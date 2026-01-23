@@ -5,30 +5,33 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class Main implements ApplicationListener {
 	Texture backgroundTexture;
-	Texture wallTexture;
 	SpriteBatch spriteBatch;
+	Array<Sprite> spriteArray;
 	FitViewport viewport;
 	Character characterSprite;
+	Wall wallSprite;
 	Camera camera;
 
 	@Override
 	public void create() {
-		backgroundTexture = new Texture(Gdx.files.internal("test.png"));
-		wallTexture = new Texture(Gdx.files.internal("wall.png"));
+		backgroundTexture = new Texture(Gdx.files.internal("maps/test.png"));
 		spriteBatch = new SpriteBatch();
 
 		viewport = new FitViewport(80, 50);
 		camera = viewport.getCamera();
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		characterSprite = new Character("character.png", 5, 5);
+		characterSprite = new Character("characters/character.png", 5, 5);
+		wallSprite = new Wall("objects/wall.png", 20, 20, 20, 20);
 
 		float x = (viewport.getWorldWidth() - characterSprite.getWidth()) * 0.5f;
 		float y = (viewport.getWorldHeight() - characterSprite.getHeight()) * 0.5f;
@@ -73,6 +76,7 @@ public class Main implements ApplicationListener {
 		float worldHeight = viewport.getWorldHeight();
 		spriteBatch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
 		characterSprite.draw(spriteBatch);
+		wallSprite.draw(spriteBatch);
 		spriteBatch.end();
 	}
 
@@ -88,7 +92,7 @@ public class Main implements ApplicationListener {
 	public void dispose() {
 		spriteBatch.dispose();
 		backgroundTexture.dispose();
-		wallTexture.dispose();
 		characterSprite.getTexture().dispose();
+		wallSprite.getTexture().dispose();
 	}
 }
