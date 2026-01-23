@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class Main implements ApplicationListener {
 	Texture backgroundTexture;
 	SpriteBatch spriteBatch;
-	Array<Sprite> spriteArray;
+	Array<Wall> spriteArray;
 	FitViewport viewport;
 	Character characterSprite;
 	Wall wallSprite;
