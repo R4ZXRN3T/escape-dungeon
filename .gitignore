@@ -5,3 +5,4 @@ core/build/
 lwjgl3/build/
 lwjgl3/bin/
 *.jar
+assets/assets.txt
