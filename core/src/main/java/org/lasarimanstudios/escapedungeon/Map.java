@@ -1,5 +1,6 @@
 package org.lasarimanstudios.escapedungeon;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 
@@ -12,7 +13,7 @@ public class Map {
 	private float startPosY;
 
 	public Map(String backgroundTexture, Array<Wall> walls, float width, float height, float startPosX, float startPosY) {
-		this.background = new Texture(backgroundTexture);
+		this.background = new Texture(Gdx.files.internal("textures/maps/" + backgroundTexture));
 		this.walls = walls;
 		this.width = width;
 		this.height = height;

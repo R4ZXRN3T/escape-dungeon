@@ -13,7 +13,7 @@ public class Character extends Sprite {
 	private final Vector2 mouseWorld = new Vector2();
 
 	public Character(String texture, float width, float height) {
-		super(new Texture(Gdx.files.internal(texture)));
+		super(new Texture(Gdx.files.internal("textures/characters/" + texture)));
 		setSize(width, height);
 		setOriginCenter();
 	}
