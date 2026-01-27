@@ -12,10 +12,14 @@ public class MapLoader {
 		JSONObject mapJson = new JSONObject(mapConfig);
 
 		String background = mapJson.getString("background");
+		float width = mapJson.getFloat("width");
+		float height = mapJson.getFloat("height");
+		float startPosX = mapJson.getFloat("startPosX");
+		float startPosY = mapJson.getFloat("startPosY");
 
 		Array<Wall> wallArray = getWalls(mapJson);
 
-		return new Map(background, wallArray);
+		return new Map(background, wallArray, width, height, startPosX, startPosY);
 	}
 
 	private static Array<Wall> getWalls(JSONObject mapJson) {
