@@ -2,7 +2,10 @@ package org.lasarimanstudios.escapedungeon.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import org.lasarimanstudios.escapedungeon.Level;
 import org.lasarimanstudios.escapedungeon.Main;
+import org.lasarimanstudios.escapedungeon.Map;
+import org.lasarimanstudios.escapedungeon.MapLoader;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -12,7 +15,7 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new Main(), getDefaultConfiguration());
+        return new Lwjgl3Application(new Level(MapLoader.loadMap("map_01")), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

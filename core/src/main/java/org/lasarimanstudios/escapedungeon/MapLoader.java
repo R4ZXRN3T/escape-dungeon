@@ -1,25 +1,30 @@
 package org.lasarimanstudios.escapedungeon;
 
+import com.badlogic.gdx.Gdx;
 import org.json.JSONObject;
 
 import com.badlogic.gdx.utils.Array;
-import java.io.File;
 
 public class MapLoader {
 
 	public static Map loadMap(String mapName) {
-		File mapConfig = new File("levels/" + mapName + ".json");
-		JSONObject mapJson = new JSONObject(mapConfig);
+		try {
 
-		String background = mapJson.getString("background");
-		float width = mapJson.getFloat("width");
-		float height = mapJson.getFloat("height");
-		float startPosX = mapJson.getFloat("startPosX");
-		float startPosY = mapJson.getFloat("startPosY");
+			String jsonText = Gdx.files.internal("levels/" + mapName + ".json").readString();
+			JSONObject mapJson = new JSONObject(jsonText);
 
-		Array<Wall> wallArray = getWalls(mapJson);
+			String background = mapJson.getString("background");
+			float width = mapJson.getFloat("width");
+			float height = mapJson.getFloat("height");
+			float startPosX = mapJson.getFloat("startPosX");
+			float startPosY = mapJson.getFloat("startPosY");
 
-		return new Map(background, wallArray, width, height, startPosX, startPosY);
+			Array<Wall> wallArray = getWalls(mapJson);
+
+			return new Map(background, wallArray, width, height, startPosX, startPosY);
+		} catch (Exception e) {
+			throw new RuntimeException("Error reading json: " + e);
+		}
 	}
 
 	private static Array<Wall> getWalls(JSONObject mapJson) {
