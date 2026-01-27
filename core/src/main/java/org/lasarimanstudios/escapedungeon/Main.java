@@ -23,15 +23,15 @@ public class Main implements ApplicationListener {
 
 	@Override
 	public void create() {
-		backgroundTexture = new Texture(Gdx.files.internal("textures/maps/test.png"));
+		backgroundTexture = new Texture(Gdx.files.internal("test.png"));
 		spriteBatch = new SpriteBatch();
 
 		viewport = new FitViewport(80, 50);
 		camera = viewport.getCamera();
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		characterSprite = new Character("textures/characters/character.png", 5, 5);
-		wallSprite = new Wall("textures/objects/wall.png", 20, 20, 20, 20);
+		characterSprite = new Character("character.png", 5, 5);
+		wallSprite = new Wall("wall.png", 20, 20, 20, 20);
 
 		float x = (viewport.getWorldWidth() - characterSprite.getWidth()) * 0.5f;
 		float y = (viewport.getWorldHeight() - characterSprite.getHeight()) * 0.5f;
