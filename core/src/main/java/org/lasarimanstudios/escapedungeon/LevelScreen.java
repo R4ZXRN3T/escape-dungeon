@@ -26,7 +26,7 @@ public class LevelScreen extends ScreenAdapter {
 		camera = viewport.getCamera();
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		characterSprite = new Character("character.png", 5, 5);
+		characterSprite = new Character(map.getWalls(), "character.png", 5, 5);
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		camera.update();

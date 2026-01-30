@@ -5,6 +5,6 @@
     "startPosX":0,
     "startPosY":0,
     "walls":[
-        "wall.png 10 10 30 30"
+        "wall.png 20 5 30 30"
     ]
 }

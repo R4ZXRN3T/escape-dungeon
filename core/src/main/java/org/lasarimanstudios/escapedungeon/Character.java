@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Character extends Sprite {
@@ -12,9 +13,12 @@ public class Character extends Sprite {
 
 	private final Vector2 mouseWorld = new Vector2();
 
-	public Character(String texture, float width, float height) {
+	private Array<Wall> wallArray;
+
+	public Character(Array<Wall> wallArray, String texture, float width, float height) {
 		super(new Texture(Gdx.files.internal("textures/characters/" + texture)));
 		setSize(width, height);
+		this.wallArray = wallArray;
 		setOriginCenter();
 	}
 
@@ -66,6 +70,23 @@ public class Character extends Sprite {
 			translateY(speed * delta);
 		} else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 			translateY(-speed * delta);
+		}
+
+		for(Wall wall : this.wallArray) {
+			if(this.getBoundingRectangle().overlaps(wall.getBoundingRectangle())) {
+				if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+					translateX(-speed * delta);
+				}
+				if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+					translateX(speed * delta);
+				}
+				if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+					translateY(-speed * delta);
+				}
+				if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+					translateY(speed * delta);
+				}
+			}
 		}
 	}
 }
