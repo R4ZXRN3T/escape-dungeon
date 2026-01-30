@@ -44,6 +44,8 @@ public class Character extends Sprite {
 		float speed = 22f;
 		float delta = Gdx.graphics.getDeltaTime();
 		float diagonalMultiplier = 2f / 3f;
+		float oldX = this.getX();
+		float oldY = this.getY();
 
 		if ((Gdx.input.isKeyPressed(Input.Keys.S) && Gdx.input.isKeyPressed(Input.Keys.W)) ||
 			(Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D))) {
@@ -74,17 +76,22 @@ public class Character extends Sprite {
 
 		for(Wall wall : this.wallArray) {
 			if(this.getBoundingRectangle().overlaps(wall.getBoundingRectangle())) {
-				if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-					translateX(-speed * delta);
-				}
-				if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-					translateX(speed * delta);
-				}
-				if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-					translateY(-speed * delta);
-				}
-				if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-					translateY(speed * delta);
+				if (Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.S)) {
+					setPosition(oldX, oldY);
+				} else if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.W)) {
+					setPosition(oldX, oldY);
+				} else if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.D)) {
+					setPosition(oldX, oldY);
+				} else if (Gdx.input.isKeyPressed(Input.Keys.S) && Gdx.input.isKeyPressed(Input.Keys.A)) {
+					setPosition(oldX, oldY);
+				} else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+					setPosition(oldX, oldY);
+				} else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+					setPosition(oldX, oldY);
+				} else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+					setPosition(oldX, oldY);
+				} else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+					setPosition(oldX, oldY);
 				}
 			}
 		}
