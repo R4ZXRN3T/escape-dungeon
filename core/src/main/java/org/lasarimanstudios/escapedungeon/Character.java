@@ -2,16 +2,19 @@ package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Character extends Sprite {
 	private static final float FRONT_ANGLE_OFFSET_DEG = -90f;
 
-	private final Vector2 mouseWorld = new Vector2();
+	private final Vector3 mouseWorld = new Vector3();
 
 	private Array<Wall> wallArray;
 
@@ -20,15 +23,16 @@ public class Character extends Sprite {
 		setSize(width, height);
 		this.wallArray = wallArray;
 		setOriginCenter();
+		setPosition(960, 540);
 	}
 
-	public void run(Viewport viewport) {
+	public void run(OrthographicCamera camera) {
 		movement();
-		rotateToMouse(viewport);
+		rotateToMouse(camera);
 	}
 
-	private void rotateToMouse(Viewport viewport) {
-		viewport.unproject(mouseWorld.set(Gdx.input.getX(), Gdx.input.getY()));
+	private void rotateToMouse(OrthographicCamera camera) {
+		camera.unproject(mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 
 		float cx = getX() + getWidth() * 0.5f;
 		float cy = getY() + getHeight() * 0.5f;

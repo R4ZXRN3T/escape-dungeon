@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -14,7 +15,7 @@ public class LevelScreen extends ScreenAdapter {
 	private final Map map;
 	private SpriteBatch spriteBatch;
 	private FitViewport viewport;
-	private Camera camera;
+	private OrthographicCamera camera;
 	private Character characterSprite;
 
 	public LevelScreen(DungeonGame game, Map map) {
@@ -23,7 +24,7 @@ public class LevelScreen extends ScreenAdapter {
 
 		spriteBatch = new SpriteBatch();
 		viewport = new FitViewport(map.getWidth(), map.getHeight());
-		camera = viewport.getCamera();
+		camera = new OrthographicCamera(80, 50);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
 		characterSprite = new Character(map.getWalls(), "character.png", 5, 5);
@@ -44,10 +45,15 @@ public class LevelScreen extends ScreenAdapter {
 		camera.update();
 		spriteBatch.setProjectionMatrix(camera.combined);
 
-		characterSprite.run(viewport);
+		characterSprite.run(camera);
 
+		moveCamera();
 		logic();
 		draw();
+	}
+
+	private void moveCamera() {
+		camera.position.set(characterSprite.getX(), characterSprite.getY(), 0);
 	}
 
 	private void logic() {

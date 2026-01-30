@@ -1,7 +1,7 @@
 {
     "background":"test.png",
-    "width":80,
-    "height":50,
+    "width":1920,
+    "height":1080,
     "startPosX":0,
     "startPosY":0,
     "walls":[
