@@ -1,10 +1,16 @@
 {
-    "background":"test.png",
-    "width":1920,
-    "height":1080,
-    "startPosX":0,
-    "startPosY":0,
-    "walls":[
-        "wall.png 20 5 30 30"
+    "background": "test.png",
+    "width": 1920,
+    "height": 1080,
+    "startPosX": 0,
+    "startPosY": 0,
+    "walls": [
+        {
+            "texture": "wall.png",
+            "width": 20,
+            "height": 5,
+            "posX": 30,
+            "posY": 30
+        }
     ]
 }
