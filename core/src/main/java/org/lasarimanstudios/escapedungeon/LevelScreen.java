@@ -1,41 +1,33 @@
 package org.lasarimanstudios.escapedungeon;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class Main implements ApplicationListener {
-	Texture backgroundTexture;
-	SpriteBatch spriteBatch;
-	Array<Wall> spriteArray;
-	FitViewport viewport;
-	Character characterSprite;
-	Wall wallSprite;
-	Camera camera;
+public class LevelScreen extends ScreenAdapter {
+	private final DungeonGame game;
+	private final Map map;
+	private SpriteBatch spriteBatch;
+	private FitViewport viewport;
+	private Camera camera;
+	private Character characterSprite;
 
-	@Override
-	public void create() {
-		backgroundTexture = new Texture(Gdx.files.internal("test.png"));
+	public LevelScreen(DungeonGame game, Map map) {
+		this.game = game;
+		this.map = map;
+
 		spriteBatch = new SpriteBatch();
-
-		viewport = new FitViewport(80, 50);
+		viewport = new FitViewport(map.getWidth(), map.getHeight());
 		camera = viewport.getCamera();
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
 		characterSprite = new Character("character.png", 5, 5);
-		wallSprite = new Wall("wall.png", 20, 20, 20, 20);
-
-		float x = (viewport.getWorldWidth() - characterSprite.getWidth()) * 0.5f;
-		float y = (viewport.getWorldHeight() - characterSprite.getHeight()) * 0.5f;
-		characterSprite.setPosition(x, y);
+		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		camera.update();
 	}
@@ -47,7 +39,7 @@ public class Main implements ApplicationListener {
 	}
 
 	@Override
-	public void render() {
+	public void render(float delta) {
 		viewport.apply();
 		camera.update();
 		spriteBatch.setProjectionMatrix(camera.combined);
@@ -63,11 +55,6 @@ public class Main implements ApplicationListener {
 		float worldHeight = viewport.getWorldHeight();
 		float characterWidth = characterSprite.getWidth();
 		float characterHeight = characterSprite.getHeight();
-		float wallWidth = wallSprite.getWidth();
-		float wallHeight = wallSprite.getHeight();
-
-		characterSprite.setX(MathUtils.clamp(characterSprite.getX(), 0, wallWidth - characterWidth));
-		characterSprite.setY(MathUtils.clamp(characterSprite.getY(), 0, wallHeight - characterHeight));
 
 		characterSprite.setX(MathUtils.clamp(characterSprite.getX(), 0, worldWidth - characterWidth));
 		characterSprite.setY(MathUtils.clamp(characterSprite.getY(), 0, worldHeight - characterHeight));
@@ -75,29 +62,24 @@ public class Main implements ApplicationListener {
 
 	private void draw() {
 		ScreenUtils.clear(Color.BLACK);
-
 		spriteBatch.begin();
 		float worldWidth = viewport.getWorldWidth();
 		float worldHeight = viewport.getWorldHeight();
-		spriteBatch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
+		spriteBatch.draw(map.getBackground(), 0, 0, worldWidth, worldHeight);
 		characterSprite.draw(spriteBatch);
-		wallSprite.draw(spriteBatch);
+		for (Wall wall : map.getWalls()) {
+			wall.draw(spriteBatch);
+		}
 		spriteBatch.end();
-	}
-
-	@Override
-	public void pause() {
-	}
-
-	@Override
-	public void resume() {
 	}
 
 	@Override
 	public void dispose() {
 		spriteBatch.dispose();
-		backgroundTexture.dispose();
 		characterSprite.getTexture().dispose();
-		wallSprite.getTexture().dispose();
+		if (map.getBackground() != null) map.getBackground().dispose();
+		for (Wall w : map.getWalls()) {
+			if (w.getTexture() != null) w.getTexture().dispose();
+		}
 	}
 }
