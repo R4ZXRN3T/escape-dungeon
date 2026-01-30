@@ -1,12 +1,24 @@
 package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
 import org.json.JSONObject;
 
-import com.badlogic.gdx.utils.Array;
-
+/**
+ * Utility for loading {@link Map} instances from JSON level files located under {@code levels/}.
+ */
 public class MapLoader {
 
+	/**
+	 * Loads a map from {@code assets/levels/<mapName>.json}.
+	 *
+	 * <p>Expected JSON keys include: {@code background}, {@code width}, {@code height}, {@code startPosX},
+	 * {@code startPosY}, and {@code walls}.</p>
+	 *
+	 * @param mapName map identifier without {@code .json} extension
+	 * @return loaded {@link Map}
+	 * @throws RuntimeException if the file cannot be read or the JSON format is invalid
+	 */
 	public static Map loadMap(String mapName) {
 		try {
 
@@ -27,6 +39,15 @@ public class MapLoader {
 		}
 	}
 
+	/**
+	 * Parses the {@code walls} array from the given JSON object.
+	 *
+	 * <p>Each wall entry is expected to be a space-separated string:
+	 * {@code "<texture> <width> <height> <posX> <posY>"}.</p>
+	 *
+	 * @param mapJson root map JSON object containing a {@code walls} array
+	 * @return array of parsed {@link Wall} instances
+	 */
 	private static Array<Wall> getWalls(JSONObject mapJson) {
 		Array<Wall> wallArray = new Array<>();
 
