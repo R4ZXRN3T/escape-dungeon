@@ -2,21 +2,18 @@ package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Character extends Sprite {
 	private static final float FRONT_ANGLE_OFFSET_DEG = -90f;
 
 	private final Vector3 mouseWorld = new Vector3();
 
-	private Array<Wall> wallArray;
+	private final Array<Wall> wallArray;
 
 	public Character(Array<Wall> wallArray, String texture, float width, float height) {
 		super(new Texture(Gdx.files.internal("textures/characters/" + texture)));

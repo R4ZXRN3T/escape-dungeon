@@ -2,8 +2,6 @@ package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.ScreenAdapter;
 
-import java.io.DataInput;
-
 public class InventoryScreen extends ScreenAdapter {
 	private final DungeonGame game;
 
