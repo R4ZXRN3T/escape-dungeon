@@ -2,6 +2,7 @@ package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 
 /**
  * Main LibGDX {@link com.badlogic.gdx.Game} entry that manages screen transitions (menu, level, inventory).
@@ -12,7 +13,12 @@ public class DungeonGame extends Game {
 	 */
 	@Override
 	public void create() {
-		setScreen(new MenuScreen(this));
+		Graphics.DisplayMode displayMode = Gdx.graphics.getDisplayMode();
+		Gdx.graphics.setUndecorated(true);
+		Gdx.graphics.setWindowedMode(displayMode.width, displayMode.height);
+		Gdx.graphics.setForegroundFPS(0);
+		Gdx.graphics.setVSync(false);
+		setScreen(new IntroScreen(this));
 	}
 
 	/**
@@ -24,8 +30,6 @@ public class DungeonGame extends Game {
 	 * @throws RuntimeException if the map cannot be loaded or parsed
 	 */
 	public void openLevel(String mapName) {
-		Gdx.graphics.setForegroundFPS(0);
-		Gdx.graphics.setVSync(false);
 		Map map = MapLoader.loadMap(mapName);
 		setScreen(new LevelScreen(this, map));
 	}

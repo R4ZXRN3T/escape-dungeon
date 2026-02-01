@@ -19,9 +19,9 @@ import com.badlogic.gdx.utils.Array;
 public class Character extends Sprite {
 	private static final float FRONT_ANGLE_OFFSET_DEG = -90f;
 
-	private static final float SPEED = 22f;                        // Character speed in units per second.
-	private static final float DIAGONAL_MULTIPLIER = 2f / 3f;    // To keep diagonal speed consistent with axial speed.
-	private static final float MAX_STEP_DISTANCE = 0.25f;        // Max distance per movement sub-step to avoid tunneling.
+	private static final float SPEED = 22f;                     // Character speed in units per second.
+	private static final float DIAGONAL_MULTIPLIER = 2f / 3f;   // To keep diagonal speed consistent with axial speed.
+	private static final float MAX_STEP_DISTANCE = 0.25f;       // Max distance per movement sub-step to avoid tunneling.
 	private static final float MAX_DELTA = 1f / 30f;            // Cap delta time to avoid large steps on frame drops.
 
 	private final Vector3 mouseWorld = new Vector3();
