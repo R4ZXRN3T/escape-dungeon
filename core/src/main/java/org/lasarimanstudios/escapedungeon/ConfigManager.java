@@ -1,97 +1,183 @@
 package org.lasarimanstudios.escapedungeon;
 
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.MathUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
 
-import javax.swing.*;
+public final class ConfigManager {
 
-public class ConfigManager {
+	private static final Object LOCK = new Object();
+	private static boolean initialized = false;
 
-	private static HashMap<String, String> configList;
-	public static final String CONFIG_PATH = String.valueOf(getConfigFilePath());
+	private static final Path CONFIG_PATH = getConfigFilePath();
+	private static final Map<ConfigKey, String> config = new EnumMap<>(ConfigKey.class);
+
+	private ConfigManager() {
+	}
 
 	public static void init() {
-		configList = new HashMap<>();
-		readConfig();
+		synchronized (LOCK) {
+			if (initialized) return;
+			readConfigLocked();
+			initialized = true;
+		}
 	}
 
 	public static void saveConfig() {
-		writeConfig();
-	}
-
-	private static void readConfig() {
-		try {
-			File configFile = new File(new File(ConfigManager.CONFIG_PATH).getAbsolutePath());
-			System.out.println("Reading config from " + configFile.getAbsolutePath());
-			if (!configFile.exists() || configFile.length() == 0) {
-				setDefaultConfig();
-				return;
-			}
-			String fileContent = new String(java.nio.file.Files.readAllBytes(Path.of(configFile.getAbsolutePath())));
-			JSONObject jsonObject = new JSONObject(fileContent);
-			for (String currentKey : jsonObject.keySet()) {
-				String content = jsonObject.getString(currentKey);
-				configList.put(currentKey, content);
-				System.out.println("Loaded config: " + currentKey + " = " + content);
-			}
-		} catch (JSONException e) {
-			System.err.println("Config file is corrupted or invalid JSON: " + e.getMessage());
-			setDefaultConfig();
-		} catch (IOException e) {
-			System.err.println("Failed to read config file: " + e.getMessage());
+		ensureInitialized();
+		synchronized (LOCK) {
+			writeConfigAtomicallyLocked();
 		}
-	}
-
-	private static void writeConfig() {
-		File configFile = new File(new File(ConfigManager.CONFIG_PATH).getAbsolutePath());
-		try (FileWriter writer = new FileWriter(configFile)) {
-			if (!configFile.getParentFile().exists() && !configFile.getParentFile().mkdirs()) {
-				System.err.println("Failed to create config directory");
-				return;
-			}
-			JSONObject jsonToSave = new JSONObject(configList);
-			for (String key : configList.keySet()) System.out.println("Saving config: " + key + " = " + configList.get(key));
-			writer.write(jsonToSave.toString(4));
-			writer.flush();
-		} catch (IOException e) {
-			System.err.println("Error writing config: " + e.getMessage());
-		}
-	}
-
-	private static void setDefaultConfig() {
-	}
-
-	private static void setDefault(ConfigKey key) {
 	}
 
 	public static String getConfig(ConfigKey key) {
-		return configList.getOrDefault(key.toString(), null);
+		ensureInitialized();
+		synchronized (LOCK) {
+			return config.getOrDefault(key, getDefault(key));
+		}
 	}
 
-	public static Path getConfigFilePath() {
-		String os = System.getProperty("os.name").toLowerCase();
-		String fileName = "escape-dungeon/config.json";
-		if (os.contains("win")) {
-			String appData = System.getenv("APPDATA");
-			return Paths.get(appData, fileName);
-		} else if (os.contains("mac")) {
-			String userHome = System.getProperty("user.home");
-			return Paths.get(userHome, "Library", "Application Support", fileName);
-		} else { // Linux and others
-			String userHome = System.getProperty("user.home");
-			return Paths.get(userHome, ".config", fileName);
+	public static int getInt(ConfigKey key, int min, int max) {
+		ensureInitialized();
+		synchronized (LOCK) {
+			String raw = config.get(key);
+			int value;
+			try {
+				value = Integer.parseInt(raw);
+			} catch (Exception e) {
+				value = Integer.parseInt(getDefault(key));
+			}
+
+			value = MathUtils.clamp(value, min, max);
+			String normalized = String.valueOf(value);
+			if (!normalized.equals(raw)) {
+				config.put(key, normalized);
+			}
+			return value;
+		}
+	}
+
+	public static boolean getBoolean(ConfigKey key) {
+		ensureInitialized();
+		synchronized (LOCK) {
+			String raw = config.get(key);
+			if (raw == null) raw = getDefault(key);
+
+			boolean value = Boolean.parseBoolean(raw);
+			String normalized = String.valueOf(value);
+			if (!normalized.equalsIgnoreCase(raw)) {
+				config.put(key, normalized);
+			}
+			return value;
 		}
 	}
 
 	public static void setConfig(ConfigKey key, String value) {
-		configList.put(key.toString(), value);
+		ensureInitialized();
+		synchronized (LOCK) {
+			config.put(key, value);
+		}
+	}
+
+	private static void ensureInitialized() {
+		if (!initialized) {
+			init();
+		}
+	}
+
+	private static void readConfigLocked() {
+		try {
+			if (!Files.exists(CONFIG_PATH) || Files.size(CONFIG_PATH) == 0) {
+				setDefaultsLocked();
+				writeConfigAtomicallyLocked();
+				return;
+			}
+
+			String fileContent = Files.readString(CONFIG_PATH, StandardCharsets.UTF_8);
+			JSONObject jsonObject = new JSONObject(fileContent);
+
+			setDefaultsLocked();
+			for (String jsonKey : jsonObject.keySet()) {
+				ConfigKey key = ConfigKey.fromJsonKey(jsonKey);
+				if (key == null) continue;
+
+				Object v = jsonObject.opt(jsonKey);
+				if (v == null || v == JSONObject.NULL) continue;
+
+				config.put(key, String.valueOf(v));
+			}
+		} catch (JSONException e) {
+			setDefaultsLocked();
+			writeConfigAtomicallyLocked();
+		} catch (IOException e) {
+			setDefaultsLocked();
+		}
+	}
+
+	private static void writeConfigAtomicallyLocked() {
+		try {
+			Path parent = CONFIG_PATH.getParent();
+			if (parent != null) Files.createDirectories(parent);
+
+			JSONObject jsonToSave = new JSONObject();
+			for (ConfigKey key : ConfigKey.values()) {
+				jsonToSave.put(key.jsonKey, config.getOrDefault(key, getDefault(key)));
+			}
+
+			Path tmp = CONFIG_PATH.resolveSibling(CONFIG_PATH.getFileName() + ".tmp");
+			Files.writeString(tmp, jsonToSave.toString(4), StandardCharsets.UTF_8);
+
+			try {
+				Files.move(tmp, CONFIG_PATH, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+			} catch (AtomicMoveNotSupportedException e) {
+				Files.move(tmp, CONFIG_PATH, StandardCopyOption.REPLACE_EXISTING);
+			}
+		} catch (IOException ignored) {
+			// Consider logging.
+		}
+	}
+
+	private static void setDefaultsLocked() {
+		for (ConfigKey key : ConfigKey.values()) {
+			config.putIfAbsent(key, getDefault(key));
+		}
+	}
+
+	private static String getDefault(ConfigKey key) {
+		return switch (key) {
+			case WINDOW_MODE -> "0";
+			case MAX_FPS -> "60";
+			case VSYNC -> "true";
+			case SHOW_FPS -> "false";
+			case FORWARD_KEY -> String.valueOf(Input.Keys.W);
+			case BACKWARD_KEY -> String.valueOf(Input.Keys.S);
+			case LEFT_KEY -> String.valueOf(Input.Keys.A);
+			case RIGHT_KEY -> String.valueOf(Input.Keys.D);
+			case ATTACK_KEY -> String.valueOf(Input.Buttons.LEFT);
+		};
+	}
+
+	public static Path getConfigFilePath() {
+		String os = System.getProperty("os.name", "").toLowerCase();
+		String fileName = "escape-dungeon/config.json";
+
+		if (os.contains("win")) {
+			String appData = System.getenv("APPDATA");
+			if (appData != null && !appData.isBlank()) return Paths.get(appData, fileName);
+			return Paths.get(System.getProperty("user.home"), "AppData", "Roaming", fileName);
+		} else if (os.contains("mac")) {
+			return Paths.get(System.getProperty("user.home"), "Library", "Application Support", fileName);
+		} else {
+			return Paths.get(System.getProperty("user.home"), ".config", fileName);
+		}
 	}
 
 	public enum ConfigKey {
@@ -105,15 +191,25 @@ public class ConfigManager {
 		RIGHT_KEY("rightKey"),
 		ATTACK_KEY("attackKey");
 
-		private final String value;
+		private static final Map<String, ConfigKey> LOOKUP = new HashMap<>();
 
-		ConfigKey(String value) {
-			this.value = value;
+		static {
+			for (ConfigKey k : values()) LOOKUP.put(k.jsonKey, k);
+		}
+
+		private final String jsonKey;
+
+		ConfigKey(String jsonKey) {
+			this.jsonKey = jsonKey;
+		}
+
+		static ConfigKey fromJsonKey(String jsonKey) {
+			return LOOKUP.get(jsonKey);
 		}
 
 		@Override
 		public String toString() {
-			return value;
+			return jsonKey;
 		}
 	}
 }
