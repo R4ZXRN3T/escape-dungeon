@@ -1,7 +1,6 @@
 package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -30,6 +29,11 @@ public class Character extends Sprite {
 	// Stable collider that ignores sprite rotation.
 	private final Rectangle collider = new Rectangle();
 
+	private static int KEY_FORWARD;
+	private static int KEY_BACKWARD;
+	private static int KEY_LEFT;
+	private static int KEY_RIGHT;
+
 	/**
 	 * Creates a character sprite using a texture from {@code textures/characters/}, sets its size and origin,
 	 * and initializes its axis-aligned collider.
@@ -45,6 +49,10 @@ public class Character extends Sprite {
 		this.wallArray = wallArray;
 		setOriginCenter();
 		updateCollider();
+		KEY_FORWARD = ConfigManager.getInt(ConfigManager.ConfigKey.FORWARD_KEY, 0, 255);
+		KEY_BACKWARD = ConfigManager.getInt(ConfigManager.ConfigKey.BACKWARD_KEY, 0, 255);
+		KEY_LEFT = ConfigManager.getInt(ConfigManager.ConfigKey.LEFT_KEY, 0, 255);
+		KEY_RIGHT = ConfigManager.getInt(ConfigManager.ConfigKey.RIGHT_KEY, 0, 255);
 	}
 
 	/**
@@ -91,10 +99,10 @@ public class Character extends Sprite {
 		float moveX = 0f;
 		float moveY = 0f;
 
-		if (Gdx.input.isKeyPressed(Input.Keys.D)) moveX += 1f;
-		if (Gdx.input.isKeyPressed(Input.Keys.A)) moveX -= 1f;
-		if (Gdx.input.isKeyPressed(Input.Keys.W)) moveY += 1f;
-		if (Gdx.input.isKeyPressed(Input.Keys.S)) moveY -= 1f;
+		if (Gdx.input.isKeyPressed(KEY_FORWARD)) moveY += 1f;
+		if (Gdx.input.isKeyPressed(KEY_BACKWARD)) moveY -= 1f;
+		if (Gdx.input.isKeyPressed(KEY_RIGHT)) moveX += 1f;
+		if (Gdx.input.isKeyPressed(KEY_LEFT)) moveX -= 1f;
 
 		if (moveX != 0f && moveY != 0f) {
 			moveX *= DIAGONAL_MULTIPLIER;
