@@ -63,4 +63,23 @@ public class MapLoader {
 
 		return wallArray;
 	}
+
+	private static Array<Enemy> getEnemy(JSONObject mapJson) {
+		Array<Enemy> enemyArray = new Array<>();
+
+		for (Object enemyValueObject : mapJson.getJSONArray("enemies")) {
+			JSONObject enemyJson = (JSONObject) enemyValueObject;
+			String enemyTexture = enemyJson.getString("texture");
+			float enemyPosX = enemyJson.getFloat("posX");
+			float enemyPosy = enemyJson.getFloat("posY");
+			float enemyheight = enemyJson.getFloat("width");
+			float enemywidth = enemyJson.getFloat("height");
+			enemyArray.add(new Enemy(enemyTexture, enemyPosX, enemyPosy, enemyheight, enemywidth));
+		}
+
+		return enemyArray;
+
+	}
 }
+
+
