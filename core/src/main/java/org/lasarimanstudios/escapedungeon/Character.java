@@ -1,3 +1,4 @@
+// core/src/main/java/org/lasarimanstudios/escapedungeon/Character.java
 package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.Gdx;
@@ -5,8 +6,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import org.lasarimanstudios.escapedungeon.weapons.Sword;
+import org.lasarimanstudios.escapedungeon.weapons.Weapon;
 
 /**
  * Player-controlled character sprite with keyboard movement, mouse-facing rotation, and simple AABB
@@ -33,6 +37,10 @@ public class Character extends Sprite {
 	private static int KEY_BACKWARD;
 	private static int KEY_LEFT;
 	private static int KEY_RIGHT;
+	private static int BUTTON_ATTACK;
+
+	private final Weapon weapon;
+	private final Vector2 weaponOffset = new Vector2(0.5f, -3f);
 
 	/**
 	 * Creates a character sprite using a texture from {@code textures/characters/}, sets its size and origin,
@@ -49,10 +57,22 @@ public class Character extends Sprite {
 		this.wallArray = wallArray;
 		setOriginCenter();
 		updateCollider();
+
 		KEY_FORWARD = ConfigManager.getInt(ConfigManager.ConfigKey.FORWARD_KEY, 0, 255);
 		KEY_BACKWARD = ConfigManager.getInt(ConfigManager.ConfigKey.BACKWARD_KEY, 0, 255);
 		KEY_LEFT = ConfigManager.getInt(ConfigManager.ConfigKey.LEFT_KEY, 0, 255);
 		KEY_RIGHT = ConfigManager.getInt(ConfigManager.ConfigKey.RIGHT_KEY, 0, 255);
+		BUTTON_ATTACK = ConfigManager.getInt(ConfigManager.ConfigKey.ATTACK_KEY, 0, 255);
+
+
+		// Create the sword once; LevelScreen will draw it.
+		this.weapon = new Sword("sword1.png", 10f, 0.20f, 1.5f);
+		this.weapon.setOriginCenter();
+		attachWeapon();
+	}
+
+	public Weapon getWeapon() {
+		return weapon;
 	}
 
 	/**
@@ -64,6 +84,14 @@ public class Character extends Sprite {
 	public void run(OrthographicCamera camera) {
 		movement();
 		rotateToMouse(camera);
+
+		if (Gdx.input.isButtonJustPressed(BUTTON_ATTACK)) {
+			weapon.startAttack(getRotation());
+		}
+
+		// Keep sword attached and animate attacks.
+		attachWeapon();
+		weapon.attack();
 	}
 
 	/**
@@ -86,13 +114,23 @@ public class Character extends Sprite {
 		setRotation(angleDeg);
 	}
 
-	/**
-	 * Applies WASD movement input for the current frame.
-	 *
-	 * <p>Delta time is capped to avoid large simulation jumps during frame drops. Diagonal movement is scaled
-	 * to keep speed roughly consistent with axial movement. The final displacement is subdivided into small
-	 * sub-steps to reduce tunneling through walls.</p>
-	 */
+	private void attachWeapon() {
+		float cx = getX() + getWidth() * 0.5f;
+		float cy = getY() + getHeight() * 0.5f;
+
+		// Place slightly in front of the character based on facing.
+		float rad = (float) Math.toRadians(getRotation() - FRONT_ANGLE_OFFSET_DEG);
+		float ox = weaponOffset.x * (float) Math.cos(rad) - weaponOffset.y * (float) Math.sin(rad);
+		float oy = weaponOffset.x * (float) Math.sin(rad) + weaponOffset.y * (float) Math.cos(rad);
+
+		weapon.setPosition(cx - weapon.getWidth() * 0.5f + ox, cy - weapon.getHeight() * 0.5f + oy);
+
+		// If you want the sword to follow facing even when not attacking:
+		//if (!(weapon instanceof Sword)) {
+			weapon.setRotation(getRotation());
+		//}
+	}
+
 	private void movement() {
 		float delta = Math.min(Gdx.graphics.getDeltaTime(), MAX_DELTA);
 
