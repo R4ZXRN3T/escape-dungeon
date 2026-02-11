@@ -67,7 +67,6 @@ public class Character extends Sprite {
 
 		// Create the sword once; LevelScreen will draw it.
 		this.weapon = new Sword("sword1.png", 10f, 0.20f, 1.5f);
-		this.weapon.setOriginCenter();
 		attachWeapon();
 	}
 
@@ -127,7 +126,9 @@ public class Character extends Sprite {
 
 		// If you want the sword to follow facing even when not attacking:
 		//if (!(weapon instanceof Sword)) {
+		if (!weapon.isAttacking()) {
 			weapon.setRotation(getRotation());
+		}
 		//}
 	}
 

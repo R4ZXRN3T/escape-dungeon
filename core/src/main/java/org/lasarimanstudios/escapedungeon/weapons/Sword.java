@@ -18,7 +18,7 @@ public class Sword extends Weapon {
 	private float endAngle;
 	private float lungeAngle;
 
-	private boolean attacking = false;
+	public boolean attacking = false;
 	private float elapsedTime;
 
 	private float baseX;
@@ -29,6 +29,7 @@ public class Sword extends Weapon {
 		setSize(3f, 3f);
 		setOrigin(getWidth() * 0.15f, getHeight() * 0.15f);
 	}
+
 
 	@Override
 	public void attack() {
