@@ -18,7 +18,6 @@ public class Sword extends Weapon {
 	private float endAngle;
 	private float lungeAngle;
 
-	public boolean attacking = false;
 	private float elapsedTime;
 
 	private float baseX;
@@ -44,7 +43,7 @@ public class Sword extends Weapon {
 			attacking = false;
 		}
 
-		float eased = Interpolation.sine.apply(t);
+		float eased = Interpolation.pow2Out.apply(t);
 
 		float currentAngle = startAngle + (endAngle - startAngle) * eased;
 		setRotation(currentAngle);

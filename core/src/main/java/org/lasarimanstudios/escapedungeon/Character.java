@@ -89,7 +89,10 @@ public class Character extends Sprite {
 		}
 
 		// Keep sword attached and animate attacks.
-		attachWeapon();
+		if (!weapon.isAttacking()) {
+			attachWeapon();
+		}
+
 		weapon.attack();
 	}
 
