@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Array;
 public class Map {
 	private Texture background;
 	private Array<Wall> walls;
+	private Array<Enemy> enemies;
 	private float width;
 	private float height;
 	private float startPosX;
@@ -28,17 +29,20 @@ public class Map {
 	 * @param startPosX         character spawn X (world units)
 	 * @param startPosY         character spawn Y (world units)
 	 */
-	public Map(String backgroundTexture, Array<Wall> walls, float width, float height, float startPosX, float startPosY) {
+	public Map(String backgroundTexture, Array<Wall> walls, Array<Enemy> enemies, float width, float height, float startPosX, float startPosY) {
 		this.background = new Texture(Gdx.files.internal("textures/maps/" + backgroundTexture));
 		this.walls = walls;
+		this.enemies = enemies;
 		this.width = width;
 		this.height = height;
 		this.startPosX = startPosX;
 		this.startPosY = startPosY;
 	}
 
+
+
 	/**
-	 * @return the background texture for the map (may be {@code null} if cleared externally)
+	 * @return the background texture for the map (maybe {@code null} if cleared externally)
 	 */
 	public Texture getBackground() {
 		return background;
@@ -132,4 +136,30 @@ public class Map {
 	public void setStartPosY(float startPosY) {
 		this.startPosY = startPosY;
 	}
+
+
+	/**
+	 * Replaces the Enemy array reference.
+	 *
+	 * @param enemies new walls array
+	 */
+	public void setEnemies(Array<Enemy> enemies) {
+		this.enemies = enemies;
+	}
+
+	/**
+	 * @return Enemies in this map
+	 */
+	public Array<Enemy> getEnemies() {
+		return enemies;
+	}
+
+
+
+
+
+
+
+
+
 }

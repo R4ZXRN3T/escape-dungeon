@@ -32,8 +32,9 @@ public class MapLoader {
 			float startPosY = mapJson.getFloat("startPosY");
 
 			Array<Wall> wallArray = getWalls(mapJson);
+			Array<Enemy> enemyArray = getEnemies(mapJson);
 
-			return new Map(background, wallArray, width, height, startPosX, startPosY);
+			return new Map(background, wallArray, enemyArray, width, height, startPosX, startPosY);
 		} catch (Exception e) {
 			throw new RuntimeException("Error reading json: " + e);
 		}
@@ -64,17 +65,18 @@ public class MapLoader {
 		return wallArray;
 	}
 
-	private static Array<Enemy> getEnemy(JSONObject mapJson) {
+	private static Array<Enemy> getEnemies(JSONObject mapJson) {
 		Array<Enemy> enemyArray = new Array<>();
 
 		for (Object enemyValueObject : mapJson.getJSONArray("enemies")) {
 			JSONObject enemyJson = (JSONObject) enemyValueObject;
 			String enemyTexture = enemyJson.getString("texture");
+			float enemywidth = enemyJson.getFloat("width");
+			float  enemyheight = enemyJson.getFloat("height");
 			float enemyPosX = enemyJson.getFloat("posX");
 			float enemyPosy = enemyJson.getFloat("posY");
-			float enemyheight = enemyJson.getFloat("width");
-			float enemywidth = enemyJson.getFloat("height");
-			enemyArray.add(new Enemy(enemyTexture, enemyPosX, enemyPosy, enemyheight, enemywidth));
+
+			enemyArray.add(new Enemy(enemyTexture, enemywidth, enemyheight, enemyPosX, enemyPosy));
 		}
 
 		return enemyArray;

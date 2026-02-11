@@ -112,6 +112,9 @@ public class LevelScreen extends ScreenAdapter {
 		for (Wall wall : map.getWalls()) {
 			wall.draw(spriteBatch);
 		}
+		for (Enemy enemy : map.getEnemies()) {
+			enemy.draw(spriteBatch);
+		}
 		spriteBatch.end();
 	}
 
@@ -127,6 +130,9 @@ public class LevelScreen extends ScreenAdapter {
 		if (map.getBackground() != null) map.getBackground().dispose();
 		for (Wall w : map.getWalls()) {
 			if (w.getTexture() != null) w.getTexture().dispose();
+		}
+		for (Enemy e : map.getEnemies()) {
+			if (e.getTexture() != null) e.getTexture().dispose();
 		}
 	}
 }
