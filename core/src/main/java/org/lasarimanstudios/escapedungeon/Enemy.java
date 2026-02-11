@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Array;
 public class Enemy extends Sprite {
 
 	public Enemy(String texture, float width, float height, float posX, float posY) {
-		super(new Texture(Gdx.files.internal("textures/characters/" + texture)));
+		super(new Texture(Gdx.files.internal("textures/enemy/" + texture)));
 		setBounds(posX, posY, width, height);
 		setOriginCenter();
 	}
