@@ -40,7 +40,8 @@ public class Character extends Sprite {
 	private static int BUTTON_ATTACK;
 
 	private final Weapon weapon;
-	private final Vector2 weaponOffset = new Vector2(0.5f, -3f);
+	private final Vector2 weaponOffsetLocal = new Vector2(1.8f, -1.3f);
+	private final Vector2 weaponOffsetWorld = new Vector2();
 
 	/**
 	 * Creates a character sprite using a texture from {@code textures/characters/}, sets its size and origin,
@@ -66,7 +67,7 @@ public class Character extends Sprite {
 
 
 		// Create the sword once; LevelScreen will draw it.
-		this.weapon = new Sword("sword1.png", 10f, 0.20f, 1.5f);
+		this.weapon = new Sword("sword1.png", 10f, 0.2f, 1.5f);
 		attachWeapon();
 	}
 
@@ -120,19 +121,13 @@ public class Character extends Sprite {
 		float cx = getX() + getWidth() * 0.5f;
 		float cy = getY() + getHeight() * 0.5f;
 
-		// Place slightly in front of the character based on facing.
-		float rad = (float) Math.toRadians(getRotation() - FRONT_ANGLE_OFFSET_DEG);
-		float ox = weaponOffset.x * (float) Math.cos(rad) - weaponOffset.y * (float) Math.sin(rad);
-		float oy = weaponOffset.x * (float) Math.sin(rad) + weaponOffset.y * (float) Math.cos(rad);
+		weaponOffsetWorld.set(weaponOffsetLocal).rotateDeg(getRotation());
 
-		weapon.setPosition(cx - weapon.getWidth() * 0.5f + ox, cy - weapon.getHeight() * 0.5f + oy);
+		weapon.setPosition(cx + weaponOffsetWorld.x, cy + weaponOffsetWorld.y);
 
-		// If you want the sword to follow facing even when not attacking:
-		//if (!(weapon instanceof Sword)) {
 		if (!weapon.isAttacking()) {
 			weapon.setRotation(getRotation());
 		}
-		//}
 	}
 
 	private void movement() {

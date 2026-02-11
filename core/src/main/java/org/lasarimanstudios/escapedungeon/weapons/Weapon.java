@@ -15,10 +15,6 @@ public abstract class Weapon extends Sprite {
 		this.attackDamage = attackDamage;
 		this.attackSpeed = attackSpeed;
 		this.range = range;
-
-		// Use a stable pivot (handle) in local units.
-		// Assumes the sword texture is oriented pointing "up" when rotation == 0.
-		setOrigin(-getWidth() / 2, -getHeight() / 2);
 	}
 
 	public boolean isAttacking() {
