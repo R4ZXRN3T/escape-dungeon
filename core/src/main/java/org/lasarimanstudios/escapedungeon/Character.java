@@ -40,7 +40,7 @@ public class Character extends Sprite {
 	private static int BUTTON_ATTACK;
 
 	private final Weapon weapon;
-	private final Vector2 weaponOffsetLocal = new Vector2(1.8f, -1.3f);
+	private final Vector2 weaponOffsetLocal = new Vector2(2.5f, -1.3f);
 	private final Vector2 weaponOffsetWorld = new Vector2();
 
 	/**
@@ -126,7 +126,7 @@ public class Character extends Sprite {
 		weapon.setPosition(cx + weaponOffsetWorld.x, cy + weaponOffsetWorld.y);
 
 		if (!weapon.isAttacking()) {
-			weapon.setRotation(getRotation());
+			weapon.setRotation(getRotation() + 45f);
 		}
 	}
 

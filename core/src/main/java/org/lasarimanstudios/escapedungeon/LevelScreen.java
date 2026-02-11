@@ -107,8 +107,9 @@ public class LevelScreen extends ScreenAdapter {
 		float worldWidth = viewport.getWorldWidth();
 		float worldHeight = viewport.getWorldHeight();
 		spriteBatch.draw(map.getBackground(), 0, 0, worldWidth, worldHeight);
-		characterSprite.draw(spriteBatch);
 		characterSprite.getWeapon().draw(spriteBatch);
+		characterSprite.draw(spriteBatch);
+
 		for (Wall wall : map.getWalls()) {
 			wall.draw(spriteBatch);
 		}

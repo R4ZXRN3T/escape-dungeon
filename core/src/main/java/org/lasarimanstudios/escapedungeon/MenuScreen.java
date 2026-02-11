@@ -31,7 +31,7 @@ public class MenuScreen extends ScreenAdapter {
 	@Override
 	public void render(float delta) {
 		ScreenUtils.clear(0f, 0f, 0f, 1f);
-		if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
 			game.openLevel("map_01");
 		}
 	}
