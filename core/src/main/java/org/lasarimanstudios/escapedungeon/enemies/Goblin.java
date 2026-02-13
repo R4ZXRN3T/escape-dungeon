@@ -13,7 +13,7 @@ public class Goblin extends Enemy {
 	private float knockbackVy = 0f;
 
 	public Goblin(String texture, float width, float height, float posX, float posY, int level) {
-		super(texture, width, height, posX, posY);
+		super("goblin-01/" + texture, width, height, posX, posY);
 		setLevel(level);
 		setMaxHealth((float) (BASE_HEALTH * Math.pow(1.2, level)));
 		setRemainingHealth(getMaxHealth());
