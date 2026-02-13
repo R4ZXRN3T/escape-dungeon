@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import org.lasarimanstudios.escapedungeon.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.weapons.Sword;
 import org.lasarimanstudios.escapedungeon.weapons.Weapon;
 
@@ -27,6 +28,7 @@ public class Character extends Sprite {
 	private float RemainingHealth;
 	private float knockbackVx = 0f;
 	private float knockbackVy = 0f;
+	private float damageInvulnerabilityTime = 1f;
 	private static final float FRONT_ANGLE_OFFSET_DEG = -90f;
 
 	private static final float SPEED = 22f;                     // Character speed in units per second.
@@ -36,6 +38,7 @@ public class Character extends Sprite {
 
 	private final Vector3 mouseWorld = new Vector3();
 	private final Array<Wall> wallArray;
+	private final Array<Enemy> enemyArray;
 
 	// Stable collider that ignores sprite rotation.
 	private final Rectangle collider = new Rectangle();
@@ -59,12 +62,13 @@ public class Character extends Sprite {
 	 * @param width     sprite width in world units
 	 * @param height    sprite height in world units
 	 */
-	public Character(Array<Wall> wallArray, String texture, float width, float height, float MaxHealth){
+	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, String texture, float width, float height, float MaxHealth){
 		super(new Texture(Gdx.files.internal("textures/characters/" + texture)));
 		setMaxHealth(MaxHealth);
 		setRemainingHealth(getMaxHealth());
 		setSize(width, height);
 		this.wallArray = wallArray;
+		this.enemyArray = enemyArray;
 		setOriginCenter();
 		updateCollider();
 
@@ -85,7 +89,9 @@ public class Character extends Sprite {
 	}
 
 	public void takeDamage(float damage, float knockback, float hitAngle){
+		if (damageInvulnerabilityTime > 0f) return;
 		setRemainingHealth(getRemainingHealth()-damage);
+		damageInvulnerabilityTime = 1f;
 
 		float dx = (float) Math.cos(hitAngle);
 		float dy = (float) Math.sin(hitAngle);
@@ -118,6 +124,8 @@ public class Character extends Sprite {
 		}
 
 		weapon.attack();
+		damageInvulnerabilityTime -= delta;
+		if (overlapsAnyEnemy(enemyArray)) takeDamage(10, 150, getRotation() + 270f);
 		updateKnockback(delta);
 	}
 
@@ -251,6 +259,14 @@ public class Character extends Sprite {
 		for (Wall wall : wallArray) {
 			// Wall collider is also an AABB rectangle.
 			if (collider.overlaps(wall.getBoundingRectangle())) return true;
+		}
+		return false;
+	}
+
+	private boolean overlapsAnyEnemy(Array<Enemy> enemyArray) {
+		for (Enemy enemy : enemyArray) {
+			// Enemy collider is also an AABB rectangle.
+			if (collider.overlaps(enemy.getBoundingRectangle())) return true;
 		}
 		return false;
 	}

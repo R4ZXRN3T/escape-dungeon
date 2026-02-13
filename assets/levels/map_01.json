@@ -19,8 +19,8 @@
             "texture": "goblin-01-vorne-stehend.png",
             "width": 5,
             "height": 5,
-            "posX": 50,
-            "posY": 50,
+            "posX": 40,
+            "posY": 60,
             "level": 0
         }
     ]
