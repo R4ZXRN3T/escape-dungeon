@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import org.lasarimanstudios.escapedungeon.weapons.Sword;
 import org.lasarimanstudios.escapedungeon.weapons.Weapon;
 
+
 /**
  * Player-controlled character sprite with keyboard movement, mouse-facing rotation, and simple AABB
  * collision against a set of {@link Wall} rectangles.
@@ -20,6 +21,12 @@ import org.lasarimanstudios.escapedungeon.weapons.Weapon;
  * axis-aligned {@link Rectangle} collider that intentionally ignores sprite rotation.</p>
  */
 public class Character extends Sprite {
+	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
+	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
+	private float MaxHealth;
+	private float RemainingHealth;
+	private float knockbackVx = 0f;
+	private float knockbackVy = 0f;
 	private static final float FRONT_ANGLE_OFFSET_DEG = -90f;
 
 	private static final float SPEED = 22f;                     // Character speed in units per second.
@@ -52,8 +59,10 @@ public class Character extends Sprite {
 	 * @param width     sprite width in world units
 	 * @param height    sprite height in world units
 	 */
-	public Character(Array<Wall> wallArray, String texture, float width, float height) {
+	public Character(Array<Wall> wallArray, String texture, float width, float height, float MaxHealth){
 		super(new Texture(Gdx.files.internal("textures/characters/" + texture)));
+		setMaxHealth(MaxHealth);
+		setRemainingHealth(getMaxHealth());
 		setSize(width, height);
 		this.wallArray = wallArray;
 		setOriginCenter();
@@ -75,6 +84,19 @@ public class Character extends Sprite {
 		return weapon;
 	}
 
+	public void takeDamage(float damage, float knockback, float hitAngle){
+		setRemainingHealth(getRemainingHealth()-damage);
+
+		float dx = (float) Math.cos(hitAngle);
+		float dy = (float) Math.sin(hitAngle);
+
+		knockbackVx = dx * knockback;
+		knockbackVy += dy * knockback;
+		if(getRemainingHealth() <= 0){
+			System.exit(0);
+		}
+	}
+
 	/**
 	 * Updates character state for the current frame: applies movement input and rotates the sprite to face
 	 * the mouse cursor in world space.
@@ -82,6 +104,7 @@ public class Character extends Sprite {
 	 * @param camera camera used to unproject mouse screen coordinates into world coordinates
 	 */
 	public void run(OrthographicCamera camera) {
+		float delta = Gdx.graphics.getDeltaTime();
 		movement();
 		rotateToMouse(camera);
 
@@ -95,6 +118,21 @@ public class Character extends Sprite {
 		}
 
 		weapon.attack();
+		updateKnockback(delta);
+	}
+
+	private void updateKnockback(float delta){
+		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
+			setX(getX() + knockbackVx * delta);
+			setY(getY() + knockbackVy * delta);
+
+			float decay = (float) Math.exp(-KNOCKBACK_DAMPING_PER_SECOND * delta);
+			knockbackVx *= decay;
+			knockbackVy *= decay;
+
+			if (Math.abs(knockbackVx) < KNOCKBACK_VELOCITY_EPS) knockbackVx = 0f;
+			if (Math.abs(knockbackVy) < KNOCKBACK_VELOCITY_EPS) knockbackVy = 0f;
+		}
 	}
 
 	/**
@@ -215,5 +253,21 @@ public class Character extends Sprite {
 			if (collider.overlaps(wall.getBoundingRectangle())) return true;
 		}
 		return false;
+	}
+
+	public float getMaxHealth() {
+		return MaxHealth;
+	}
+
+	public void setMaxHealth(float maxHealth) {
+		MaxHealth = maxHealth;
+	}
+
+	public float getRemainingHealth() {
+		return RemainingHealth;
+	}
+
+	public void setRemainingHealth(float remainingHealth) {
+		RemainingHealth = remainingHealth;
 	}
 }
