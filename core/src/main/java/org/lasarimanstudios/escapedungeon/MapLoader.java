@@ -3,6 +3,8 @@ package org.lasarimanstudios.escapedungeon;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import org.json.JSONObject;
+import org.lasarimanstudios.escapedungeon.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.enemies.Goblin;
 
 /**
  * Utility for loading {@link Map} instances from JSON level files located under {@code levels/}.
@@ -70,17 +72,28 @@ public class MapLoader {
 
 		for (Object enemyValueObject : mapJson.getJSONArray("enemies")) {
 			JSONObject enemyJson = (JSONObject) enemyValueObject;
+			String enemyType = enemyJson.getString("enemyType");
 			String enemyTexture = enemyJson.getString("texture");
-			float enemywidth = enemyJson.getFloat("width");
-			float  enemyheight = enemyJson.getFloat("height");
+			float enemyWidth = enemyJson.getFloat("width");
+			float enemyHeight = enemyJson.getFloat("height");
 			float enemyPosX = enemyJson.getFloat("posX");
 			float enemyPosy = enemyJson.getFloat("posY");
+			int level = enemyJson.getInt("level");
 
-			enemyArray.add(new Enemy(enemyTexture, enemywidth, enemyheight, enemyPosX, enemyPosy));
+			Enemy enemy = getNewEnemy(enemyType, enemyTexture, enemyWidth, enemyHeight, enemyPosX, enemyPosy, level);
+
+			enemyArray.add(enemy);
 		}
 
 		return enemyArray;
 
+	}
+
+	private static Enemy getNewEnemy(String enemyType, String enemyTexture, float enemyWidth, float enemyHeight, float enemyPosX, float enemyPosy, int level) {
+		return switch(enemyType) {
+			case "goblin" -> new Goblin(enemyTexture, enemyWidth, enemyHeight, enemyPosX, enemyPosy, level);
+			default -> throw new RuntimeException("Unknown enemy type: " + enemyType);
+		};
 	}
 }
 

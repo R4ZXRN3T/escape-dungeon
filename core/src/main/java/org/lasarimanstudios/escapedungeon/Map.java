@@ -3,6 +3,7 @@ package org.lasarimanstudios.escapedungeon;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
+import org.lasarimanstudios.escapedungeon.enemies.Enemy;
 
 /**
  * Immutable-ish container for level data: background texture, wall sprites, world dimensions, and start position.

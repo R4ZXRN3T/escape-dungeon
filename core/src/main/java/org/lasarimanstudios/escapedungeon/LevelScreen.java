@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import org.lasarimanstudios.escapedungeon.enemies.Enemy;
 
 /**
  * Gameplay screen that renders a {@link Map}, updates the {@link Character}, and follows the character
