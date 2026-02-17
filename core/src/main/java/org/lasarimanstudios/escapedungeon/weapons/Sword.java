@@ -3,6 +3,8 @@ package org.lasarimanstudios.escapedungeon.weapons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import org.lasarimanstudios.escapedungeon.enemies.Enemy;
 
 public class Sword extends Weapon {
 
@@ -14,14 +16,17 @@ public class Sword extends Weapon {
 	public boolean attacking = false;
 	private float elapsedTime;
 
-	public Sword(String texture, float attackDamage, float attackSpeed, float range) {
+	private final Array<Enemy> enemies;
+
+	public Sword(Array<Enemy> enemies, String texture, float attackDamage, float attackSpeed, float range) {
 		super(texture, attackDamage, attackSpeed, range);
 		setSize(4f, 4f);
 		setOrigin(0, 0);
+		this.enemies = enemies;
 	}
 
 	@Override
-	public void attack() {
+	public void update() {
 		if (!attacking) return;
 
 		float dt = Gdx.graphics.getDeltaTime();
@@ -34,6 +39,10 @@ public class Sword extends Weapon {
 		if (t >= 1f) {
 			attacking = false;
 		}
+
+		for (Enemy enemy : enemies)
+			if (enemy.getBoundingRectangle().overlaps(getBoundingRectangle()))
+				enemy.takeDamage(getAttackDamage(), 0f, angle);
 	}
 
 	@Override

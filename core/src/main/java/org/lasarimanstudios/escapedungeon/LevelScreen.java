@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.lasarimanstudios.escapedungeon.enemies.Enemy;
@@ -21,6 +22,7 @@ public class LevelScreen extends ScreenAdapter {
 	private final FitViewport viewport;
 	private final OrthographicCamera camera;
 	private final Character characterSprite;
+	private Array<BloodPuddle> bloodPuddles = new Array<>();
 
 	/**
 	 * Creates a new level screen for the given map, sets up rendering, viewport, camera, and spawns the character
@@ -32,6 +34,10 @@ public class LevelScreen extends ScreenAdapter {
 	public LevelScreen(DungeonGame game, Map map) {
 		this.game = game;
 		this.map = map;
+
+		for (Enemy enemy : map.getEnemies()) {
+			enemy.setLevelScreen(this);
+		}
 
 		spriteBatch = new SpriteBatch();
 		viewport = new FitViewport(map.getWidth(), map.getHeight());
@@ -69,6 +75,10 @@ public class LevelScreen extends ScreenAdapter {
 		spriteBatch.setProjectionMatrix(camera.combined);
 
 		characterSprite.run(camera);
+
+		for (BloodPuddle puddle : bloodPuddles) {
+			puddle.update(delta);
+		}
 
 		moveCamera();
 		logic();
@@ -108,6 +118,11 @@ public class LevelScreen extends ScreenAdapter {
 		float worldWidth = viewport.getWorldWidth();
 		float worldHeight = viewport.getWorldHeight();
 		spriteBatch.draw(map.getBackground(), 0, 0, worldWidth, worldHeight);
+
+		for (BloodPuddle puddle : bloodPuddles) {
+			puddle.draw(spriteBatch);
+		}
+
 		characterSprite.getWeapon().draw(spriteBatch);
 		characterSprite.draw(spriteBatch);
 
@@ -136,5 +151,17 @@ public class LevelScreen extends ScreenAdapter {
 		for (Enemy e : map.getEnemies()) {
 			if (e.getTexture() != null) e.getTexture().dispose();
 		}
+	}
+
+	public void addBloodPuddle(float x, float y) {
+		bloodPuddles.add(new BloodPuddle(x, y, 5f, this));
+	}
+
+	public Map getMap() {
+		return map;
+	}
+
+	public Array<BloodPuddle> getBloodPuddles() {
+		return bloodPuddles;
 	}
 }

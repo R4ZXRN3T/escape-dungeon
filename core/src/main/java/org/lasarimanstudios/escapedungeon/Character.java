@@ -80,7 +80,7 @@ public class Character extends Sprite {
 
 
 		// Create the sword once; LevelScreen will draw it.
-		this.weapon = new Sword("sword1.png", 10f, 0.2f, 1.5f);
+		this.weapon = new Sword(enemyArray, "sword1.png", 10f, 0.2f, 1.5f);
 		attachWeapon();
 	}
 
@@ -123,7 +123,7 @@ public class Character extends Sprite {
 			attachWeapon();
 		}
 
-		weapon.attack();
+		weapon.update();
 		damageInvulnerabilityTime -= delta;
 		if (overlapsAnyEnemy(enemyArray)) takeDamage(10, 150, getRotation() + 270f);
 		updateKnockback(delta);

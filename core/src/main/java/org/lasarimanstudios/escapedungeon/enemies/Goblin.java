@@ -51,6 +51,7 @@ public class Goblin extends Enemy {
 
 	@Override
 	public void die() {
-
+		getLevelScreen().addBloodPuddle(getX(), getY());
+		getLevelScreen().getMap().getEnemies().removeValue(this, true);
 	}
 }
