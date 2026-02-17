@@ -3,6 +3,8 @@ package org.lasarimanstudios.escapedungeon.weapons;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.utils.Array;
+import org.lasarimanstudios.escapedungeon.enemies.Enemy;
 
 public abstract class Weapon extends Sprite {
 	private float attackDamage;
@@ -21,7 +23,7 @@ public abstract class Weapon extends Sprite {
 		return attacking;
 	}
 
-	public abstract void attack();
+	public abstract void update();
 
 	public abstract void startAttack(float angle);
 
