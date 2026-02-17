@@ -12,6 +12,8 @@ public class Goblin extends Enemy {
 	private float knockbackVx = 0f;
 	private float knockbackVy = 0f;
 
+
+
 	public Goblin(String texture, float width, float height, float posX, float posY, int level) {
 		super("goblin-01/" + texture, width, height, posX, posY);
 		setLevel(level);
@@ -35,7 +37,8 @@ public class Goblin extends Enemy {
 	}
 
 	@Override
-	public void update(float delta) {
+		public void update(float delta) {
+
 		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
 			setX(getX() + knockbackVx * delta);
 			setY(getY() + knockbackVy * delta);
@@ -46,11 +49,30 @@ public class Goblin extends Enemy {
 
 			if (Math.abs(knockbackVx) < KNOCKBACK_VELOCITY_EPS) knockbackVx = 0f;
 			if (Math.abs(knockbackVy) < KNOCKBACK_VELOCITY_EPS) knockbackVy = 0f;
+		} else {
+			following(delta);
 		}
 	}
 
 	@Override
 	public void die() {
 
+	}
+
+
+	public void following(float delta) {
+
+		float diffX = getCharacter().getX() - getX();
+		float diffY = getCharacter().getY() - getY();
+
+		float length = (float) Math.sqrt(diffX * diffX + diffY * diffY);
+
+		if (length > 0) {
+			float dirX = diffX / length;
+			float dirY = diffY / length;
+
+			setX(getX() + dirX * getSpeed() * delta);
+			setY(getY() + dirY * getSpeed() * delta);
+		}
 	}
 }

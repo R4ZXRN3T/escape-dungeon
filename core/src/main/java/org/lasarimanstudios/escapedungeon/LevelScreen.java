@@ -33,6 +33,8 @@ public class LevelScreen extends ScreenAdapter {
 		this.game = game;
 		this.map = map;
 
+
+
 		spriteBatch = new SpriteBatch();
 		viewport = new FitViewport(map.getWidth(), map.getHeight());
 		camera = new OrthographicCamera(80, 50);
@@ -42,6 +44,9 @@ public class LevelScreen extends ScreenAdapter {
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		camera.update();
+		for (Enemy enemy : map.getEnemies()) {
+			enemy.setCharacter(this.characterSprite);
+		}
 	}
 
 	/**

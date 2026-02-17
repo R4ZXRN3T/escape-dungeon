@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import org.lasarimanstudios.escapedungeon.Character;
+
 public abstract class Enemy extends Sprite {
 
 	private int level;
@@ -11,11 +13,19 @@ public abstract class Enemy extends Sprite {
 	private float remainingHealth;
 	private float attackDamage;
 	private float speed;
+	private Character character;
 
 	public Enemy(String texture, float width, float height, float posX, float posY) {
 		super(new Texture(Gdx.files.internal("textures/enemy/" + texture)));
 		setBounds(posX, posY, width, height);
 		setOriginCenter();
+	}
+	public void setCharacter(Character character){
+		this.character = character;
+	}
+
+	public Character getCharacter() {
+		return character;
 	}
 
 	public abstract void takeDamage(float damage, float knockback, float hitAngle);

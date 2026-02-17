@@ -114,6 +114,8 @@ public class Character extends Sprite {
 		movement();
 		rotateToMouse(camera);
 
+
+
 		if (Gdx.input.isButtonJustPressed(BUTTON_ATTACK)) {
 			weapon.startAttack(getRotation());
 		}
