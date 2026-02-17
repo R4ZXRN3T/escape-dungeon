@@ -48,6 +48,9 @@ public class LevelScreen extends ScreenAdapter {
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		camera.update();
+		for (Enemy enemy : map.getEnemies()) {
+			enemy.setCharacter(this.characterSprite);
+		}
 	}
 
 	/**

@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import org.lasarimanstudios.escapedungeon.BloodPuddle;
 import org.lasarimanstudios.escapedungeon.LevelScreen;
 
+import org.lasarimanstudios.escapedungeon.Character;
+
 public abstract class Enemy extends Sprite {
 
 	private int level;
@@ -13,6 +15,7 @@ public abstract class Enemy extends Sprite {
 	private float remainingHealth;
 	private float attackDamage;
 	private float speed;
+	private Character character;
 
 	private LevelScreen levelScreen;
 
@@ -20,6 +23,13 @@ public abstract class Enemy extends Sprite {
 		super(new Texture(Gdx.files.internal("textures/enemy/" + texture)));
 		setBounds(posX, posY, width, height);
 		setOriginCenter();
+	}
+	public void setCharacter(Character character){
+		this.character = character;
+	}
+
+	public Character getCharacter() {
+		return character;
 	}
 
 	public void setLevelScreen(LevelScreen level) {
