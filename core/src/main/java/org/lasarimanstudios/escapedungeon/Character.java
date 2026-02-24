@@ -80,7 +80,7 @@ public class Character extends Sprite {
 
 
 		// Create the sword once; LevelScreen will draw it.
-		this.weapon = new Sword(enemyArray, "sword1.png", 10f, 0.2f, 1.5f);
+		this.weapon = new Sword(enemyArray, "sword1.png", 10f, 10f, 1.5f);
 		attachWeapon();
 	}
 

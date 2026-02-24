@@ -22,7 +22,7 @@ public class LevelScreen extends ScreenAdapter {
 	private final FitViewport viewport;
 	private final OrthographicCamera camera;
 	private final Character characterSprite;
-	private Array<BloodPuddle> bloodPuddles = new Array<>();
+	private final Array<BloodPuddle> bloodPuddles = new Array<>();
 
 	/**
 	 * Creates a new level screen for the given map, sets up rendering, viewport, camera, and spawns the character
