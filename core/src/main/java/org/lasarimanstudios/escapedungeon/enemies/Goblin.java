@@ -12,8 +12,6 @@ public class Goblin extends Enemy {
 	private float knockbackVx = 0f;
 	private float knockbackVy = 0f;
 
-
-
 	public Goblin(String texture, float width, float height, float posX, float posY, int level) {
 		super("goblin-01/" + texture, width, height, posX, posY);
 		setLevel(level);

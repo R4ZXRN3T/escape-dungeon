@@ -83,6 +83,10 @@ public class LevelScreen extends ScreenAdapter {
 			puddle.update(delta);
 		}
 
+		for (Enemy enemy : map.getEnemies()) {
+			enemy.update(delta);
+		}
+
 		moveCamera();
 		logic();
 		draw();
