@@ -2,12 +2,13 @@ package org.lasarimanstudios.escapedungeon.enemies;
 
 public class Goblin extends Enemy {
 
-	private static final float BASE_HEALTH = 100f;
+	private static final float BASE_HEALTH = 100;
 	private static final float BASE_ATTACK_DAMAGE = 10f;
 	private static final float BASE_SPEED = 10f;
 
 	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
+	private float damageInvulnerabilityTime = 0.3f;
 
 	private float knockbackVx = 0f;
 	private float knockbackVy = 0f;
@@ -23,7 +24,9 @@ public class Goblin extends Enemy {
 
 	@Override
 	public void takeDamage(float damage, float knockback, float hitAngle) {
+		if (damageInvulnerabilityTime > 0f) return;
 		setRemainingHealth(getRemainingHealth() - damage);
+		damageInvulnerabilityTime = 0.3f;
 
 		float dx = (float) Math.cos(hitAngle);
 		float dy = (float) Math.sin(hitAngle);
@@ -36,7 +39,7 @@ public class Goblin extends Enemy {
 
 	@Override
 		public void update(float delta) {
-
+		damageInvulnerabilityTime -= delta;
 		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
 			setX(getX() + knockbackVx * delta);
 			setY(getY() + knockbackVy * delta);
@@ -73,5 +76,13 @@ public class Goblin extends Enemy {
 			setX(getX() + dirX * getSpeed() * delta);
 			setY(getY() + dirY * getSpeed() * delta);
 		}
+	}
+
+	public float getDamageInvulnerabilityTime() {
+		return damageInvulnerabilityTime;
+	}
+
+	public void setDamageInvulnerabilityTime(float damageInvulnerabilityTime) {
+		this.damageInvulnerabilityTime = damageInvulnerabilityTime;
 	}
 }
