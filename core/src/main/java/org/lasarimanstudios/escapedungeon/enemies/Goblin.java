@@ -1,5 +1,7 @@
 package org.lasarimanstudios.escapedungeon.enemies;
 
+import com.badlogic.gdx.math.MathUtils;
+
 public class Goblin extends Enemy {
 
 	private static final float BASE_HEALTH = 100;
@@ -59,6 +61,9 @@ public class Goblin extends Enemy {
 	public void die() {
 		getLevelScreen().addBloodPuddle(getX(), getY());
 		getLevelScreen().getMap().getEnemies().removeValue(this, true);
+		if (MathUtils.random(2) == 0) {
+			getLevelScreen().addChest(getX(), getY());
+		}
 	}
 
 

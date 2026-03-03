@@ -1,6 +1,7 @@
 package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import org.lasarimanstudios.escapedungeon.LevelScreen;
 
 public class BloodPuddle extends Sprite {
 	private final float duration; // Duration in seconds before the puddle disappears

@@ -23,6 +23,7 @@ public class LevelScreen extends ScreenAdapter {
 	private final OrthographicCamera camera;
 	private final Character characterSprite;
 	private Array<BloodPuddle> bloodPuddles = new Array<>();
+	private Array<Chest> chest = new Array<>();
 
 	/**
 	 * Creates a new level screen for the given map, sets up rendering, viewport, camera, and spawns the character
@@ -87,6 +88,10 @@ public class LevelScreen extends ScreenAdapter {
 			enemy.update(delta);
 		}
 
+		for (Chest chest : chest) {
+			chest.update(delta);
+		}
+
 		moveCamera();
 		logic();
 		draw();
@@ -126,7 +131,11 @@ public class LevelScreen extends ScreenAdapter {
 		float worldHeight = viewport.getWorldHeight();
 		spriteBatch.draw(map.getBackground(), 0, 0, worldWidth, worldHeight);
 
+
 		for (BloodPuddle puddle : bloodPuddles) {
+			puddle.draw(spriteBatch);
+		}
+		for (Chest puddle : chest) {
 			puddle.draw(spriteBatch);
 		}
 
@@ -171,4 +180,10 @@ public class LevelScreen extends ScreenAdapter {
 	public Array<BloodPuddle> getBloodPuddles() {
 		return bloodPuddles;
 	}
+
+	public void addChest(float x, float y) {chest.add(new Chest(x, y, 20f, this));}
+
+	public Array<Chest> getChest(){return chest;}
+
+
 }
