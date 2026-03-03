@@ -1,4 +1,3 @@
-// core/src/main/java/org/lasarimanstudios/escapedungeon/weapons/Sword.java
 package org.lasarimanstudios.escapedungeon.weapons;
 
 import com.badlogic.gdx.Gdx;
@@ -50,12 +49,13 @@ public class Sword extends Weapon {
 		if (attacking) return;
 
 		float halfArc = ARC_DEG * 0.5f;
-		this.startAngle = facingAngle + halfArc;
-		this.endAngle = facingAngle - halfArc;
+		this.startAngle = facingAngle + halfArc + 45f;
+		this.endAngle = facingAngle - halfArc + 45f;
 
 		this.attacking = true;
 		this.elapsedTime = 0f;
 
 		setRotation(startAngle);
 	}
+
 }
