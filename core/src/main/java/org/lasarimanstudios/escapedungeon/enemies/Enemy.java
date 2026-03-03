@@ -85,4 +85,12 @@ public abstract class Enemy extends Sprite {
 	public void setSpeed(float speed) {
 		this.speed = speed;
 	}
+
+	public float getCenterX() {
+		return getX() + getWidth() * 0.5f;
+	}
+
+	public float getCenterY() {
+		return getY() + getHeight() * 0.5f;
+	}
 }

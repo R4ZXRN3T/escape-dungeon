@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -88,17 +89,26 @@ public class Character extends Sprite {
 		return weapon;
 	}
 
-	public void takeDamage(float damage, float knockback, float hitAngle){
+	public void takeDamage(Enemy enemy, float damage, float knockback) {
 		if (damageInvulnerabilityTime > 0f) return;
-		setRemainingHealth(getRemainingHealth()-damage);
+
+		setRemainingHealth(getRemainingHealth() - damage);
 		damageInvulnerabilityTime = 1f;
 
-		float dx = (float) Math.cos(hitAngle);
-		float dy = (float) Math.sin(hitAngle);
+		float dx = getCenterX() - enemy.getCenterX();
+		float dy = getCenterY() - enemy.getCenterY();
+
+		float len = (float) Math.sqrt(dx * dx + dy * dy);
+
+		if (len != 0f) {
+			dx /= len;
+			dy /= len;
+		}
 
 		knockbackVx = dx * knockback;
-		knockbackVy += dy * knockback;
-		if(getRemainingHealth() <= 0){
+		knockbackVy = dy * knockback;
+
+		if (getRemainingHealth() <= 0) {
 			System.exit(0);
 		}
 	}
@@ -127,14 +137,18 @@ public class Character extends Sprite {
 
 		weapon.update();
 		damageInvulnerabilityTime -= delta;
-		if (overlapsAnyEnemy(enemyArray)) takeDamage(10, 150, getRotation() + 270f);
+		for (Enemy enemy : enemyArray) {
+			if (collider.overlaps(enemy.getBoundingRectangle())) {
+				takeDamage(enemy, 10, 150);
+				break;
+			}
+		}
 		updateKnockback(delta);
 	}
 
 	private void updateKnockback(float delta){
 		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
-			setX(getX() + knockbackVx * delta);
-			setY(getY() + knockbackVy * delta);
+			moveWithCollisions(knockbackVx * delta, knockbackVy * delta);
 
 			float decay = (float) Math.exp(-KNOCKBACK_DAMPING_PER_SECOND * delta);
 			knockbackVx *= decay;
@@ -224,7 +238,7 @@ public class Character extends Sprite {
 			setX(oldX + dx);
 			updateCollider();
 
-			if (overlapsAnyWall()) {
+			if (overlapsAnyWall() || overlapsAnyEnemy()) {
 				setX(oldX);
 				updateCollider();
 			}
@@ -236,7 +250,7 @@ public class Character extends Sprite {
 			setY(oldY + dy);
 			updateCollider();
 
-			if (overlapsAnyWall()) {
+			if (overlapsAnyWall() || overlapsAnyEnemy()) {
 				setY(oldY);
 				updateCollider();
 			}
@@ -265,10 +279,11 @@ public class Character extends Sprite {
 		return false;
 	}
 
-	private boolean overlapsAnyEnemy(Array<Enemy> enemyArray) {
+	private boolean overlapsAnyEnemy() {
 		for (Enemy enemy : enemyArray) {
-			// Enemy collider is also an AABB rectangle.
-			if (collider.overlaps(enemy.getBoundingRectangle())) return true;
+			if (collider.overlaps(enemy.getBoundingRectangle())) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -287,5 +302,13 @@ public class Character extends Sprite {
 
 	public void setRemainingHealth(float remainingHealth) {
 		RemainingHealth = remainingHealth;
+	}
+
+	public float getCenterX() {
+		return getX() + getWidth() * 0.5f;
+	}
+
+	public float getCenterY() {
+		return getY() + getHeight() * 0.5f;
 	}
 }
