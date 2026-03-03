@@ -1,5 +1,6 @@
 package org.lasarimanstudios.escapedungeon;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class Chest extends Sprite {
@@ -17,6 +18,8 @@ public class Chest extends Sprite {
 		this.duration = duration;
 		this.elapsedTime = 0f;
 		this.levelScreen = levelScreen;
+
+
 	}
 
 

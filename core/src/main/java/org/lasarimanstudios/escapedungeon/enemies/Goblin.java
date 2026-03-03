@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 
 public class Goblin extends Enemy {
 
-	private static final float BASE_HEALTH = 100;
+	private static final float BASE_HEALTH = 10;
 	private static final float BASE_ATTACK_DAMAGE = 10f;
 	private static final float BASE_SPEED = 10f;
 

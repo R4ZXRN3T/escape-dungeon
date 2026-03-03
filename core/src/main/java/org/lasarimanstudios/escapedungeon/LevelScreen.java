@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.lasarimanstudios.escapedungeon.enemies.Enemy;
 
+import static com.badlogic.gdx.math.MathUtils.random;
+
 /**
  * Gameplay screen that renders a {@link Map}, updates the {@link Character}, and follows the character
  * with an orthographic camera.
@@ -135,15 +137,18 @@ public class LevelScreen extends ScreenAdapter {
 		for (BloodPuddle puddle : bloodPuddles) {
 			puddle.draw(spriteBatch);
 		}
-		for (Chest puddle : chest) {
-			puddle.draw(spriteBatch);
-		}
+
 
 		characterSprite.getWeapon().draw(spriteBatch);
 		characterSprite.draw(spriteBatch);
 
 		for (Wall wall : map.getWalls()) {
 			wall.draw(spriteBatch);
+		}
+		if (MathUtils.random(0) == 0) {
+			for (Chest chest : chest) {
+				chest.draw(spriteBatch);
+			}
 		}
 		for (Enemy enemy : map.getEnemies()) {
 			enemy.draw(spriteBatch);
