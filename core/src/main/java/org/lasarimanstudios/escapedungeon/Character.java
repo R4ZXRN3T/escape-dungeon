@@ -54,6 +54,7 @@ public class Character extends Sprite {
 	private final Vector2 weaponOffsetLocal = new Vector2(2.5f, -1.3f);
 	private final Vector2 weaponOffsetWorld = new Vector2();
 
+
 	/**
 	 * Creates a character sprite using a texture from {@code textures/characters/}, sets its size and origin,
 	 * and initializes its axis-aligned collider.
@@ -81,7 +82,7 @@ public class Character extends Sprite {
 
 
 		// Create the sword once; LevelScreen will draw it.
-		this.weapon = new Sword(enemyArray, "sword1.png", 10f, 10f, 1.5f);
+		this.weapon = new Sword(enemyArray, "sword1.png", 10f, 0.2f, 1.5f);
 		attachWeapon();
 	}
 
@@ -143,21 +144,8 @@ public class Character extends Sprite {
 				break;
 			}
 		}
-		updateKnockback(delta);
 	}
 
-	private void updateKnockback(float delta){
-		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
-			moveWithCollisions(knockbackVx * delta, knockbackVy * delta);
-
-			float decay = (float) Math.exp(-KNOCKBACK_DAMPING_PER_SECOND * delta);
-			knockbackVx *= decay;
-			knockbackVy *= decay;
-
-			if (Math.abs(knockbackVx) < KNOCKBACK_VELOCITY_EPS) knockbackVx = 0f;
-			if (Math.abs(knockbackVy) < KNOCKBACK_VELOCITY_EPS) knockbackVy = 0f;
-		}
-	}
 
 	/**
 	 * Rotates the sprite so its "front" points toward the current mouse position.
@@ -195,30 +183,41 @@ public class Character extends Sprite {
 	private void movement() {
 		float delta = Math.min(Gdx.graphics.getDeltaTime(), MAX_DELTA);
 
-		float moveX = 0f;
-		float moveY = 0f;
+		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
+			moveWithCollisions(knockbackVx * delta, knockbackVy * delta, false);
 
-		if (Gdx.input.isKeyPressed(KEY_FORWARD)) moveY += 1f;
-		if (Gdx.input.isKeyPressed(KEY_BACKWARD)) moveY -= 1f;
-		if (Gdx.input.isKeyPressed(KEY_RIGHT)) moveX += 1f;
-		if (Gdx.input.isKeyPressed(KEY_LEFT)) moveX -= 1f;
+			float decay = (float) Math.exp(-KNOCKBACK_DAMPING_PER_SECOND * delta);
+			knockbackVx *= decay;
+			knockbackVy *= decay;
 
-		if (moveX != 0f && moveY != 0f) {
-			moveX *= DIAGONAL_MULTIPLIER;
-			moveY *= DIAGONAL_MULTIPLIER;
+			if (Math.abs(knockbackVx) < KNOCKBACK_VELOCITY_EPS) knockbackVx = 0f;
+			if (Math.abs(knockbackVy) < KNOCKBACK_VELOCITY_EPS) knockbackVy = 0f;
 		}
+		if (knockbackVx == 0f && knockbackVy == 0f) {
+			float moveX = 0f;
+			float moveY = 0f;
 
-		float totalDx = moveX * SPEED * delta;
-		float totalDy = moveY * SPEED * delta;
+			if (Gdx.input.isKeyPressed(KEY_FORWARD)) moveY += 1f;
+			if (Gdx.input.isKeyPressed(KEY_BACKWARD)) moveY -= 1f;
+			if (Gdx.input.isKeyPressed(KEY_RIGHT)) moveX += 1f;
+			if (Gdx.input.isKeyPressed(KEY_LEFT)) moveX -= 1f;
 
-		// Sub-step to avoid tunneling and corner embedding.
-		float distance = (float) Math.sqrt(totalDx * totalDx + totalDy * totalDy);
-		int steps = Math.max(1, (int) Math.ceil(distance / MAX_STEP_DISTANCE));
-		float stepDx = totalDx / steps;
-		float stepDy = totalDy / steps;
+			if (moveX != 0f && moveY != 0f) {
+				moveX *= DIAGONAL_MULTIPLIER;
+				moveY *= DIAGONAL_MULTIPLIER;
+			}
 
-		for (int i = 0; i < steps; i++) {
-			moveWithCollisions(stepDx, stepDy);
+			float totalDx = moveX * SPEED * delta;
+			float totalDy = moveY * SPEED * delta;
+
+			float distance = (float) Math.sqrt(totalDx * totalDx + totalDy * totalDy);
+			int steps = Math.max(1, (int) Math.ceil(distance / MAX_STEP_DISTANCE));
+			float stepDx = totalDx / steps;
+			float stepDy = totalDy / steps;
+
+			for (int i = 0; i < steps; i++) {
+				moveWithCollisions(stepDx, stepDy, true);
+			}
 		}
 	}
 
@@ -231,28 +230,39 @@ public class Character extends Sprite {
 	 * @param dx movement delta on X axis (world units)
 	 * @param dy movement delta on Y axis (world units)
 	 */
-	private void moveWithCollisions(float dx, float dy) {
-		// X axis
+	private void moveWithCollisions(float dx, float dy, boolean checkEnemies){
+		boolean ignoreEnemyCollision = Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f;
+
 		if (dx != 0f) {
 			float oldX = getX();
 			setX(oldX + dx);
 			updateCollider();
 
-			if (overlapsAnyWall() || overlapsAnyEnemy()) {
+			if (overlapsAnyWall()) {
 				setX(oldX);
 				updateCollider();
+			} else if (!ignoreEnemyCollision) {
+				Enemy enemy = getOverlappingEnemy();
+				if (enemy != null) {
+					resolveEnemyCollision(enemy);
+				}
 			}
 		}
 
-		// Y axis
 		if (dy != 0f) {
 			float oldY = getY();
 			setY(oldY + dy);
 			updateCollider();
 
-			if (overlapsAnyWall() || overlapsAnyEnemy()) {
+			if (overlapsAnyWall()) {
 				setY(oldY);
 				updateCollider();
+			} else if (checkEnemies && !ignoreEnemyCollision) {
+				Enemy enemy = getOverlappingEnemy();
+				if (enemy != null) {
+					takeDamage(enemy, 10, 150);
+					resolveEnemyCollision(enemy);
+				}
 			}
 		}
 	}
@@ -279,13 +289,43 @@ public class Character extends Sprite {
 		return false;
 	}
 
-	private boolean overlapsAnyEnemy() {
+	private Enemy getOverlappingEnemy() {
 		for (Enemy enemy : enemyArray) {
 			if (collider.overlaps(enemy.getBoundingRectangle())) {
-				return true;
+				return enemy;
 			}
 		}
-		return false;
+		return null;
+	}
+
+	private void resolveEnemyCollision(Enemy enemy) {
+		Rectangle enemyRect = enemy.getBoundingRectangle();
+
+		float overlapX = Math.min(
+			collider.x + collider.width - enemyRect.x,
+			enemyRect.x + enemyRect.width - collider.x
+		);
+
+		float overlapY = Math.min(
+			collider.y + collider.height - enemyRect.y,
+			enemyRect.y + enemyRect.height - collider.y
+		);
+
+		if (overlapX < overlapY) {
+			if (getCenterX() < enemy.getCenterX()) {
+				setX(getX() - overlapX);
+			} else {
+				setX(getX() + overlapX);
+			}
+		} else {
+			if (getCenterY() < enemy.getCenterY()) {
+				setY(getY() - overlapY);
+			} else {
+				setY(getY() + overlapY);
+			}
+		}
+
+		updateCollider();
 	}
 
 	public float getMaxHealth() {
