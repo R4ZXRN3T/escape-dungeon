@@ -1,4 +1,4 @@
-package org.lasarimanstudios.escapedungeon;
+package org.lasarimanstudios.escapedungeon.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+import org.lasarimanstudios.escapedungeon.DungeonGame;
 
 /**
  * Displays an intro texture with a simple zoom animation and transitions to the MenuScreen
@@ -35,7 +37,7 @@ public class IntroScreen extends ScreenAdapter {
 		batch = new SpriteBatch();
 		camera = new OrthographicCamera();
 
-		texture = new Texture(Gdx.files.internal("textures/ui/intro_screen.png"));
+		texture = new Texture(Gdx.files.internal("assets/ui/intro_screen.png"));
 
 		viewport = new ScalingViewport(Scaling.fit, texture.getWidth(), texture.getHeight(), camera);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);

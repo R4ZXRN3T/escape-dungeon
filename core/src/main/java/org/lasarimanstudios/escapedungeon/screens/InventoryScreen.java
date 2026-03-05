@@ -1,6 +1,8 @@
-package org.lasarimanstudios.escapedungeon;
+package org.lasarimanstudios.escapedungeon.screens;
 
 import com.badlogic.gdx.ScreenAdapter;
+
+import org.lasarimanstudios.escapedungeon.DungeonGame;
 
 /**
  * Screen placeholder for the player's inventory UI.

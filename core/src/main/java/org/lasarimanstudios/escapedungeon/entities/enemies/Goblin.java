@@ -1,6 +1,4 @@
-package org.lasarimanstudios.escapedungeon.enemies;
-
-import com.badlogic.gdx.math.MathUtils;
+package org.lasarimanstudios.escapedungeon.entities.enemies;
 
 public class Goblin extends Enemy {
 
@@ -40,7 +38,7 @@ public class Goblin extends Enemy {
 	}
 
 	@Override
-		public void update(float delta) {
+	public void update(float delta) {
 		damageInvulnerabilityTime -= delta;
 		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
 			setX(getX() + knockbackVx * delta);
@@ -59,13 +57,8 @@ public class Goblin extends Enemy {
 
 	@Override
 	public void die() {
-		getLevelScreen().addBloodPuddle(getX(), getY());
-		getLevelScreen().getMap().getEnemies().removeValue(this, true);
-		if (MathUtils.random(2) == 0) {
-			getLevelScreen().addChest(getX(), getY());
-		}
+		notifyDied();
 	}
-
 
 	public void following(float delta) {
 

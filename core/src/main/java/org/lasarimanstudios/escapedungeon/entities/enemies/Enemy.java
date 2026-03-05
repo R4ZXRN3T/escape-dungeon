@@ -1,14 +1,12 @@
-package org.lasarimanstudios.escapedungeon.enemies;
+package org.lasarimanstudios.escapedungeon.entities.enemies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import org.lasarimanstudios.escapedungeon.BloodPuddle;
-import org.lasarimanstudios.escapedungeon.LevelScreen;
 
-import org.lasarimanstudios.escapedungeon.Character;
+import org.lasarimanstudios.escapedungeon.entities.Character;
+import org.lasarimanstudios.escapedungeon.entities.Entity;
 
-public abstract class Enemy extends Sprite {
+public abstract class Enemy extends Entity {
 
 	private int level;
 	private float maxHealth;
@@ -17,27 +15,28 @@ public abstract class Enemy extends Sprite {
 	private float speed;
 	private Character character;
 
-	private LevelScreen levelScreen;
+	private EnemyDeathListener deathListener;
 
 	public Enemy(String texture, float width, float height, float posX, float posY) {
 		super(new Texture(Gdx.files.internal("textures/enemy/" + texture)));
 		setBounds(posX, posY, width, height);
 		setOriginCenter();
 	}
-	public void setCharacter(Character character){
-		this.character = character;
-	}
 
 	public Character getCharacter() {
 		return character;
 	}
 
-	public void setLevelScreen(LevelScreen level) {
-		this.levelScreen = level;
+	public void setCharacter(Character character) {
+		this.character = character;
 	}
 
-	public LevelScreen getLevelScreen() {
-		return levelScreen;
+	public void setDeathListener(EnemyDeathListener deathListener) {
+		this.deathListener = deathListener;
+	}
+
+	protected void notifyDied() {
+		if (deathListener != null) deathListener.onEnemyDied(this);
 	}
 
 	public abstract void takeDamage(float damage, float knockback, float hitAngle);

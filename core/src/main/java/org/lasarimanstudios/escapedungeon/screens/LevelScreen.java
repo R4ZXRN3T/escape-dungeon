@@ -1,4 +1,4 @@
-package org.lasarimanstudios.escapedungeon;
+package org.lasarimanstudios.escapedungeon.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -6,15 +6,18 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import org.lasarimanstudios.escapedungeon.enemies.Enemy;
 
-import static com.badlogic.gdx.math.MathUtils.random;
+import org.lasarimanstudios.escapedungeon.*;
+import org.lasarimanstudios.escapedungeon.entities.Character;
+import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.level.Map;
+import org.lasarimanstudios.escapedungeon.world.World;
+import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
- * Gameplay screen that renders a {@link Map}, updates the {@link Character}, and follows the character
+ * Gameplay screen that renders a {@link Map}, updates the {@link org.lasarimanstudios.escapedungeon.entities.Character}, and follows the character
  * with an orthographic camera.
  */
 public class LevelScreen extends ScreenAdapter {
@@ -24,8 +27,9 @@ public class LevelScreen extends ScreenAdapter {
 	private final FitViewport viewport;
 	private final OrthographicCamera camera;
 	private final Character characterSprite;
-	private Array<BloodPuddle> bloodPuddles = new Array<>();
-	private Array<Chest> chest = new Array<>();
+
+	private final GameAssets assets;
+	private final World world;
 
 	/**
 	 * Creates a new level screen for the given map, sets up rendering, viewport, camera, and spawns the character
@@ -38,8 +42,13 @@ public class LevelScreen extends ScreenAdapter {
 		this.game = game;
 		this.map = map;
 
+		assets = new GameAssets();
+		assets.load();
+
+		world = new World(map, assets);
+
 		for (Enemy enemy : map.getEnemies()) {
-			enemy.setLevelScreen(this);
+			enemy.setDeathListener(world::onEnemyDied);
 		}
 
 		spriteBatch = new SpriteBatch();
@@ -47,7 +56,7 @@ public class LevelScreen extends ScreenAdapter {
 		camera = new OrthographicCamera(80, 50);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		characterSprite = new Character(map.getWalls(), map.getEnemies(), "character.png", 5, 5, 100);
+		characterSprite = new org.lasarimanstudios.escapedungeon.entities.Character(map.getWalls(), map.getEnemies(), "character.png", 5, 5, 100);
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		camera.update();
@@ -82,16 +91,9 @@ public class LevelScreen extends ScreenAdapter {
 
 		characterSprite.run(camera);
 
-		for (BloodPuddle puddle : bloodPuddles) {
-			puddle.update(delta);
-		}
-
+		world.update(delta);
 		for (Enemy enemy : map.getEnemies()) {
 			enemy.update(delta);
-		}
-
-		for (Chest chest : chest) {
-			chest.update(delta);
 		}
 
 		moveCamera();
@@ -133,25 +135,13 @@ public class LevelScreen extends ScreenAdapter {
 		float worldHeight = viewport.getWorldHeight();
 		spriteBatch.draw(map.getBackground(), 0, 0, worldWidth, worldHeight);
 
-
-		for (BloodPuddle puddle : bloodPuddles) {
-			puddle.draw(spriteBatch);
-		}
-
+		world.draw(spriteBatch);
 
 		characterSprite.getWeapon().draw(spriteBatch);
 		characterSprite.draw(spriteBatch);
 
 		for (Wall wall : map.getWalls()) {
 			wall.draw(spriteBatch);
-		}
-		if (MathUtils.random(0) == 0) {
-			for (Chest chest : chest) {
-				chest.draw(spriteBatch);
-			}
-		}
-		for (Enemy enemy : map.getEnemies()) {
-			enemy.draw(spriteBatch);
 		}
 		spriteBatch.end();
 	}
@@ -172,23 +162,10 @@ public class LevelScreen extends ScreenAdapter {
 		for (Enemy e : map.getEnemies()) {
 			if (e.getTexture() != null) e.getTexture().dispose();
 		}
-	}
-
-	public void addBloodPuddle(float x, float y) {
-		bloodPuddles.add(new BloodPuddle(x, y, 5f, this));
+		assets.dispose();
 	}
 
 	public Map getMap() {
 		return map;
 	}
-
-	public Array<BloodPuddle> getBloodPuddles() {
-		return bloodPuddles;
-	}
-
-	public void addChest(float x, float y) {chest.add(new Chest(x, y, 20f, this));}
-
-	public Array<Chest> getChest(){return chest;}
-
-
 }

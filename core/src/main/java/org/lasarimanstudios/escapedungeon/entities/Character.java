@@ -1,18 +1,19 @@
 // core/src/main/java/org/lasarimanstudios/escapedungeon/Character.java
-package org.lasarimanstudios.escapedungeon;
+package org.lasarimanstudios.escapedungeon.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import org.lasarimanstudios.escapedungeon.enemies.Enemy;
-import org.lasarimanstudios.escapedungeon.weapons.Sword;
-import org.lasarimanstudios.escapedungeon.weapons.Weapon;
+
+import org.lasarimanstudios.escapedungeon.ConfigManager;
+import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
+import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.entities.weapons.Sword;
+import org.lasarimanstudios.escapedungeon.entities.weapons.Weapon;
 
 
 /**
@@ -22,37 +23,33 @@ import org.lasarimanstudios.escapedungeon.weapons.Weapon;
  * <p>Movement uses sub-stepping to reduce tunneling through thin walls. Collision is performed with an
  * axis-aligned {@link Rectangle} collider that intentionally ignores sprite rotation.</p>
  */
-public class Character extends Sprite {
+public class Character extends Entity {
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
 	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
-	private float MaxHealth;
-	private float RemainingHealth;
-	private float knockbackVx = 0f;
-	private float knockbackVy = 0f;
-	private float damageInvulnerabilityTime = 1f;
 	private static final float FRONT_ANGLE_OFFSET_DEG = -90f;
-
 	private static final float SPEED = 22f;                     // Character speed in units per second.
 	private static final float DIAGONAL_MULTIPLIER = 2f / 3f;   // To keep diagonal speed consistent with axial speed.
 	private static final float MAX_STEP_DISTANCE = 0.25f;       // Max distance per movement sub-step to avoid tunneling.
 	private static final float MAX_DELTA = 1f / 30f;            // Cap delta time to avoid large steps on frame drops.
-
+	private static int KEY_FORWARD;
+	private static int KEY_BACKWARD;
+	private static int KEY_LEFT;
+	private static int KEY_RIGHT;
+	private static int BUTTON_ATTACK;
 	private final Vector3 mouseWorld = new Vector3();
 	private final Array<Wall> wallArray;
 	private final Array<Enemy> enemyArray;
 
 	// Stable collider that ignores sprite rotation.
 	private final Rectangle collider = new Rectangle();
-
-	private static int KEY_FORWARD;
-	private static int KEY_BACKWARD;
-	private static int KEY_LEFT;
-	private static int KEY_RIGHT;
-	private static int BUTTON_ATTACK;
-
 	private final Weapon weapon;
 	private final Vector2 weaponOffsetLocal = new Vector2(2.5f, -1.3f);
 	private final Vector2 weaponOffsetWorld = new Vector2();
+	private float MaxHealth;
+	private float RemainingHealth;
+	private float knockbackVx = 0f;
+	private float knockbackVy = 0f;
+	private float damageInvulnerabilityTime = 1f;
 
 
 	/**
@@ -64,7 +61,7 @@ public class Character extends Sprite {
 	 * @param width     sprite width in world units
 	 * @param height    sprite height in world units
 	 */
-	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, String texture, float width, float height, float MaxHealth){
+	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, String texture, float width, float height, float MaxHealth) {
 		super(new Texture(Gdx.files.internal("textures/characters/" + texture)));
 		setMaxHealth(MaxHealth);
 		setRemainingHealth(getMaxHealth());
@@ -124,8 +121,6 @@ public class Character extends Sprite {
 		float delta = Gdx.graphics.getDeltaTime();
 		movement();
 		rotateToMouse(camera);
-
-
 
 		if (Gdx.input.isButtonJustPressed(BUTTON_ATTACK)) {
 			weapon.startAttack(getRotation());
@@ -230,7 +225,7 @@ public class Character extends Sprite {
 	 * @param dx movement delta on X axis (world units)
 	 * @param dy movement delta on Y axis (world units)
 	 */
-	private void moveWithCollisions(float dx, float dy, boolean checkEnemies){
+	private void moveWithCollisions(float dx, float dy, boolean checkEnemies) {
 		boolean ignoreEnemyCollision = Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f;
 
 		if (dx != 0f) {

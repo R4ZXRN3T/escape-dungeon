@@ -1,10 +1,12 @@
-package org.lasarimanstudios.escapedungeon;
+package org.lasarimanstudios.escapedungeon.level;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
+
 import org.json.JSONObject;
-import org.lasarimanstudios.escapedungeon.enemies.Enemy;
-import org.lasarimanstudios.escapedungeon.enemies.Goblin;
+import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
+import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.entities.enemies.Goblin;
 
 /**
  * Utility for loading {@link Map} instances from JSON level files located under {@code levels/}.
@@ -90,7 +92,7 @@ public class MapLoader {
 	}
 
 	private static Enemy getNewEnemy(String enemyType, String enemyTexture, float enemyWidth, float enemyHeight, float enemyPosX, float enemyPosy, int level) {
-		return switch(enemyType) {
+		return switch (enemyType) {
 			case "goblin" -> new Goblin(enemyTexture, enemyWidth, enemyHeight, enemyPosX, enemyPosy, level);
 			default -> throw new RuntimeException("Unknown enemy type: " + enemyType);
 		};

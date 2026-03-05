@@ -1,9 +1,12 @@
-package org.lasarimanstudios.escapedungeon;
+package org.lasarimanstudios.escapedungeon.level;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
-import org.lasarimanstudios.escapedungeon.enemies.Enemy;
+
+import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
+import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.screens.LevelScreen;
 
 /**
  * Immutable-ish container for level data: background texture, wall sprites, world dimensions, and start position.
@@ -39,7 +42,6 @@ public class Map {
 		this.startPosX = startPosX;
 		this.startPosY = startPosY;
 	}
-
 
 
 	/**
@@ -138,6 +140,12 @@ public class Map {
 		this.startPosY = startPosY;
 	}
 
+	/**
+	 * @return Enemies in this map
+	 */
+	public Array<Enemy> getEnemies() {
+		return enemies;
+	}
 
 	/**
 	 * Replaces the Enemy array reference.
@@ -147,20 +155,6 @@ public class Map {
 	public void setEnemies(Array<Enemy> enemies) {
 		this.enemies = enemies;
 	}
-
-	/**
-	 * @return Enemies in this map
-	 */
-	public Array<Enemy> getEnemies() {
-		return enemies;
-	}
-
-
-
-
-
-
-
 
 
 }

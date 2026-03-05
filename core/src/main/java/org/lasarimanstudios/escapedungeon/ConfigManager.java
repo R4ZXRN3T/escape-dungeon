@@ -2,6 +2,7 @@ package org.lasarimanstudios.escapedungeon;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,10 +16,9 @@ import java.util.Map;
 public final class ConfigManager {
 
 	private static final Object LOCK = new Object();
-	private static boolean initialized = false;
-
 	private static final Path CONFIG_PATH = getConfigFilePath();
 	private static final Map<ConfigKey, String> config = new EnumMap<>(ConfigKey.class);
+	private static boolean initialized = false;
 
 	private ConfigManager() {
 	}

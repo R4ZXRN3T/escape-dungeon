@@ -3,7 +3,15 @@ package org.lasarimanstudios.escapedungeon;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
+
 import org.lasarimanstudios.escapedungeon.ConfigManager.ConfigKey;
+import org.lasarimanstudios.escapedungeon.level.Map;
+import org.lasarimanstudios.escapedungeon.level.MapLoader;
+import org.lasarimanstudios.escapedungeon.screens.IntroScreen;
+import org.lasarimanstudios.escapedungeon.screens.InventoryScreen;
+import org.lasarimanstudios.escapedungeon.screens.LevelScreen;
+import org.lasarimanstudios.escapedungeon.screens.MenuScreen;
+import org.lasarimanstudios.escapedungeon.screens.SettingsScreen;
 
 /**
  * Main LibGDX {@link com.badlogic.gdx.Game} entry that manages screen transitions (menu, level, inventory).
@@ -52,6 +60,13 @@ public class DungeonGame extends Game {
 	}
 
 	/**
+	 * Opens the main menu screen.
+	 */
+	public void openMenu() {
+		setScreen(new MenuScreen(this));
+	}
+
+	/**
 	 * Loads a level map and switches to the gameplay screen.
 	 *
 	 * <p>Also disables VSync and removes the foreground FPS cap for gameplay.</p>
@@ -69,5 +84,12 @@ public class DungeonGame extends Game {
 	 */
 	public void openInventory() {
 		setScreen(new InventoryScreen(this));
+	}
+
+	/**
+	 * Switches to the settings screen.
+	 */
+	public void openSettings() {
+		setScreen(new SettingsScreen(this));
 	}
 }

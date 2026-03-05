@@ -1,0 +1,39 @@
+{
+  "com.badlogic.gdx.graphics.g2d.BitmapFont": {
+    "default-font": {
+      "file": "ui/default.fnt"
+    }
+  },
+  "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+    "default": {
+      "font": "default-font",
+      "fontColor": "WHITE"
+    }
+  },
+  "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
+    "default": {
+      "up": "button-up",
+      "down": "button-down",
+      "over": "button-up",
+      "font": "default-font",
+      "fontColor": "WHITE",
+      "downFontColor": "LIGHT_GRAY"
+    }
+  },
+  "com.badlogic.gdx.scenes.scene2d.ui.Skin": {
+    "default": {
+      "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": "default",
+      "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": "default"
+    }
+  },
+  "com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable": {},
+  "com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable": {
+    "button-up": {
+      "name": "button-up"
+    },
+    "button-down": {
+      "name": "button-down"
+    }
+  }
+}
+

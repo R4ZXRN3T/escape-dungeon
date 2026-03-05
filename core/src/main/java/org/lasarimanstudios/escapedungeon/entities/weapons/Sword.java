@@ -1,21 +1,19 @@
-package org.lasarimanstudios.escapedungeon.weapons;
+package org.lasarimanstudios.escapedungeon.entities.weapons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import org.lasarimanstudios.escapedungeon.enemies.Enemy;
+
+import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 
 public class Sword extends Weapon {
 
 	private static final float ARC_DEG = 180f;
-
+	private final Array<Enemy> enemies;
+	public boolean attacking = false;
 	private float startAngle;
 	private float endAngle;
-
-	public boolean attacking = false;
 	private float elapsedTime;
-
-	private final Array<Enemy> enemies;
 
 	public Sword(Array<Enemy> enemies, String texture, float attackDamage, float attackSpeed, float range) {
 		super(texture, attackDamage, attackSpeed, range);
