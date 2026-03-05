@@ -7,4 +7,3 @@ package org.lasarimanstudios.escapedungeon.entities.enemies;
 public interface EnemyDeathListener {
 	void onEnemyDied(Enemy enemy);
 }
-

@@ -1,17 +1,16 @@
 package org.lasarimanstudios.escapedungeon.entities.weapons;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public abstract class Weapon extends Sprite {
-	public boolean attacking;
+	private boolean attacking;
 	private float attackDamage;
 	private float attackSpeed;
 	private float range;
 
-	public Weapon(String texture, float attackDamage, float attackSpeed, float range) {
-		super(new Texture(Gdx.files.internal("textures/weapons/" + texture)));
+	public Weapon(Texture texture, float attackDamage, float attackSpeed, float range) {
+		super(texture);
 		this.attackDamage = attackDamage;
 		this.attackSpeed = attackSpeed;
 		this.range = range;
@@ -21,7 +20,11 @@ public abstract class Weapon extends Sprite {
 		return attacking;
 	}
 
-	public abstract void update();
+	protected void setAttacking(boolean attacking) {
+		this.attacking = attacking;
+	}
+
+	public abstract void update(float delta);
 
 	public abstract void startAttack(float angle);
 

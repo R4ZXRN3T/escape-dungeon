@@ -22,15 +22,13 @@ import org.lasarimanstudios.escapedungeon.DungeonGame;
  * Main menu screen using LibGDX Scene2D UI.
  */
 public class MenuScreen extends ScreenAdapter {
+	private static final int BUTTON_WIDTH = 580;
+	private static final int BUTTON_HEIGHT = 96;
 	private final DungeonGame game;
-
 	private Stage stage;
 	private Skin skin;
 	private BitmapFont font;
 	private Texture buttonBackground;
-
-	private static final int BUTTON_WIDTH = 580;
-	private static final int BUTTON_HEIGHT = 96;
 
 	/**
 	 * Creates the menu screen.
@@ -41,6 +39,20 @@ public class MenuScreen extends ScreenAdapter {
 		this.game = game;
 	}
 
+	private static BitmapFont createFontFromTtf() {
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ui/font.ttf"));
+		try {
+			FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+			parameter.size = 100;
+			parameter.magFilter = Texture.TextureFilter.Nearest;
+			parameter.minFilter = Texture.TextureFilter.Nearest;
+			parameter.incremental = true;
+			return generator.generateFont(parameter);
+		} finally {
+			generator.dispose();
+		}
+	}
+
 	@Override
 	public void show() {
 		stage = new Stage(new ScreenViewport());
@@ -49,7 +61,7 @@ public class MenuScreen extends ScreenAdapter {
 		buttonBackground = new Texture(Gdx.files.internal("ui/buttons/button_background.png"));
 		buttonBackground.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
-		font = createFontFromTtf("ui/font.ttf", 100);
+		font = createFontFromTtf();
 
 		skin = new Skin();
 		skin.add("default-font", font);
@@ -72,20 +84,6 @@ public class MenuScreen extends ScreenAdapter {
 		root.add(makeTextOnlyButton("EXIT", () -> Gdx.app.exit())).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 	}
 
-	private static BitmapFont createFontFromTtf(String ttfInternalPath, int sizePx) {
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(ttfInternalPath));
-		try {
-			FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-			parameter.size = sizePx;
-			parameter.magFilter = Texture.TextureFilter.Nearest;
-			parameter.minFilter = Texture.TextureFilter.Nearest;
-			parameter.incremental = true;
-			return generator.generateFont(parameter);
-		} finally {
-			generator.dispose();
-		}
-	}
-
 	private TextButton makeTextOnlyButton(String text, Runnable onClick) {
 		TextButton button = new TextButton(text, skin);
 		button.addListener(new ClickListener() {
@@ -99,7 +97,7 @@ public class MenuScreen extends ScreenAdapter {
 
 	@Override
 	public void render(float delta) {
-		ScreenUtils.clear(99f/255f, 99f/255f, 99f/255f, 1f);
+		ScreenUtils.clear(99f / 255f, 99f / 255f, 99f / 255f, 1f);
 
 		stage.act(delta);
 		stage.draw();

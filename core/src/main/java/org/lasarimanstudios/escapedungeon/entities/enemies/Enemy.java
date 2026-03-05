@@ -1,6 +1,5 @@
 package org.lasarimanstudios.escapedungeon.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 import org.lasarimanstudios.escapedungeon.entities.Character;
@@ -17,8 +16,8 @@ public abstract class Enemy extends Entity {
 
 	private EnemyDeathListener deathListener;
 
-	public Enemy(String texture, float width, float height, float posX, float posY) {
-		super(new Texture(Gdx.files.internal("textures/enemy/" + texture)));
+	public Enemy(Texture texture, float width, float height, float posX, float posY) {
+		super(texture);
 		setBounds(posX, posY, width, height);
 		setOriginCenter();
 	}

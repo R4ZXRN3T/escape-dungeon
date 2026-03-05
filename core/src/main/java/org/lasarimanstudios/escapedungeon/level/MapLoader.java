@@ -1,12 +1,14 @@
 package org.lasarimanstudios.escapedungeon.level;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 
 import org.json.JSONObject;
-import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
+import org.lasarimanstudios.escapedungeon.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Goblin;
+import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
  * Utility for loading {@link Map} instances from JSON level files located under {@code levels/}.
@@ -19,11 +21,15 @@ public class MapLoader {
 	 * <p>Expected JSON keys include: {@code background}, {@code width}, {@code height}, {@code startPosX},
 	 * {@code startPosY}, and {@code walls}.</p>
 	 *
+	 * <p>Enemy textures are loaded via the provided {@link GameAssets} instance. Asset ownership stays with
+	 * the caller (typically a screen or the game).</p>
+	 *
 	 * @param mapName map identifier without {@code .json} extension
+	 * @param assets  shared asset registry used to load textures
 	 * @return loaded {@link Map}
 	 * @throws RuntimeException if the file cannot be read or the JSON format is invalid
 	 */
-	public static Map loadMap(String mapName) {
+	public static Map loadMap(String mapName, GameAssets assets) {
 		try {
 
 			String jsonText = Gdx.files.internal("levels/" + mapName + ".json").readString();
@@ -36,7 +42,7 @@ public class MapLoader {
 			float startPosY = mapJson.getFloat("startPosY");
 
 			Array<Wall> wallArray = getWalls(mapJson);
-			Array<Enemy> enemyArray = getEnemies(mapJson);
+			Array<Enemy> enemyArray = getEnemies(mapJson, assets);
 
 			return new Map(background, wallArray, enemyArray, width, height, startPosX, startPosY);
 		} catch (Exception e) {
@@ -69,19 +75,20 @@ public class MapLoader {
 		return wallArray;
 	}
 
-	private static Array<Enemy> getEnemies(JSONObject mapJson) {
+	private static Array<Enemy> getEnemies(JSONObject mapJson, GameAssets assets) {
 		Array<Enemy> enemyArray = new Array<>();
 
 		for (Object enemyValueObject : mapJson.getJSONArray("enemies")) {
 			JSONObject enemyJson = (JSONObject) enemyValueObject;
 			String enemyType = enemyJson.getString("enemyType");
-			String enemyTexture = enemyJson.getString("texture");
+			String enemyTexturePath = enemyJson.getString("texture");
 			float enemyWidth = enemyJson.getFloat("width");
 			float enemyHeight = enemyJson.getFloat("height");
 			float enemyPosX = enemyJson.getFloat("posX");
 			float enemyPosy = enemyJson.getFloat("posY");
 			int level = enemyJson.getInt("level");
 
+			Texture enemyTexture = assets.createTexture("textures/enemy/goblin-01/" + enemyTexturePath);
 			Enemy enemy = getNewEnemy(enemyType, enemyTexture, enemyWidth, enemyHeight, enemyPosX, enemyPosy, level);
 
 			enemyArray.add(enemy);
@@ -91,12 +98,11 @@ public class MapLoader {
 
 	}
 
-	private static Enemy getNewEnemy(String enemyType, String enemyTexture, float enemyWidth, float enemyHeight, float enemyPosX, float enemyPosy, int level) {
+	private static Enemy getNewEnemy(String enemyType, Texture enemyTexture, float enemyWidth, float enemyHeight, float enemyPosX, float enemyPosy, int level) {
 		return switch (enemyType) {
 			case "goblin" -> new Goblin(enemyTexture, enemyWidth, enemyHeight, enemyPosX, enemyPosy, level);
 			default -> throw new RuntimeException("Unknown enemy type: " + enemyType);
 		};
 	}
 }
-
 

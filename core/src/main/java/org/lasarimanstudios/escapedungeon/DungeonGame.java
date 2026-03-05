@@ -7,11 +7,7 @@ import com.badlogic.gdx.Graphics;
 import org.lasarimanstudios.escapedungeon.ConfigManager.ConfigKey;
 import org.lasarimanstudios.escapedungeon.level.Map;
 import org.lasarimanstudios.escapedungeon.level.MapLoader;
-import org.lasarimanstudios.escapedungeon.screens.IntroScreen;
-import org.lasarimanstudios.escapedungeon.screens.InventoryScreen;
-import org.lasarimanstudios.escapedungeon.screens.LevelScreen;
-import org.lasarimanstudios.escapedungeon.screens.MenuScreen;
-import org.lasarimanstudios.escapedungeon.screens.SettingsScreen;
+import org.lasarimanstudios.escapedungeon.screens.*;
 
 /**
  * Main LibGDX {@link com.badlogic.gdx.Game} entry that manages screen transitions (menu, level, inventory).
@@ -75,8 +71,10 @@ public class DungeonGame extends Game {
 	 * @throws RuntimeException if the map cannot be loaded or parsed
 	 */
 	public void openLevel(String mapName) {
-		Map map = MapLoader.loadMap(mapName);
-		setScreen(new LevelScreen(this, map));
+		GameAssets assets = new GameAssets();
+		assets.load();
+		Map map = MapLoader.loadMap(mapName, assets);
+		setScreen(new LevelScreen(this, map, assets));
 	}
 
 	/**

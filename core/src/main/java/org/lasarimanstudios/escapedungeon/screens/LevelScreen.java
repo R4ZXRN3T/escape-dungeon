@@ -4,12 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import org.lasarimanstudios.escapedungeon.*;
+import org.lasarimanstudios.escapedungeon.DungeonGame;
+import org.lasarimanstudios.escapedungeon.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.level.Map;
@@ -32,37 +34,39 @@ public class LevelScreen extends ScreenAdapter {
 	private final World world;
 
 	/**
-	 * Creates a new level screen for the given map, sets up rendering, viewport, camera, and spawns the character
-	 * at the map's start position.
+	 * Creates a new level screen for the given map.
 	 *
-	 * @param game game instance used for navigation between screens
-	 * @param map  loaded map defining world size, background, walls, and start position
+	 * @param game   game instance used for navigation between screens
+	 * @param map    loaded map defining world size, background, walls, start position, and enemies
+	 * @param assets shared assets registry (owns all textures it loaded)
 	 */
-	public LevelScreen(DungeonGame game, Map map) {
+	public LevelScreen(DungeonGame game, Map map, GameAssets assets) {
 		this.game = game;
 		this.map = map;
-
-		assets = new GameAssets();
-		assets.load();
+		this.assets = assets;
 
 		world = new World(map, assets);
-
-		for (Enemy enemy : map.getEnemies()) {
-			enemy.setDeathListener(world::onEnemyDied);
-		}
 
 		spriteBatch = new SpriteBatch();
 		viewport = new FitViewport(map.getWidth(), map.getHeight());
 		camera = new OrthographicCamera(80, 50);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		characterSprite = new org.lasarimanstudios.escapedungeon.entities.Character(map.getWalls(), map.getEnemies(), "character.png", 5, 5, 100);
+		Texture characterTex = assets.createTexture("textures/characters/character.png");
+		Texture weaponTex = assets.createTexture("textures/weapons/sword1.png");
+		characterSprite = new org.lasarimanstudios.escapedungeon.entities.Character(map.getWalls(), map.getEnemies(), characterTex, weaponTex, 5, 5, 100);
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
-		camera.update();
+		// Allow the World to wire dynamically spawned enemies to the player.
+		world.setPlayerCharacter(characterSprite);
+
+		// Ensure all map-loaded enemies are wired the same way as dynamically spawned ones.
 		for (Enemy enemy : map.getEnemies()) {
 			enemy.setCharacter(this.characterSprite);
+			enemy.setDeathListener(world::onEnemyDied);
 		}
+
+		camera.update();
 	}
 
 	/**
@@ -89,7 +93,7 @@ public class LevelScreen extends ScreenAdapter {
 		camera.update();
 		spriteBatch.setProjectionMatrix(camera.combined);
 
-		characterSprite.run(camera);
+		characterSprite.update(delta, camera);
 
 		world.update(delta);
 		for (Enemy enemy : map.getEnemies()) {
@@ -154,14 +158,13 @@ public class LevelScreen extends ScreenAdapter {
 	@Override
 	public void dispose() {
 		spriteBatch.dispose();
-		characterSprite.getTexture().dispose();
+
+		// Textures are owned by GameAssets (AssetManager). Don't dispose them via entities.
 		if (map.getBackground() != null) map.getBackground().dispose();
 		for (Wall w : map.getWalls()) {
 			if (w.getTexture() != null) w.getTexture().dispose();
 		}
-		for (Enemy e : map.getEnemies()) {
-			if (e.getTexture() != null) e.getTexture().dispose();
-		}
+
 		assets.dispose();
 	}
 

@@ -1,6 +1,6 @@
 package org.lasarimanstudios.escapedungeon.entities.weapons;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
@@ -10,12 +10,11 @@ public class Sword extends Weapon {
 
 	private static final float ARC_DEG = 180f;
 	private final Array<Enemy> enemies;
-	public boolean attacking = false;
 	private float startAngle;
 	private float endAngle;
 	private float elapsedTime;
 
-	public Sword(Array<Enemy> enemies, String texture, float attackDamage, float attackSpeed, float range) {
+	public Sword(Array<Enemy> enemies, Texture texture, float attackDamage, float attackSpeed, float range) {
 		super(texture, attackDamage, attackSpeed, range);
 		setSize(4f, 4f);
 		setOrigin(0, 0);
@@ -23,34 +22,35 @@ public class Sword extends Weapon {
 	}
 
 	@Override
-	public void update() {
-		if (!attacking) return;
+	public void update(float delta) {
+		if (!isAttacking()) return;
 
-		float dt = Gdx.graphics.getDeltaTime();
-		elapsedTime += dt;
+		elapsedTime += delta;
 
 		float t = MathUtils.clamp(elapsedTime / getAttackSpeed(), 0f, 1f);
 		float angle = MathUtils.lerp(startAngle, endAngle, t);
 		setRotation(angle);
 
 		if (t >= 1f) {
-			attacking = false;
+			setAttacking(false);
 		}
 
-		for (Enemy enemy : enemies)
-			if (enemy.getBoundingRectangle().overlaps(getBoundingRectangle()))
+		for (Enemy enemy : enemies) {
+			if (enemy.getBoundingRectangle().overlaps(getBoundingRectangle())) {
 				enemy.takeDamage(getAttackDamage(), 0f, angle);
+			}
+		}
 	}
 
 	@Override
 	public void startAttack(float facingAngle) {
-		if (attacking) return;
+		if (isAttacking()) return;
 
 		float halfArc = ARC_DEG * 0.5f;
 		this.startAngle = facingAngle + halfArc + 45f;
 		this.endAngle = facingAngle - halfArc + 45f;
 
-		this.attacking = true;
+		setAttacking(true);
 		this.elapsedTime = 0f;
 
 		setRotation(startAngle);

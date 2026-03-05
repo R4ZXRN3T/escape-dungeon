@@ -10,10 +10,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.ConfigManager;
-import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.weapons.Sword;
 import org.lasarimanstudios.escapedungeon.entities.weapons.Weapon;
+import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 
 /**
@@ -53,16 +53,23 @@ public class Character extends Entity {
 
 
 	/**
-	 * Creates a character sprite using a texture from {@code textures/characters/}, sets its size and origin,
-	 * and initializes its axis-aligned collider.
+	 * Creates a character sprite with injected textures.
 	 *
-	 * @param wallArray walls used for collision checks (AABB vs AABB)
-	 * @param texture   character texture file name (relative to {@code textures/characters/})
-	 * @param width     sprite width in world units
-	 * @param height    sprite height in world units
+	 * @param wallArray        walls used for collision checks (AABB vs AABB)
+	 * @param enemyArray       enemies for collision and weapon targeting
+	 * @param characterTexture already-loaded character texture
+	 * @param weaponTexture    already-loaded weapon texture
+	 * @param width            sprite width in world units
+	 * @param height           sprite height in world units
 	 */
-	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, String texture, float width, float height, float MaxHealth) {
-		super(new Texture(Gdx.files.internal("textures/characters/" + texture)));
+	public Character(Array<Wall> wallArray,
+					 Array<Enemy> enemyArray,
+					 Texture characterTexture,
+					 Texture weaponTexture,
+					 float width,
+					 float height,
+					 float MaxHealth) {
+		super(characterTexture);
 		setMaxHealth(MaxHealth);
 		setRemainingHealth(getMaxHealth());
 		setSize(width, height);
@@ -79,7 +86,7 @@ public class Character extends Entity {
 
 
 		// Create the sword once; LevelScreen will draw it.
-		this.weapon = new Sword(enemyArray, "sword1.png", 10f, 0.2f, 1.5f);
+		this.weapon = new Sword(enemyArray, weaponTexture, 10f, 0.2f, 1.5f);
 		attachWeapon();
 	}
 
@@ -115,11 +122,11 @@ public class Character extends Entity {
 	 * Updates character state for the current frame: applies movement input and rotates the sprite to face
 	 * the mouse cursor in world space.
 	 *
+	 * @param delta  time since last frame (seconds)
 	 * @param camera camera used to unproject mouse screen coordinates into world coordinates
 	 */
-	public void run(OrthographicCamera camera) {
-		float delta = Gdx.graphics.getDeltaTime();
-		movement();
+	public void update(float delta, OrthographicCamera camera) {
+		movement(delta);
 		rotateToMouse(camera);
 
 		if (Gdx.input.isButtonJustPressed(BUTTON_ATTACK)) {
@@ -131,7 +138,7 @@ public class Character extends Entity {
 			attachWeapon();
 		}
 
-		weapon.update();
+		weapon.update(delta);
 		damageInvulnerabilityTime -= delta;
 		for (Enemy enemy : enemyArray) {
 			if (collider.overlaps(enemy.getBoundingRectangle())) {
@@ -175,8 +182,8 @@ public class Character extends Entity {
 		}
 	}
 
-	private void movement() {
-		float delta = Math.min(Gdx.graphics.getDeltaTime(), MAX_DELTA);
+	private void movement(float delta) {
+		delta = Math.min(delta, MAX_DELTA);
 
 		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
 			moveWithCollisions(knockbackVx * delta, knockbackVy * delta, false);

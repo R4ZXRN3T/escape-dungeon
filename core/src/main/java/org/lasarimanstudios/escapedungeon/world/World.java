@@ -7,10 +7,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.GameAssets;
-import org.lasarimanstudios.escapedungeon.entities.objects.BloodPuddle;
-import org.lasarimanstudios.escapedungeon.entities.objects.Chest;
+import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Goblin;
+import org.lasarimanstudios.escapedungeon.entities.objects.BloodPuddle;
+import org.lasarimanstudios.escapedungeon.entities.objects.Chest;
 import org.lasarimanstudios.escapedungeon.level.Map;
 
 /**
@@ -19,13 +20,35 @@ import org.lasarimanstudios.escapedungeon.level.Map;
 public class World {
 	private final Map map;
 	private final GameAssets assets;
-
 	private final Array<BloodPuddle> bloodPuddles = new Array<>();
 	private final Array<Chest> chests = new Array<>();
+	private Character playerCharacter;
 
 	public World(Map map, GameAssets assets) {
 		this.map = map;
 		this.assets = assets;
+	}
+
+	/**
+	 * Provides the player character reference used by newly spawned enemies for AI/follow behavior.
+	 */
+	public void setPlayerCharacter(Character playerCharacter) {
+		this.playerCharacter = playerCharacter;
+	}
+
+	/**
+	 * Adds an enemy to the map and wires required runtime dependencies (player ref + death callback).
+	 */
+	public void registerEnemy(Enemy enemy) {
+		if (enemy == null) return;
+
+		// Ensure dynamically spawned enemies behave consistently with map-loaded enemies.
+		enemy.setDeathListener(this::onEnemyDied);
+		if (playerCharacter != null) {
+			enemy.setCharacter(playerCharacter);
+		}
+
+		map.getEnemies().add(enemy);
 	}
 
 	public void update(float delta) {
@@ -41,10 +64,10 @@ public class World {
 			if (c.isExpired()) chests.removeIndex(i);
 		}
 
-		if (Gdx.input.isKeyPressed(Input.Keys.R)) {
-			Goblin goblin = new Goblin("goblin-01-vorne-stehend.png", 3, 5, 30, 30, 1);
-			goblin.setCharacter(map.getEnemies().first().getCharacter());
-			map.getEnemies().add(goblin);
+		// Spawn test enemy.
+		if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+			Goblin goblin = new Goblin(assets.getTexture("textures/enemy/goblin-01/goblin-01-vorne-stehend.png"), 3, 5, 30, 30, 1);
+			registerEnemy(goblin);
 		}
 	}
 
@@ -78,4 +101,3 @@ public class World {
 		return map;
 	}
 }
-

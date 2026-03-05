@@ -4,9 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 
-import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.screens.LevelScreen;
+import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
  * Immutable-ish container for level data: background texture, wall sprites, world dimensions, and start position.

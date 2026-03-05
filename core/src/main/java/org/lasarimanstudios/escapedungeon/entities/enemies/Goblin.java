@@ -1,5 +1,7 @@
 package org.lasarimanstudios.escapedungeon.entities.enemies;
 
+import com.badlogic.gdx.graphics.Texture;
+
 public class Goblin extends Enemy {
 
 	private static final float BASE_HEALTH = 10;
@@ -13,8 +15,8 @@ public class Goblin extends Enemy {
 	private float knockbackVx = 0f;
 	private float knockbackVy = 0f;
 
-	public Goblin(String texture, float width, float height, float posX, float posY, int level) {
-		super("goblin-01/" + texture, width, height, posX, posY);
+	public Goblin(Texture texture, float width, float height, float posX, float posY, int level) {
+		super(texture, width, height, posX, posY);
 		setLevel(level);
 		setMaxHealth((float) (BASE_HEALTH * Math.pow(1.2, level)));
 		setRemainingHealth(getMaxHealth());
