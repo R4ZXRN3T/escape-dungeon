@@ -19,8 +19,11 @@ import org.lasarimanstudios.escapedungeon.world.World;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
- * Gameplay screen that renders a {@link Map}, updates the {@link org.lasarimanstudios.escapedungeon.entities.Character}, and follows the character
- * with an orthographic camera.
+ * Gameplay screen.
+ *
+ * <p>Owns the render loop for a {@link Map}: updates the player character, updates/enables the
+ * {@link org.lasarimanstudios.escapedungeon.world.World} runtime state, updates enemies, and draws
+ * the background and sprites using a {@link SpriteBatch}.</p>
  */
 public class LevelScreen extends ScreenAdapter {
 	private final DungeonGame game;
@@ -34,11 +37,11 @@ public class LevelScreen extends ScreenAdapter {
 	private final World world;
 
 	/**
-	 * Creates a new level screen for the given map.
+	 * Creates a new level screen.
 	 *
-	 * @param game   game instance used for navigation between screens
-	 * @param map    loaded map defining world size, background, walls, start position, and enemies
-	 * @param assets shared assets registry (owns all textures it loaded)
+	 * @param game   game instance used for navigation
+	 * @param map    loaded map data
+	 * @param assets asset registry used to load textures for entities; disposed by this screen
 	 */
 	public LevelScreen(DungeonGame game, Map map, GameAssets assets) {
 		this.game = game;
@@ -151,9 +154,10 @@ public class LevelScreen extends ScreenAdapter {
 	}
 
 	/**
-	 * Disposes GPU resources owned/used by this screen (batch, character texture, map textures).
+	 * Disposes GPU resources owned by this screen.
 	 *
-	 * <p>Assumes the {@link Map} owns its background texture and each {@link Wall} owns its texture.</p>
+	 * <p>Important: the {@link Map} currently loads its own background texture and {@link Wall} loads its
+	 * own texture. Those textures are disposed here as well.</p>
 	 */
 	@Override
 	public void dispose() {

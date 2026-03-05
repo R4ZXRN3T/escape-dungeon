@@ -19,7 +19,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.lasarimanstudios.escapedungeon.DungeonGame;
 
 /**
- * Main menu screen using LibGDX Scene2D UI.
+ * Main menu screen implemented with LibGDX Scene2D.
+ *
+ * <p>Creates a {@link Stage} with a table layout and several buttons to navigate to other screens.
+ * GPU/UI resources are created in {@link #show()} and disposed in {@link #dispose()}.</p>
  */
 public class MenuScreen extends ScreenAdapter {
 	private static final int BUTTON_WIDTH = 580;
@@ -33,12 +36,15 @@ public class MenuScreen extends ScreenAdapter {
 	/**
 	 * Creates the menu screen.
 	 *
-	 * @param game game instance used to open levels/screens
+	 * @param game game instance used to open other screens
 	 */
 	public MenuScreen(DungeonGame game) {
 		this.game = game;
 	}
 
+	/**
+	 * Loads the TTF and generates a bitmap font.
+	 */
 	private static BitmapFont createFontFromTtf() {
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ui/font.ttf"));
 		try {

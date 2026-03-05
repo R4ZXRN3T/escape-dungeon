@@ -8,13 +8,18 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import org.lasarimanstudios.escapedungeon.DungeonGame;
 
 /**
- * Minimal placeholder settings screen.
+ * Simple settings screen placeholder.
  *
- * <p>Press ESC to go back to the menu.</p>
+ * <p>Currently only clears the screen and returns to the menu when the user presses ESC.</p>
  */
 public class SettingsScreen extends ScreenAdapter {
 	private final DungeonGame game;
 
+	/**
+	 * Creates the settings screen.
+	 *
+	 * @param game game instance used to navigate back to the menu
+	 */
 	public SettingsScreen(DungeonGame game) {
 		this.game = game;
 	}

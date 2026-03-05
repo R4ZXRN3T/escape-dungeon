@@ -5,14 +5,23 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
-import org.lasarimanstudios.escapedungeon.screens.LevelScreen;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
- * Immutable-ish container for level data: background texture, wall sprites, world dimensions, and start position.
+ * Level data container.
  *
- * <p>This class loads its background texture from disk in the constructor. Callers are responsible for disposing
- * textures (see {@link LevelScreen#dispose()}).</p>
+ * <p>A {@code Map} bundles:</p>
+ * <ul>
+ *   <li>Background texture</li>
+ *   <li>Static walls</li>
+ *   <li>Initial enemies</li>
+ *   <li>World dimensions</li>
+ *   <li>Player starting position</li>
+ * </ul>
+ *
+ * <h2>Resource ownership</h2>
+ * The background texture is loaded in the constructor and must be disposed by the code that owns the
+ * map (typically the gameplay screen).
  */
 public class Map {
 	private Texture background;
@@ -28,10 +37,11 @@ public class Map {
 	 *
 	 * @param backgroundTexture background texture file name (relative to {@code textures/maps/})
 	 * @param walls             wall sprites/colliders in the level
-	 * @param width             map/world width (world units)
-	 * @param height            map/world height (world units)
-	 * @param startPosX         character spawn X (world units)
-	 * @param startPosY         character spawn Y (world units)
+	 * @param enemies           enemies present at level start
+	 * @param width             map/world width in world units
+	 * @param height            map/world height in world units
+	 * @param startPosX         player start X in world units
+	 * @param startPosY         player start Y in world units
 	 */
 	public Map(String backgroundTexture, Array<Wall> walls, Array<Enemy> enemies, float width, float height, float startPosX, float startPosY) {
 		this.background = new Texture(Gdx.files.internal("textures/maps/" + backgroundTexture));
@@ -43,118 +53,74 @@ public class Map {
 		this.startPosY = startPosY;
 	}
 
-
-	/**
-	 * @return the background texture for the map (maybe {@code null} if cleared externally)
-	 */
+	/** @return background texture */
 	public Texture getBackground() {
 		return background;
 	}
 
-	/**
-	 * Sets the background texture reference.
-	 *
-	 * @param background new background texture
-	 */
+	/** @param background background texture */
 	public void setBackground(Texture background) {
 		this.background = background;
 	}
 
-	/**
-	 * @return walls in this map
-	 */
+	/** @return walls in this map */
 	public Array<Wall> getWalls() {
 		return walls;
 	}
 
-	/**
-	 * Replaces the wall array reference.
-	 *
-	 * @param walls new walls array
-	 */
+	/** @param walls new wall list */
 	public void setWalls(Array<Wall> walls) {
 		this.walls = walls;
 	}
 
-	/**
-	 * @return world width in world units
-	 */
+	/** @return world width in world units */
 	public float getWidth() {
 		return width;
 	}
 
-	/**
-	 * Sets the world width.
-	 *
-	 * @param width new width in world units
-	 */
+	/** @param width world width in world units */
 	public void setWidth(float width) {
 		this.width = width;
 	}
 
-	/**
-	 * @return world height in world units
-	 */
+	/** @return world height in world units */
 	public float getHeight() {
 		return height;
 	}
 
-	/**
-	 * Sets the world height.
-	 *
-	 * @param height new height in world units
-	 */
+	/** @param height world height in world units */
 	public void setHeight(float height) {
 		this.height = height;
 	}
 
-	/**
-	 * @return character start X in world units
-	 */
+	/** @return player start X in world units */
 	public float getStartPosX() {
 		return startPosX;
 	}
 
-	/**
-	 * Sets the character start X coordinate.
-	 *
-	 * @param startPosX new start X in world units
-	 */
+	/** @param startPosX player start X in world units */
 	public void setStartPosX(float startPosX) {
 		this.startPosX = startPosX;
 	}
 
-	/**
-	 * @return character start Y in world units
-	 */
+	/** @return player start Y in world units */
 	public float getStartPosY() {
 		return startPosY;
 	}
 
-	/**
-	 * Sets the character start Y coordinate.
-	 *
-	 * @param startPosY new start Y in world units
-	 */
+	/** @param startPosY player start Y in world units */
 	public void setStartPosY(float startPosY) {
 		this.startPosY = startPosY;
 	}
 
-	/**
-	 * @return Enemies in this map
-	 */
+	/** @return enemies present in the map */
 	public Array<Enemy> getEnemies() {
 		return enemies;
 	}
 
-	/**
-	 * Replaces the Enemy array reference.
-	 *
-	 * @param enemies new walls array
-	 */
+	/** @param enemies new enemy list */
 	public void setEnemies(Array<Enemy> enemies) {
 		this.enemies = enemies;
 	}
-
 
 }

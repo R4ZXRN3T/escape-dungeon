@@ -10,11 +10,19 @@ import org.lasarimanstudios.escapedungeon.level.MapLoader;
 import org.lasarimanstudios.escapedungeon.screens.*;
 
 /**
- * Main LibGDX {@link com.badlogic.gdx.Game} entry that manages screen transitions (menu, level, inventory).
+ * Main LibGDX {@link com.badlogic.gdx.Game} implementation.
+ *
+ * <p>Responsible for:</p>
+ * <ul>
+ *   <li>Initializing configuration ({@link ConfigManager})</li>
+ *   <li>Applying window mode / FPS / VSync settings</li>
+ *   <li>Managing transitions between screens (intro, menu, level, inventory, settings)</li>
+ * </ul>
  */
 public class DungeonGame extends Game {
+
 	/**
-	 * Initializes the game and shows the main menu screen.
+	 * Initializes configuration and opens the intro screen.
 	 */
 	@Override
 	public void create() {
@@ -40,7 +48,7 @@ public class DungeonGame extends Game {
 	}
 
 	/**
-	 * Sets the game to windowed mode with a fixed resolution of 1280x720.
+	 * Sets the game to decorated windowed mode at 1280x720.
 	 */
 	private void setWindowed() {
 		Gdx.graphics.setUndecorated(false);
@@ -48,7 +56,7 @@ public class DungeonGame extends Game {
 	}
 
 	/**
-	 * Sets the game to exclusive fullscreen mode at the current display resolution.
+	 * Sets the game to exclusive fullscreen mode using the current display mode.
 	 */
 	private void setFullscreen() {
 		Graphics.DisplayMode displayMode = Gdx.graphics.getDisplayMode();
@@ -56,19 +64,16 @@ public class DungeonGame extends Game {
 	}
 
 	/**
-	 * Opens the main menu screen.
+	 * Switches to the main menu.
 	 */
 	public void openMenu() {
 		setScreen(new MenuScreen(this));
 	}
 
 	/**
-	 * Loads a level map and switches to the gameplay screen.
+	 * Loads a map and switches to the gameplay screen.
 	 *
-	 * <p>Also disables VSync and removes the foreground FPS cap for gameplay.</p>
-	 *
-	 * @param mapName level/map identifier without file extension (resolved from {@code levels/<mapName>.json})
-	 * @throws RuntimeException if the map cannot be loaded or parsed
+	 * @param mapName map identifier without file extension (e.g. {@code "map_01"})
 	 */
 	public void openLevel(String mapName) {
 		GameAssets assets = new GameAssets();

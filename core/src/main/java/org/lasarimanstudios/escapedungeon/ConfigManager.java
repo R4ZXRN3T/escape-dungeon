@@ -13,6 +13,20 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Simple JSON-backed configuration store.
+ *
+ * <p>Values are persisted to a platform-specific config file path (see {@link #getConfigFilePath()}).
+ * The config is loaded lazily on first use (or eagerly via {@link #init()}).</p>
+ *
+ * <h2>Thread safety</h2>
+ * All public methods are thread-safe. Access is guarded by an internal lock.
+ *
+ * <h2>Types</h2>
+ * Values are stored as strings. Convenience getters ({@link #getInt(ConfigKey, int, int)} and
+ * {@link #getBoolean(ConfigKey)}) parse and normalize values and write normalized values back into
+ * the in-memory map.
+ */
 public final class ConfigManager {
 
 	private static final Object LOCK = new Object();
@@ -23,6 +37,11 @@ public final class ConfigManager {
 	private ConfigManager() {
 	}
 
+	/**
+	 * Initializes the configuration system.
+	 *
+	 * <p>If the config file does not exist (or is empty/invalid), defaults are written.</p>
+	 */
 	public static void init() {
 		synchronized (LOCK) {
 			if (initialized) return;
@@ -31,6 +50,12 @@ public final class ConfigManager {
 		}
 	}
 
+	/**
+	 * Writes the current configuration to disk.
+	 *
+	 * <p>Call {@link #setConfig(ConfigKey, String)} to change values and then call this method to
+	 * persist them.</p>
+	 */
 	public static void saveConfig() {
 		ensureInitialized();
 		synchronized (LOCK) {
@@ -38,6 +63,12 @@ public final class ConfigManager {
 		}
 	}
 
+	/**
+	 * Returns the raw stored value for the given key.
+	 *
+	 * @param key config key
+	 * @return stored value or the default for {@code key} if missing
+	 */
 	public static String getConfig(ConfigKey key) {
 		ensureInitialized();
 		synchronized (LOCK) {
@@ -45,6 +76,18 @@ public final class ConfigManager {
 		}
 	}
 
+	/**
+	 * Returns a config value parsed as an integer.
+	 *
+	 * <p>If the value is missing or cannot be parsed, the default value is used. The value is then
+	 * clamped into the provided range. If parsing/clamping changes the value, the normalized value is
+	 * stored back into the in-memory config.</p>
+	 *
+	 * @param key config key
+	 * @param min minimum allowed value (inclusive)
+	 * @param max maximum allowed value (inclusive)
+	 * @return normalized integer value
+	 */
 	public static int getInt(ConfigKey key, int min, int max) {
 		ensureInitialized();
 		synchronized (LOCK) {
@@ -65,6 +108,15 @@ public final class ConfigManager {
 		}
 	}
 
+	/**
+	 * Returns a config value parsed as a boolean.
+	 *
+	 * <p>If the key is missing, the default value is used. Normalization is written back into the
+	 * in-memory config map.</p>
+	 *
+	 * @param key config key
+	 * @return boolean value
+	 */
 	public static boolean getBoolean(ConfigKey key) {
 		ensureInitialized();
 		synchronized (LOCK) {
@@ -80,10 +132,85 @@ public final class ConfigManager {
 		}
 	}
 
+	/**
+	 * Sets a raw config value in memory.
+	 *
+	 * <p>This does not persist automatically. Call {@link #saveConfig()} to write to disk.</p>
+	 *
+	 * @param key   config key
+	 * @param value raw value to store
+	 */
 	public static void setConfig(ConfigKey key, String value) {
 		ensureInitialized();
 		synchronized (LOCK) {
 			config.put(key, value);
+		}
+	}
+
+	/**
+	 * Returns the config file location for the current operating system.
+	 *
+	 * @return path to {@code escape-dungeon/config.json}
+	 */
+	public static Path getConfigFilePath() {
+		String os = System.getProperty("os.name", "").toLowerCase();
+		String fileName = "escape-dungeon/config.json";
+
+		if (os.contains("win")) {
+			String appData = System.getenv("APPDATA");
+			if (appData != null && !appData.isBlank()) return Paths.get(appData, fileName);
+			return Paths.get(System.getProperty("user.home"), "AppData", "Roaming", fileName);
+		} else if (os.contains("mac")) {
+			return Paths.get(System.getProperty("user.home"), "Library", "Application Support", fileName);
+		} else {
+			return Paths.get(System.getProperty("user.home"), ".config", fileName);
+		}
+	}
+
+	/**
+	 * Supported configuration keys.
+	 *
+	 * <p>Each key maps to a stable JSON property name.</p>
+	 */
+	public enum ConfigKey {
+		WINDOW_MODE("windowMode"),
+		MAX_FPS("maxFps"),
+		VSYNC("vSync"),
+		SHOW_FPS("showFps"),
+		FORWARD_KEY("forwardKey"),
+		BACKWARD_KEY("backwardKey"),
+		LEFT_KEY("leftKey"),
+		RIGHT_KEY("rightKey"),
+		ATTACK_KEY("attackKey");
+
+		private static final Map<String, ConfigKey> LOOKUP = new HashMap<>();
+
+		static {
+			for (ConfigKey k : values()) LOOKUP.put(k.jsonKey, k);
+		}
+
+		private final String jsonKey;
+
+		ConfigKey(String jsonKey) {
+			this.jsonKey = jsonKey;
+		}
+
+		/**
+		 * Looks up a {@link ConfigKey} by its JSON property name.
+		 *
+		 * @param jsonKey JSON property name
+		 * @return matching key, or {@code null} if unknown
+		 */
+		static ConfigKey fromJsonKey(String jsonKey) {
+			return LOOKUP.get(jsonKey);
+		}
+
+		/**
+		 * @return JSON property name for this key
+		 */
+		@Override
+		public String toString() {
+			return jsonKey;
 		}
 	}
 
@@ -141,7 +268,7 @@ public final class ConfigManager {
 				Files.move(tmp, CONFIG_PATH, StandardCopyOption.REPLACE_EXISTING);
 			}
 		} catch (IOException ignored) {
-			// Consider logging.
+			// Intentionally ignored (consider logging).
 		}
 	}
 
@@ -163,53 +290,5 @@ public final class ConfigManager {
 			case RIGHT_KEY -> String.valueOf(Input.Keys.D);
 			case ATTACK_KEY -> String.valueOf(Input.Buttons.LEFT);
 		};
-	}
-
-	public static Path getConfigFilePath() {
-		String os = System.getProperty("os.name", "").toLowerCase();
-		String fileName = "escape-dungeon/config.json";
-
-		if (os.contains("win")) {
-			String appData = System.getenv("APPDATA");
-			if (appData != null && !appData.isBlank()) return Paths.get(appData, fileName);
-			return Paths.get(System.getProperty("user.home"), "AppData", "Roaming", fileName);
-		} else if (os.contains("mac")) {
-			return Paths.get(System.getProperty("user.home"), "Library", "Application Support", fileName);
-		} else {
-			return Paths.get(System.getProperty("user.home"), ".config", fileName);
-		}
-	}
-
-	public enum ConfigKey {
-		WINDOW_MODE("windowMode"),
-		MAX_FPS("maxFps"),
-		VSYNC("vSync"),
-		SHOW_FPS("showFps"),
-		FORWARD_KEY("forwardKey"),
-		BACKWARD_KEY("backwardKey"),
-		LEFT_KEY("leftKey"),
-		RIGHT_KEY("rightKey"),
-		ATTACK_KEY("attackKey");
-
-		private static final Map<String, ConfigKey> LOOKUP = new HashMap<>();
-
-		static {
-			for (ConfigKey k : values()) LOOKUP.put(k.jsonKey, k);
-		}
-
-		private final String jsonKey;
-
-		ConfigKey(String jsonKey) {
-			this.jsonKey = jsonKey;
-		}
-
-		static ConfigKey fromJsonKey(String jsonKey) {
-			return LOOKUP.get(jsonKey);
-		}
-
-		@Override
-		public String toString() {
-			return jsonKey;
-		}
 	}
 }

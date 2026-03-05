@@ -5,9 +5,10 @@ import com.badlogic.gdx.ScreenAdapter;
 import org.lasarimanstudios.escapedungeon.DungeonGame;
 
 /**
- * Screen placeholder for the player's inventory UI.
+ * Inventory screen placeholder.
  *
- * <p>Currently contains no rendering or input logic.</p>
+ * <p>This screen exists so navigation from the menu works. UI and input handling can be implemented
+ * later.</p>
  */
 public class InventoryScreen extends ScreenAdapter {
 	private final DungeonGame game;

@@ -17,11 +17,18 @@ import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 
 /**
- * Player-controlled character sprite with keyboard movement, mouse-facing rotation, and simple AABB
- * collision against a set of {@link Wall} rectangles.
+ * Player-controlled character.
  *
- * <p>Movement uses sub-stepping to reduce tunneling through thin walls. Collision is performed with an
- * axis-aligned {@link Rectangle} collider that intentionally ignores sprite rotation.</p>
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Movement via configured input keys</li>
+ *   <li>Facing/rotation toward the mouse cursor</li>
+ *   <li>Simple AABB collision against {@link Wall} instances</li>
+ *   <li>Owning and updating the currently equipped {@link Weapon}</li>
+ * </ul>
+ *
+ * <p>Collision uses an axis-aligned {@link Rectangle} collider that intentionally ignores sprite
+ * rotation.</p>
  */
 public class Character extends Entity {
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
@@ -53,14 +60,15 @@ public class Character extends Entity {
 
 
 	/**
-	 * Creates a character sprite with injected textures.
+	 * Creates a new player character.
 	 *
-	 * @param wallArray        walls used for collision checks (AABB vs AABB)
-	 * @param enemyArray       enemies for collision and weapon targeting
-	 * @param characterTexture already-loaded character texture
-	 * @param weaponTexture    already-loaded weapon texture
-	 * @param width            sprite width in world units
-	 * @param height           sprite height in world units
+	 * @param wallArray         walls used for collision checks
+	 * @param enemyArray        enemies used for collision/damage checks and weapon targeting
+	 * @param characterTexture  character texture (must already be loaded)
+	 * @param weaponTexture     weapon texture (must already be loaded)
+	 * @param width             sprite width in world units
+	 * @param height            sprite height in world units
+	 * @param MaxHealth         maximum health value to start with
 	 */
 	public Character(Array<Wall> wallArray,
 					 Array<Enemy> enemyArray,
@@ -90,10 +98,23 @@ public class Character extends Entity {
 		attachWeapon();
 	}
 
+	/**
+	 * @return the equipped weapon instance (never {@code null})
+	 */
 	public Weapon getWeapon() {
 		return weapon;
 	}
 
+	/**
+	 * Applies damage to the player and pushes them away from the given enemy.
+	 *
+	 * <p>Damage is ignored during the invulnerability window. If health reaches zero, the application
+	 * exits immediately.</p>
+	 *
+	 * @param enemy     damaging enemy
+	 * @param damage    damage amount
+	 * @param knockback knockback strength applied as velocity
+	 */
 	public void takeDamage(Enemy enemy, float damage, float knockback) {
 		if (damageInvulnerabilityTime > 0f) return;
 
@@ -119,10 +140,11 @@ public class Character extends Entity {
 	}
 
 	/**
-	 * Updates character state for the current frame: applies movement input and rotates the sprite to face
-	 * the mouse cursor in world space.
+	 * Updates the player for a frame.
 	 *
-	 * @param delta  time since last frame (seconds)
+	 * <p>Handles movement, rotation, weapon attacks, and enemy contact damage.</p>
+	 *
+	 * @param delta  time since last frame in seconds
 	 * @param camera camera used to unproject mouse screen coordinates into world coordinates
 	 */
 	public void update(float delta, OrthographicCamera camera) {
@@ -330,26 +352,32 @@ public class Character extends Entity {
 		updateCollider();
 	}
 
+	/** @return maximum health */
 	public float getMaxHealth() {
 		return MaxHealth;
 	}
 
+	/** @param maxHealth maximum health */
 	public void setMaxHealth(float maxHealth) {
 		MaxHealth = maxHealth;
 	}
 
+	/** @return current remaining health */
 	public float getRemainingHealth() {
 		return RemainingHealth;
 	}
 
+	/** @param remainingHealth new remaining health */
 	public void setRemainingHealth(float remainingHealth) {
 		RemainingHealth = remainingHealth;
 	}
 
+	/** @return sprite center X coordinate */
 	public float getCenterX() {
 		return getX() + getWidth() * 0.5f;
 	}
 
+	/** @return sprite center Y coordinate */
 	public float getCenterY() {
 		return getY() + getHeight() * 0.5f;
 	}

@@ -11,23 +11,26 @@ import org.lasarimanstudios.escapedungeon.entities.enemies.Goblin;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
- * Utility for loading {@link Map} instances from JSON level files located under {@code levels/}.
+ * Loads {@link Map} instances from JSON level files under {@code assets/levels/}.
+ *
+ * <p>The loader expects a JSON object with at least these keys:</p>
+ * <ul>
+ *   <li>{@code background} (string)</li>
+ *   <li>{@code width}, {@code height} (numbers)</li>
+ *   <li>{@code startPosX}, {@code startPosY} (numbers)</li>
+ *   <li>{@code walls} (array of objects: texture/width/height/posX/posY)</li>
+ *   <li>{@code enemies} (array of objects: enemyType/texture/width/height/posX/posY/level)</li>
+ * </ul>
  */
 public class MapLoader {
 
 	/**
-	 * Loads a map from {@code assets/levels/<mapName>.json}.
+	 * Loads a map from {@code levels/<mapName>.json}.
 	 *
-	 * <p>Expected JSON keys include: {@code background}, {@code width}, {@code height}, {@code startPosX},
-	 * {@code startPosY}, and {@code walls}.</p>
-	 *
-	 * <p>Enemy textures are loaded via the provided {@link GameAssets} instance. Asset ownership stays with
-	 * the caller (typically a screen or the game).</p>
-	 *
-	 * @param mapName map identifier without {@code .json} extension
-	 * @param assets  shared asset registry used to load textures
-	 * @return loaded {@link Map}
-	 * @throws RuntimeException if the file cannot be read or the JSON format is invalid
+	 * @param mapName map identifier without {@code .json}
+	 * @param assets  asset registry used to load enemy textures
+	 * @return parsed map instance
+	 * @throws RuntimeException if reading or parsing fails
 	 */
 	public static Map loadMap(String mapName, GameAssets assets) {
 		try {
@@ -51,13 +54,10 @@ public class MapLoader {
 	}
 
 	/**
-	 * Parses the {@code walls} array from the given JSON object.
+	 * Parses wall objects from the {@code walls} JSON array.
 	 *
-	 * <p>Each wall entry is expected to be a space-separated string:
-	 * {@code "<texture> <width> <height> <posX> <posY>"}.</p>
-	 *
-	 * @param mapJson root map JSON object containing a {@code walls} array
-	 * @return array of parsed {@link Wall} instances
+	 * @param mapJson root map JSON object
+	 * @return walls array
 	 */
 	private static Array<Wall> getWalls(JSONObject mapJson) {
 		Array<Wall> wallArray = new Array<>();
@@ -75,6 +75,13 @@ public class MapLoader {
 		return wallArray;
 	}
 
+	/**
+	 * Parses enemy objects from the {@code enemies} JSON array.
+	 *
+	 * @param mapJson root map JSON object
+	 * @param assets  shared asset registry used to load enemy textures
+	 * @return enemies array
+	 */
 	private static Array<Enemy> getEnemies(JSONObject mapJson, GameAssets assets) {
 		Array<Enemy> enemyArray = new Array<>();
 
@@ -98,6 +105,11 @@ public class MapLoader {
 
 	}
 
+	/**
+	 * Factory method for enemies based on {@code enemyType}.
+	 *
+	 * @throws RuntimeException if {@code enemyType} is unknown
+	 */
 	private static Enemy getNewEnemy(String enemyType, Texture enemyTexture, float enemyWidth, float enemyHeight, float enemyPosX, float enemyPosy, int level) {
 		return switch (enemyType) {
 			case "goblin" -> new Goblin(enemyTexture, enemyWidth, enemyHeight, enemyPosX, enemyPosy, level);

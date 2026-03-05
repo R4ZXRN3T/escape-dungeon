@@ -4,9 +4,17 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import org.lasarimanstudios.escapedungeon.*;
 
-/** Launches the desktop (LWJGL3) application. */
+/**
+ * Desktop launcher (LWJGL3).
+ *
+ * <p>This is the platform-specific entry point that creates the {@link org.lasarimanstudios.escapedungeon.DungeonGame}
+ * instance and configures the LWJGL3 backend.</p>
+ */
 public class Lwjgl3Launcher {
-    public static void main(String[] args) {
+	/**
+	 * Application entry point.
+	 */
+	public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
         createApplication();
     }

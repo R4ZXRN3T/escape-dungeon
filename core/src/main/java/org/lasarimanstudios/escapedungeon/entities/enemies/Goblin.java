@@ -2,6 +2,12 @@ package org.lasarimanstudios.escapedungeon.entities.enemies;
 
 import com.badlogic.gdx.graphics.Texture;
 
+/**
+ * Basic enemy that follows the player character.
+ *
+ * <p>Stats are scaled by level (using {@code 1.2^level}). When hit, the goblin becomes briefly
+ * invulnerable and receives knockback velocity that decays over time.</p>
+ */
 public class Goblin extends Enemy {
 
 	private static final float BASE_HEALTH = 10;
@@ -15,6 +21,16 @@ public class Goblin extends Enemy {
 	private float knockbackVx = 0f;
 	private float knockbackVy = 0f;
 
+	/**
+	 * Creates a goblin at the given position.
+	 *
+	 * @param texture sprite texture (must already be loaded)
+	 * @param width   sprite width in world units
+	 * @param height  sprite height in world units
+	 * @param posX    initial x position in world units
+	 * @param posY    initial y position in world units
+	 * @param level   difficulty level used for stat scaling
+	 */
 	public Goblin(Texture texture, float width, float height, float posX, float posY, int level) {
 		super(texture, width, height, posX, posY);
 		setLevel(level);
@@ -24,6 +40,13 @@ public class Goblin extends Enemy {
 		setSpeed(BASE_SPEED);
 	}
 
+	/**
+	 * Applies damage and knockback if not invulnerable.
+	 *
+	 * @param damage    damage amount
+	 * @param knockback knockback strength
+	 * @param hitAngle  hit direction in radians
+	 */
 	@Override
 	public void takeDamage(float damage, float knockback, float hitAngle) {
 		if (damageInvulnerabilityTime > 0f) return;
@@ -39,6 +62,11 @@ public class Goblin extends Enemy {
 		if (getRemainingHealth() <= 0f) die();
 	}
 
+	/**
+	 * Updates invulnerability/knockback and performs follow movement.
+	 *
+	 * @param delta time since last frame in seconds
+	 */
 	@Override
 	public void update(float delta) {
 		damageInvulnerabilityTime -= delta;
@@ -57,11 +85,22 @@ public class Goblin extends Enemy {
 		}
 	}
 
+	/**
+	 * Notifies the death listener.
+	 */
 	@Override
 	public void die() {
 		notifyDied();
 	}
 
+	/**
+	 * Moves toward the configured {@link #getCharacter()}.
+	 *
+	 * <p>This requires that {@link #setCharacter(org.lasarimanstudios.escapedungeon.entities.Character)}
+	 * was called; otherwise {@link #getCharacter()} may be {@code null}.</p>
+	 *
+	 * @param delta time since last frame in seconds
+	 */
 	public void following(float delta) {
 
 		float diffX = getCharacter().getX() - getX();
@@ -78,10 +117,12 @@ public class Goblin extends Enemy {
 		}
 	}
 
+	/** @return remaining invulnerability time in seconds */
 	public float getDamageInvulnerabilityTime() {
 		return damageInvulnerabilityTime;
 	}
 
+	/** @param damageInvulnerabilityTime remaining invulnerability time in seconds */
 	public void setDamageInvulnerabilityTime(float damageInvulnerabilityTime) {
 		this.damageInvulnerabilityTime = damageInvulnerabilityTime;
 	}
