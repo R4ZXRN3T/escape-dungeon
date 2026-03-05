@@ -27,6 +27,16 @@ public class DungeonGame extends Game {
 	@Override
 	public void create() {
 		ConfigManager.init();
+		applySettings();
+		setScreen(new IntroScreen(this));
+	}
+
+	/**
+	 * Applies window / FPS / VSync settings from {@link ConfigManager}.
+	 *
+	 * <p>This is used on startup and after the user presses "APPLY" in the settings menu.</p>
+	 */
+	public void applySettings() {
 		int windowMode = ConfigManager.getInt(ConfigKey.WINDOW_MODE, 0, 2);
 		switch (windowMode) {
 			case 1 -> setBorderless();
@@ -35,7 +45,6 @@ public class DungeonGame extends Game {
 		}
 		Gdx.graphics.setForegroundFPS(ConfigManager.getInt(ConfigKey.MAX_FPS, 0, Integer.MAX_VALUE));
 		Gdx.graphics.setVSync(ConfigManager.getBoolean(ConfigKey.VSYNC));
-		setScreen(new IntroScreen(this));
 	}
 
 	/**
