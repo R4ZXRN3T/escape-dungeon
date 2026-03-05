@@ -57,7 +57,7 @@ public class LevelScreen extends ScreenAdapter {
 
 		Texture characterTex = assets.createTexture("textures/characters/character.png");
 		Texture weaponTex = assets.createTexture("textures/weapons/sword1.png");
-		characterSprite = new org.lasarimanstudios.escapedungeon.entities.Character(map.getWalls(), map.getEnemies(), characterTex, weaponTex, 5, 5, 100);
+		characterSprite = new Character(map.getWalls(), map.getEnemies(), characterTex, weaponTex, 5, 5, 100);
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		// Allow the World to wire dynamically spawned enemies to the player.

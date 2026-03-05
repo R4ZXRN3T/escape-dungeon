@@ -62,21 +62,15 @@ public class Character extends Entity {
 	/**
 	 * Creates a new player character.
 	 *
-	 * @param wallArray         walls used for collision checks
-	 * @param enemyArray        enemies used for collision/damage checks and weapon targeting
-	 * @param characterTexture  character texture (must already be loaded)
-	 * @param weaponTexture     weapon texture (must already be loaded)
-	 * @param width             sprite width in world units
-	 * @param height            sprite height in world units
-	 * @param MaxHealth         maximum health value to start with
+	 * @param wallArray        walls used for collision checks
+	 * @param enemyArray       enemies used for collision/damage checks and weapon targeting
+	 * @param characterTexture character texture (must already be loaded)
+	 * @param weaponTexture    weapon texture (must already be loaded)
+	 * @param width            sprite width in world units
+	 * @param height           sprite height in world units
+	 * @param MaxHealth        maximum health value to start with
 	 */
-	public Character(Array<Wall> wallArray,
-					 Array<Enemy> enemyArray,
-					 Texture characterTexture,
-					 Texture weaponTexture,
-					 float width,
-					 float height,
-					 float MaxHealth) {
+	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, Texture characterTexture, Texture weaponTexture, float width, float height, float MaxHealth) {
 		super(characterTexture);
 		setMaxHealth(MaxHealth);
 		setRemainingHealth(getMaxHealth());
@@ -352,32 +346,44 @@ public class Character extends Entity {
 		updateCollider();
 	}
 
-	/** @return maximum health */
+	/**
+	 * @return maximum health
+	 */
 	public float getMaxHealth() {
 		return MaxHealth;
 	}
 
-	/** @param maxHealth maximum health */
+	/**
+	 * @param maxHealth maximum health
+	 */
 	public void setMaxHealth(float maxHealth) {
 		MaxHealth = maxHealth;
 	}
 
-	/** @return current remaining health */
+	/**
+	 * @return current remaining health
+	 */
 	public float getRemainingHealth() {
 		return RemainingHealth;
 	}
 
-	/** @param remainingHealth new remaining health */
+	/**
+	 * @param remainingHealth new remaining health
+	 */
 	public void setRemainingHealth(float remainingHealth) {
 		RemainingHealth = remainingHealth;
 	}
 
-	/** @return sprite center X coordinate */
+	/**
+	 * @return sprite center X coordinate
+	 */
 	public float getCenterX() {
 		return getX() + getWidth() * 0.5f;
 	}
 
-	/** @return sprite center Y coordinate */
+	/**
+	 * @return sprite center Y coordinate
+	 */
 	public float getCenterY() {
 		return getY() + getHeight() * 0.5f;
 	}

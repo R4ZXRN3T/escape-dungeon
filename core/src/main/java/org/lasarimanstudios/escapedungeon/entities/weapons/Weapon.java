@@ -17,6 +17,14 @@ public abstract class Weapon extends Sprite {
 	private float range;
 
 	/**
+	 * Monotonically increasing id that identifies the current/most recent attack.
+	 *
+	 * <p>This is used to ensure enemies are only hit once per attack animation, even though hit
+	 * detection may run every frame.</p>
+	 */
+	private int attackInstanceId = 0;
+
+	/**
 	 * Creates a weapon sprite.
 	 *
 	 * @param texture      weapon texture (must already be loaded)
@@ -31,7 +39,9 @@ public abstract class Weapon extends Sprite {
 		this.range = range;
 	}
 
-	/** @return whether the weapon is currently attacking */
+	/**
+	 * @return whether the weapon is currently attacking
+	 */
 	public boolean isAttacking() {
 		return attacking;
 	}
@@ -43,6 +53,29 @@ public abstract class Weapon extends Sprite {
 	 */
 	protected void setAttacking(boolean attacking) {
 		this.attacking = attacking;
+	}
+
+	/**
+	 * Starts a new logical attack instance.
+	 *
+	 * <p>Subclasses should call this exactly once when they begin an attack animation. The returned id
+	 * should be passed along with damage calls so targets can ignore duplicate hits within the same
+	 * attack.</p>
+	 *
+	 * @return the new attack instance id
+	 */
+	protected int beginAttackInstance() {
+		// Avoid returning 0 as a valid id (0 can be treated as "no instance" by callers if needed).
+		attackInstanceId++;
+		if (attackInstanceId == 0) attackInstanceId = 1;
+		return attackInstanceId;
+	}
+
+	/**
+	 * @return id that identifies the current/most recent attack instance
+	 */
+	public int getAttackInstanceId() {
+		return attackInstanceId;
 	}
 
 	/**
@@ -59,32 +92,44 @@ public abstract class Weapon extends Sprite {
 	 */
 	public abstract void startAttack(float angle);
 
-	/** @return attack damage per hit */
+	/**
+	 * @return attack damage per hit
+	 */
 	public float getAttackDamage() {
 		return attackDamage;
 	}
 
-	/** @param attackDamage attack damage per hit */
+	/**
+	 * @param attackDamage attack damage per hit
+	 */
 	public void setAttackDamage(float attackDamage) {
 		this.attackDamage = attackDamage;
 	}
 
-	/** @return attack duration in seconds */
+	/**
+	 * @return attack duration in seconds
+	 */
 	public float getAttackSpeed() {
 		return attackSpeed;
 	}
 
-	/** @param attackSpeed attack duration in seconds */
+	/**
+	 * @param attackSpeed attack duration in seconds
+	 */
 	public void setAttackSpeed(float attackSpeed) {
 		this.attackSpeed = attackSpeed;
 	}
 
-	/** @return effective range in world units */
+	/**
+	 * @return effective range in world units
+	 */
 	public float getRange() {
 		return range;
 	}
 
-	/** @param range effective range in world units */
+	/**
+	 * @param range effective range in world units
+	 */
 	public void setRange(float range) {
 		this.range = range;
 	}

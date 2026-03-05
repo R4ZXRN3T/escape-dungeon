@@ -53,72 +53,100 @@ public class Map {
 		this.startPosY = startPosY;
 	}
 
-	/** @return background texture */
+	/**
+	 * @return background texture
+	 */
 	public Texture getBackground() {
 		return background;
 	}
 
-	/** @param background background texture */
+	/**
+	 * @param background background texture
+	 */
 	public void setBackground(Texture background) {
 		this.background = background;
 	}
 
-	/** @return walls in this map */
+	/**
+	 * @return walls in this map
+	 */
 	public Array<Wall> getWalls() {
 		return walls;
 	}
 
-	/** @param walls new wall list */
+	/**
+	 * @param walls new wall list
+	 */
 	public void setWalls(Array<Wall> walls) {
 		this.walls = walls;
 	}
 
-	/** @return world width in world units */
+	/**
+	 * @return world width in world units
+	 */
 	public float getWidth() {
 		return width;
 	}
 
-	/** @param width world width in world units */
+	/**
+	 * @param width world width in world units
+	 */
 	public void setWidth(float width) {
 		this.width = width;
 	}
 
-	/** @return world height in world units */
+	/**
+	 * @return world height in world units
+	 */
 	public float getHeight() {
 		return height;
 	}
 
-	/** @param height world height in world units */
+	/**
+	 * @param height world height in world units
+	 */
 	public void setHeight(float height) {
 		this.height = height;
 	}
 
-	/** @return player start X in world units */
+	/**
+	 * @return player start X in world units
+	 */
 	public float getStartPosX() {
 		return startPosX;
 	}
 
-	/** @param startPosX player start X in world units */
+	/**
+	 * @param startPosX player start X in world units
+	 */
 	public void setStartPosX(float startPosX) {
 		this.startPosX = startPosX;
 	}
 
-	/** @return player start Y in world units */
+	/**
+	 * @return player start Y in world units
+	 */
 	public float getStartPosY() {
 		return startPosY;
 	}
 
-	/** @param startPosY player start Y in world units */
+	/**
+	 * @param startPosY player start Y in world units
+	 */
 	public void setStartPosY(float startPosY) {
 		this.startPosY = startPosY;
 	}
 
-	/** @return enemies present in the map */
+	/**
+	 * @return enemies present in the map
+	 */
 	public Array<Enemy> getEnemies() {
 		return enemies;
 	}
 
-	/** @param enemies new enemy list */
+	/**
+	 * @param enemies new enemy list
+	 */
 	public void setEnemies(Array<Enemy> enemies) {
 		this.enemies = enemies;
 	}

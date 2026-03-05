@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
  */
 public class Goblin extends Enemy {
 
-	private static final float BASE_HEALTH = 10;
+	private static final float BASE_HEALTH = 30f;
 	private static final float BASE_ATTACK_DAMAGE = 10f;
 	private static final float BASE_SPEED = 10f;
 
@@ -43,13 +43,21 @@ public class Goblin extends Enemy {
 	/**
 	 * Applies damage and knockback if not invulnerable.
 	 *
-	 * @param damage    damage amount
-	 * @param knockback knockback strength
-	 * @param hitAngle  hit direction in radians
+	 * @param damage           damage amount
+	 * @param knockback        knockback strength
+	 * @param hitAngle         hit direction in radians
+	 * @param attackInstanceId id of the current weapon attack; used to avoid multi-hits per swing
 	 */
 	@Override
-	public void takeDamage(float damage, float knockback, float hitAngle) {
+	public void takeDamage(float damage, float knockback, float hitAngle, int attackInstanceId) {
+		// Ensure "only once per attack" even if overlap is detected across multiple frames.
+		if (!shouldAcceptDamageFromAttack(attackInstanceId)) return;
+
+		// Optional additional i-frames across separate attacks.
 		if (damageInvulnerabilityTime > 0f) return;
+
+		markDamagedByAttack(attackInstanceId);
+
 		setRemainingHealth(getRemainingHealth() - damage);
 		damageInvulnerabilityTime = 0.3f;
 
@@ -117,12 +125,16 @@ public class Goblin extends Enemy {
 		}
 	}
 
-	/** @return remaining invulnerability time in seconds */
+	/**
+	 * @return remaining invulnerability time in seconds
+	 */
 	public float getDamageInvulnerabilityTime() {
 		return damageInvulnerabilityTime;
 	}
 
-	/** @param damageInvulnerabilityTime remaining invulnerability time in seconds */
+	/**
+	 * @param damageInvulnerabilityTime remaining invulnerability time in seconds
+	 */
 	public void setDamageInvulnerabilityTime(float damageInvulnerabilityTime) {
 		this.damageInvulnerabilityTime = damageInvulnerabilityTime;
 	}

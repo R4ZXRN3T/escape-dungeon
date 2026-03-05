@@ -167,53 +167,6 @@ public final class ConfigManager {
 		}
 	}
 
-	/**
-	 * Supported configuration keys.
-	 *
-	 * <p>Each key maps to a stable JSON property name.</p>
-	 */
-	public enum ConfigKey {
-		WINDOW_MODE("windowMode"),
-		MAX_FPS("maxFps"),
-		VSYNC("vSync"),
-		SHOW_FPS("showFps"),
-		FORWARD_KEY("forwardKey"),
-		BACKWARD_KEY("backwardKey"),
-		LEFT_KEY("leftKey"),
-		RIGHT_KEY("rightKey"),
-		ATTACK_KEY("attackKey");
-
-		private static final Map<String, ConfigKey> LOOKUP = new HashMap<>();
-
-		static {
-			for (ConfigKey k : values()) LOOKUP.put(k.jsonKey, k);
-		}
-
-		private final String jsonKey;
-
-		ConfigKey(String jsonKey) {
-			this.jsonKey = jsonKey;
-		}
-
-		/**
-		 * Looks up a {@link ConfigKey} by its JSON property name.
-		 *
-		 * @param jsonKey JSON property name
-		 * @return matching key, or {@code null} if unknown
-		 */
-		static ConfigKey fromJsonKey(String jsonKey) {
-			return LOOKUP.get(jsonKey);
-		}
-
-		/**
-		 * @return JSON property name for this key
-		 */
-		@Override
-		public String toString() {
-			return jsonKey;
-		}
-	}
-
 	private static void ensureInitialized() {
 		if (!initialized) {
 			init();
@@ -290,5 +243,52 @@ public final class ConfigManager {
 			case RIGHT_KEY -> String.valueOf(Input.Keys.D);
 			case ATTACK_KEY -> String.valueOf(Input.Buttons.LEFT);
 		};
+	}
+
+	/**
+	 * Supported configuration keys.
+	 *
+	 * <p>Each key maps to a stable JSON property name.</p>
+	 */
+	public enum ConfigKey {
+		WINDOW_MODE("windowMode"),
+		MAX_FPS("maxFps"),
+		VSYNC("vSync"),
+		SHOW_FPS("showFps"),
+		FORWARD_KEY("forwardKey"),
+		BACKWARD_KEY("backwardKey"),
+		LEFT_KEY("leftKey"),
+		RIGHT_KEY("rightKey"),
+		ATTACK_KEY("attackKey");
+
+		private static final Map<String, ConfigKey> LOOKUP = new HashMap<>();
+
+		static {
+			for (ConfigKey k : values()) LOOKUP.put(k.jsonKey, k);
+		}
+
+		private final String jsonKey;
+
+		ConfigKey(String jsonKey) {
+			this.jsonKey = jsonKey;
+		}
+
+		/**
+		 * Looks up a {@link ConfigKey} by its JSON property name.
+		 *
+		 * @param jsonKey JSON property name
+		 * @return matching key, or {@code null} if unknown
+		 */
+		static ConfigKey fromJsonKey(String jsonKey) {
+			return LOOKUP.get(jsonKey);
+		}
+
+		/**
+		 * @return JSON property name for this key
+		 */
+		@Override
+		public String toString() {
+			return jsonKey;
+		}
 	}
 }

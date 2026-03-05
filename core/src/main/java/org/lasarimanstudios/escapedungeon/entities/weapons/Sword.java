@@ -58,7 +58,7 @@ public class Sword extends Weapon {
 
 		for (Enemy enemy : enemies) {
 			if (enemy.getBoundingRectangle().overlaps(getBoundingRectangle())) {
-				enemy.takeDamage(getAttackDamage(), 0f, angle);
+				enemy.takeDamage(getAttackDamage(), 0f, angle, getAttackInstanceId());
 			}
 		}
 	}
@@ -71,6 +71,8 @@ public class Sword extends Weapon {
 	@Override
 	public void startAttack(float facingAngle) {
 		if (isAttacking()) return;
+
+		beginAttackInstance();
 
 		float halfArc = ARC_DEG * 0.5f;
 		this.startAngle = facingAngle + halfArc + 45f;

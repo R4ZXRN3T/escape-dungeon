@@ -27,6 +27,14 @@ public abstract class Enemy extends Entity {
 	private EnemyDeathListener deathListener;
 
 	/**
+	 * Remembers which player attack instance last successfully damaged this enemy.
+	 *
+	 * <p>This prevents taking damage every frame while a weapon collider overlaps the enemy during a
+	 * single swing.</p>
+	 */
+	private int lastDamagingAttackInstanceId = -1;
+
+	/**
 	 * Creates an enemy sprite.
 	 *
 	 * @param texture sprite texture (must already be loaded)
@@ -74,13 +82,31 @@ public abstract class Enemy extends Entity {
 	}
 
 	/**
+	 * Returns whether this enemy should accept damage for the given attack instance.
+	 *
+	 * <p>If the same weapon attack calls damage multiple times (e.g., once per frame while overlapping),
+	 * only the first call will be accepted.</p>
+	 */
+	protected boolean shouldAcceptDamageFromAttack(int attackInstanceId) {
+		return attackInstanceId != lastDamagingAttackInstanceId;
+	}
+
+	/**
+	 * Marks the given attack instance as the last one that successfully damaged this enemy.
+	 */
+	protected void markDamagedByAttack(int attackInstanceId) {
+		this.lastDamagingAttackInstanceId = attackInstanceId;
+	}
+
+	/**
 	 * Applies damage to the enemy.
 	 *
-	 * @param damage    damage amount
-	 * @param knockback knockback strength (interpretation depends on implementation)
-	 * @param hitAngle  direction of the hit (implementation-defined; {@link Goblin} expects radians)
+	 * @param damage           damage amount
+	 * @param knockback        knockback strength (interpretation depends on implementation)
+	 * @param hitAngle         direction of the hit (implementation-defined; {@link Goblin} expects radians)
+	 * @param attackInstanceId id that identifies the attacker weapon's current attack animation
 	 */
-	public abstract void takeDamage(float damage, float knockback, float hitAngle);
+	public abstract void takeDamage(float damage, float knockback, float hitAngle, int attackInstanceId);
 
 	/**
 	 * Called when the enemy should be considered dead.
@@ -97,62 +123,86 @@ public abstract class Enemy extends Entity {
 	 */
 	public abstract void update(float delta);
 
-	/** @return enemy level used for stat scaling */
+	/**
+	 * @return enemy level used for stat scaling
+	 */
 	public int getLevel() {
 		return level;
 	}
 
-	/** @param level enemy level used for stat scaling */
+	/**
+	 * @param level enemy level used for stat scaling
+	 */
 	public void setLevel(int level) {
 		this.level = level;
 	}
 
-	/** @return maximum health */
+	/**
+	 * @return maximum health
+	 */
 	public float getMaxHealth() {
 		return maxHealth;
 	}
 
-	/** @param maxHealth maximum health */
+	/**
+	 * @param maxHealth maximum health
+	 */
 	public void setMaxHealth(float maxHealth) {
 		this.maxHealth = maxHealth;
 	}
 
-	/** @return remaining health */
+	/**
+	 * @return remaining health
+	 */
 	public float getRemainingHealth() {
 		return remainingHealth;
 	}
 
-	/** @param remainingHealth remaining health */
+	/**
+	 * @param remainingHealth remaining health
+	 */
 	public void setRemainingHealth(float remainingHealth) {
 		this.remainingHealth = remainingHealth;
 	}
 
-	/** @return attack damage per hit */
+	/**
+	 * @return attack damage per hit
+	 */
 	public float getAttackDamage() {
 		return attackDamage;
 	}
 
-	/** @param attackDamage attack damage per hit */
+	/**
+	 * @param attackDamage attack damage per hit
+	 */
 	public void setAttackDamage(float attackDamage) {
 		this.attackDamage = attackDamage;
 	}
 
-	/** @return movement speed in world units per second */
+	/**
+	 * @return movement speed in world units per second
+	 */
 	public float getSpeed() {
 		return speed;
 	}
 
-	/** @param speed movement speed in world units per second */
+	/**
+	 * @param speed movement speed in world units per second
+	 */
 	public void setSpeed(float speed) {
 		this.speed = speed;
 	}
 
-	/** @return sprite center x coordinate */
+	/**
+	 * @return sprite center x coordinate
+	 */
 	public float getCenterX() {
 		return getX() + getWidth() * 0.5f;
 	}
 
-	/** @return sprite center y coordinate */
+	/**
+	 * @return sprite center y coordinate
+	 */
 	public float getCenterY() {
 		return getY() + getHeight() * 0.5f;
 	}
