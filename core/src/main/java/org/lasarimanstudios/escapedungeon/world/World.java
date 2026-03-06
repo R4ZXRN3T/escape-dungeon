@@ -89,6 +89,13 @@ public class World {
 		}
 	}
 
+	public void onPlayerDied(Character character) {
+		float x = character.getX();
+		float y = character.getY();
+
+		bloodPuddles.add(new BloodPuddle(assets.getTexture(GameAssets.TEX_BLOOD_PUDDLE), x, y, 5f));
+	}
+
 	public Array<BloodPuddle> getBloodPuddles() {
 		return bloodPuddles;
 	}
