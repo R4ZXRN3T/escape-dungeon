@@ -1,4 +1,3 @@
-// core/src/main/java/org/lasarimanstudios/escapedungeon/Character.java
 package org.lasarimanstudios.escapedungeon.entities;
 
 import com.badlogic.gdx.Gdx;
@@ -34,15 +33,17 @@ public class Character extends Entity {
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
 	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
 	private static final float FRONT_ANGLE_OFFSET_DEG = -90f;
-	private static final float SPEED = 22f;                     // Character speed in units per second.
-	private static final float DIAGONAL_MULTIPLIER = 2f / 3f;   // To keep diagonal speed consistent with axial speed.
-	private static final float MAX_STEP_DISTANCE = 0.25f;       // Max distance per movement sub-step to avoid tunneling.
-	private static final float MAX_DELTA = 1f / 30f;            // Cap delta time to avoid large steps on frame drops.
+	private static final float SPEED = 22f;
+	private static final float DIAGONAL_MULTIPLIER = 2f / 3f;
+	private static final float MAX_STEP_DISTANCE = 0.25f;
+	private static final float MAX_DELTA = 1f / 30f;
+
 	private static int KEY_FORWARD;
 	private static int KEY_BACKWARD;
 	private static int KEY_LEFT;
 	private static int KEY_RIGHT;
 	private static int BUTTON_ATTACK;
+
 	private final Vector3 mouseWorld = new Vector3();
 	private final Array<Wall> wallArray;
 	private final Array<Enemy> enemyArray;
@@ -52,24 +53,24 @@ public class Character extends Entity {
 	private final Weapon weapon;
 	private final Vector2 weaponOffsetLocal = new Vector2(2.5f, -1.3f);
 	private final Vector2 weaponOffsetWorld = new Vector2();
+
 	private float MaxHealth;
 	private float RemainingHealth;
+
 	private float knockbackVx = 0f;
 	private float knockbackVy = 0f;
+
 	private float damageInvulnerabilityTime = 1f;
 
+	private boolean isDead;
 
-	/**
-	 * Creates a new player character.
-	 *
-	 * @param wallArray        walls used for collision checks
-	 * @param enemyArray       enemies used for collision/damage checks and weapon targeting
-	 * @param characterTexture character texture (must already be loaded)
-	 * @param weaponTexture    weapon texture (must already be loaded)
-	 * @param width            sprite width in world units
-	 * @param height           sprite height in world units
-	 * @param MaxHealth        maximum health value to start with
-	 */
+	@FunctionalInterface
+	public interface DeathListener {
+		void onDied(Character character);
+	}
+
+	private DeathListener deathListener;
+
 	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, Texture characterTexture, Texture weaponTexture, float width, float height, float MaxHealth) {
 		super(characterTexture);
 		setMaxHealth(MaxHealth);
@@ -92,9 +93,10 @@ public class Character extends Entity {
 		attachWeapon();
 	}
 
-	/**
-	 * @return the equipped weapon instance (never {@code null})
-	 */
+	public void setDeathListener(DeathListener deathListener) {
+		this.deathListener = deathListener;
+	}
+
 	public Weapon getWeapon() {
 		return weapon;
 	}
@@ -110,6 +112,7 @@ public class Character extends Entity {
 	 * @param knockback knockback strength applied as velocity
 	 */
 	public void takeDamage(Enemy enemy, float damage, float knockback) {
+		if (isDead) return;
 		if (damageInvulnerabilityTime > 0f) return;
 
 		setRemainingHealth(getRemainingHealth() - damage);
@@ -129,7 +132,7 @@ public class Character extends Entity {
 		knockbackVy = dy * knockback;
 
 		if (getRemainingHealth() <= 0) {
-			System.exit(0);
+			die();
 		}
 	}
 
@@ -142,6 +145,8 @@ public class Character extends Entity {
 	 * @param camera camera used to unproject mouse screen coordinates into world coordinates
 	 */
 	public void update(float delta, OrthographicCamera camera) {
+		if (isDead) return;
+
 		movement(delta);
 		rotateToMouse(camera);
 
@@ -149,13 +154,13 @@ public class Character extends Entity {
 			weapon.startAttack(getRotation());
 		}
 
-		// Keep sword attached and animate attacks.
 		if (!weapon.isAttacking()) {
 			attachWeapon();
 		}
 
 		weapon.update(delta);
 		damageInvulnerabilityTime -= delta;
+
 		for (Enemy enemy : enemyArray) {
 			if (collider.overlaps(enemy.getBoundingRectangle())) {
 				takeDamage(enemy, 10, 150);
@@ -190,7 +195,6 @@ public class Character extends Entity {
 		float cy = getY() + getHeight() * 0.5f;
 
 		weaponOffsetWorld.set(weaponOffsetLocal).rotateDeg(getRotation());
-
 		weapon.setPosition(cx + weaponOffsetWorld.x, cy + weaponOffsetWorld.y);
 
 		if (!weapon.isAttacking()) {
@@ -211,6 +215,7 @@ public class Character extends Entity {
 			if (Math.abs(knockbackVx) < KNOCKBACK_VELOCITY_EPS) knockbackVx = 0f;
 			if (Math.abs(knockbackVy) < KNOCKBACK_VELOCITY_EPS) knockbackVy = 0f;
 		}
+
 		if (knockbackVx == 0f && knockbackVy == 0f) {
 			float moveX = 0f;
 			float moveY = 0f;
@@ -301,7 +306,6 @@ public class Character extends Entity {
 	 */
 	private boolean overlapsAnyWall() {
 		for (Wall wall : wallArray) {
-			// Wall collider is also an AABB rectangle.
 			if (collider.overlaps(wall.getBoundingRectangle())) return true;
 		}
 		return false;
@@ -330,20 +334,20 @@ public class Character extends Entity {
 		);
 
 		if (overlapX < overlapY) {
-			if (getCenterX() < enemy.getCenterX()) {
-				setX(getX() - overlapX);
-			} else {
-				setX(getX() + overlapX);
-			}
+			if (getCenterX() < enemy.getCenterX()) setX(getX() - overlapX);
+			else setX(getX() + overlapX);
 		} else {
-			if (getCenterY() < enemy.getCenterY()) {
-				setY(getY() - overlapY);
-			} else {
-				setY(getY() + overlapY);
-			}
+			if (getCenterY() < enemy.getCenterY()) setY(getY() - overlapY);
+			else setY(getY() + overlapY);
 		}
 
 		updateCollider();
+	}
+
+	private void die() {
+		if (isDead) return;
+		isDead = true;
+		if (deathListener != null) deathListener.onDied(this);
 	}
 
 	/**
@@ -386,5 +390,9 @@ public class Character extends Entity {
 	 */
 	public float getCenterY() {
 		return getY() + getHeight() * 0.5f;
+	}
+
+	public boolean getIsDead() {
+		return isDead;
 	}
 }
