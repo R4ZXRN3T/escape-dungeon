@@ -36,13 +36,8 @@ public class LevelScreen extends ScreenAdapter {
 	private final GameAssets assets;
 	private final World world;
 
-	/**
-	 * Creates a new level screen.
-	 *
-	 * @param game   game instance used for navigation
-	 * @param map    loaded map data
-	 * @param assets asset registry used to load textures for entities; disposed by this screen
-	 */
+	private boolean deathHandled = false;
+
 	public LevelScreen(DungeonGame game, Map map, GameAssets assets) {
 		this.game = game;
 		this.map = map;
@@ -69,15 +64,19 @@ public class LevelScreen extends ScreenAdapter {
 			enemy.setDeathListener(world::onEnemyDied);
 		}
 
+		characterSprite.setDeathListener(this::onPlayerDied);
+
 		camera.update();
 	}
 
-	/**
-	 * Updates viewport and camera after a window resize.
-	 *
-	 * @param width  new backbuffer width in pixels
-	 * @param height new backbuffer height in pixels
-	 */
+	private void onPlayerDied(Character character) {
+		if (deathHandled) return;
+		deathHandled = true;
+
+		world.onPlayerDied(character);
+		game.setScreen(new DeathScreen(game));
+	}
+
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
@@ -96,15 +95,18 @@ public class LevelScreen extends ScreenAdapter {
 		camera.update();
 		spriteBatch.setProjectionMatrix(camera.combined);
 
-		characterSprite.update(delta, camera);
+		if (!deathHandled) {
+			characterSprite.update(delta, camera);
 
-		world.update(delta);
-		for (Enemy enemy : map.getEnemies()) {
-			enemy.update(delta);
+			world.update(delta);
+			for (Enemy enemy : map.getEnemies()) {
+				enemy.update(delta);
+			}
+
+			moveCamera();
+			logic();
 		}
 
-		moveCamera();
-		logic();
 		draw();
 	}
 
@@ -138,18 +140,22 @@ public class LevelScreen extends ScreenAdapter {
 	private void draw() {
 		ScreenUtils.clear(Color.BLACK);
 		spriteBatch.begin();
+
 		float worldWidth = viewport.getWorldWidth();
 		float worldHeight = viewport.getWorldHeight();
 		spriteBatch.draw(map.getBackground(), 0, 0, worldWidth, worldHeight);
 
 		world.draw(spriteBatch);
 
-		characterSprite.getWeapon().draw(spriteBatch);
-		characterSprite.draw(spriteBatch);
+		if (!characterSprite.isDead()) {
+			characterSprite.getWeapon().draw(spriteBatch);
+			characterSprite.draw(spriteBatch);
+		}
 
 		for (Wall wall : map.getWalls()) {
 			wall.draw(spriteBatch);
 		}
+
 		spriteBatch.end();
 	}
 
@@ -163,7 +169,6 @@ public class LevelScreen extends ScreenAdapter {
 	public void dispose() {
 		spriteBatch.dispose();
 
-		// Textures are owned by GameAssets (AssetManager). Don't dispose them via entities.
 		if (map.getBackground() != null) map.getBackground().dispose();
 		for (Wall w : map.getWalls()) {
 			if (w.getTexture() != null) w.getTexture().dispose();
