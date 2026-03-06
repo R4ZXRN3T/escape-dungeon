@@ -72,7 +72,7 @@ public class Chest extends Entity {
 
 		float distance = (float) Math.sqrt(dx * dx + dy * dy);
 
-		return distance < 10f;
+		return distance < 5f;
 
 
 
