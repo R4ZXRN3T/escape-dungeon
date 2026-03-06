@@ -33,7 +33,7 @@ public class Sword extends Weapon {
 	public Sword(Array<Enemy> enemies, Texture texture, float attackDamage, float attackSpeed, float range) {
 		super(texture, attackDamage, attackSpeed, range);
 		setSize(4f, 4f);
-		setOrigin(0, 0);
+		setOrigin(0.5f, getHeight() / 2f);
 		this.enemies = enemies;
 	}
 
@@ -49,7 +49,7 @@ public class Sword extends Weapon {
 		elapsedTime += delta;
 
 		float t = MathUtils.clamp(elapsedTime / getAttackSpeed(), 0f, 1f);
-		float angle = MathUtils.lerp(startAngle, endAngle, t);
+		float angle = MathUtils.lerp(startAngle, endAngle, MathUtils.sin(t * MathUtils.PI));
 		setRotation(angle);
 
 		if (t >= 1f) {
@@ -75,8 +75,8 @@ public class Sword extends Weapon {
 		beginAttackInstance();
 
 		float halfArc = ARC_DEG * 0.5f;
-		this.startAngle = facingAngle + halfArc + 45f;
-		this.endAngle = facingAngle - halfArc + 45f;
+		this.startAngle = facingAngle + halfArc + 45;
+		this.endAngle = facingAngle - halfArc + 45;
 
 		setAttacking(true);
 		this.elapsedTime = 0f;

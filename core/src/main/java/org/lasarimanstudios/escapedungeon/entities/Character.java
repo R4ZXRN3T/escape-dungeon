@@ -50,7 +50,7 @@ public class Character extends Entity {
 	// Stable collider that ignores sprite rotation.
 	private final Rectangle collider = new Rectangle();
 	private final Weapon weapon;
-	private final Vector2 weaponOffsetLocal = new Vector2(2.5f, -1.3f);
+	private final Vector2 weaponOffsetLocal = new Vector2(0f, 0f);
 	private final Vector2 weaponOffsetWorld = new Vector2();
 	private float MaxHealth;
 	private float RemainingHealth;
@@ -148,11 +148,7 @@ public class Character extends Entity {
 		if (Gdx.input.isButtonJustPressed(BUTTON_ATTACK)) {
 			weapon.startAttack(getRotation());
 		}
-
-		// Keep sword attached and animate attacks.
-		if (!weapon.isAttacking()) {
-			attachWeapon();
-		}
+		attachWeapon();
 
 		weapon.update(delta);
 		damageInvulnerabilityTime -= delta;
@@ -175,23 +171,27 @@ public class Character extends Entity {
 	private void rotateToMouse(OrthographicCamera camera) {
 		camera.unproject(mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 
-		float cx = getX() + getWidth() * 0.5f;
-		float cy = getY() + getHeight() * 0.5f;
+		float characterX = getX() + getWidth() * 0.5f;
+		float characterY = getY() + getHeight() * 0.5f;
 
-		float dx = mouseWorld.x - cx;
-		float dy = mouseWorld.y - cy;
+		float dx = mouseWorld.x - characterX;
+		float dy = mouseWorld.y - characterY;
 
 		float angleDeg = (float) Math.toDegrees(Math.atan2(dy, dx)) + FRONT_ANGLE_OFFSET_DEG;
 		setRotation(angleDeg);
 	}
 
 	private void attachWeapon() {
-		float cx = getX() + getWidth() * 0.5f;
-		float cy = getY() + getHeight() * 0.5f;
+		float characterX = getX() + getWidth() * 0.5f;
+		float characterY = getY() + getHeight() * 0.5f;
 
 		weaponOffsetWorld.set(weaponOffsetLocal).rotateDeg(getRotation());
 
-		weapon.setPosition(cx + weaponOffsetWorld.x, cy + weaponOffsetWorld.y);
+		weapon.setOrigin(-0.5f * weapon.getWidth(), -0.5f * weapon.getHeight());
+		weapon.setOriginBasedPosition(
+			characterX + weaponOffsetWorld.x,
+			characterY + weaponOffsetWorld.y
+		);
 
 		if (!weapon.isAttacking()) {
 			weapon.setRotation(getRotation() + 45f);
