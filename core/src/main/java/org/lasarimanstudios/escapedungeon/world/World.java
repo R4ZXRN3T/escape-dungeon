@@ -60,7 +60,7 @@ public class World {
 
 		for (int i = chests.size - 1; i >= 0; i--) {
 			Chest c = chests.get(i);
-			c.update(delta);
+			c.update(delta, playerCharacter);
 			if (c.isExpired()) chests.removeIndex(i);
 		}
 
@@ -85,7 +85,7 @@ public class World {
 		map.getEnemies().removeValue(enemy, true);
 
 		if (MathUtils.random(2) == 0) {
-			chests.add(new Chest(assets.getTexture(GameAssets.TEX_CHEST), x, y, 20f));
+			chests.add(new Chest(assets.getTexture(GameAssets.TEX_CHEST_CLOSED),(assets.getTexture(GameAssets.TEX_CHEST_OPEN)), x, y, 20f));
 		}
 	}
 
