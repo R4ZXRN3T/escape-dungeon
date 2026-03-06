@@ -54,7 +54,7 @@ public class Sword extends Weapon {
 		float forwardPortion = 3f / 5f;
 		float angle;
 
-		if (t < 2f/3f) {
+		if (t < forwardPortion) {
 			float swingT = t / forwardPortion;
 			angle = MathUtils.lerp(startAngle, endAngle,
 				MathUtils.sin(swingT * MathUtils.PI / 2f));
