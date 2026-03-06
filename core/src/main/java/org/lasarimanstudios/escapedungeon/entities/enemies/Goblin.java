@@ -116,7 +116,7 @@ public class Goblin extends Enemy {
 
 		float length = (float) Math.sqrt(diffX * diffX + diffY * diffY);
 
-		if (length > 0) {
+		if (length > 0 && length < 35) {
 			float dirX = diffX / length;
 			float dirY = diffY / length;
 
