@@ -58,6 +58,13 @@ public class Character extends Entity {
 	private float knockbackVy = 0f;
 	private float damageInvulnerabilityTime = 1f;
 
+	private boolean isDead;
+	private DeathListener deathListener;
+
+	@FunctionalInterface
+	public interface DeathListener {
+		void onDied(Character character);
+	}
 
 	/**
 	 * Creates a new player character.
@@ -91,6 +98,11 @@ public class Character extends Entity {
 		this.weapon = new Sword(enemyArray, weaponTexture, 10f, 0.2f, 1.5f);
 		attachWeapon();
 	}
+
+	public void setDeathListener(DeathListener deathListener) {
+		this.deathListener = deathListener;
+	}
+
 
 	/**
 	 * @return the equipped weapon instance (never {@code null})
@@ -129,7 +141,7 @@ public class Character extends Entity {
 		knockbackVy = dy * knockback;
 
 		if (getRemainingHealth() <= 0) {
-			System.exit(0);
+			die();
 		}
 	}
 
@@ -346,6 +358,12 @@ public class Character extends Entity {
 		updateCollider();
 	}
 
+	private void die() {
+		if (isDead) return;
+		isDead = true;
+		if (deathListener != null) deathListener.onDied(this);
+	}
+
 	/**
 	 * @return maximum health
 	 */
@@ -386,5 +404,13 @@ public class Character extends Entity {
 	 */
 	public float getCenterY() {
 		return getY() + getHeight() * 0.5f;
+	}
+
+	public boolean isDead() {
+		return isDead;
+	}
+
+	public void setDead(boolean dead) {
+		isDead = dead;
 	}
 }

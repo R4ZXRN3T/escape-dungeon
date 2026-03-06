@@ -147,7 +147,7 @@ public class LevelScreen extends ScreenAdapter {
 
 		world.draw(spriteBatch);
 
-		if (!characterSprite.getIsDead()) {
+		if (!characterSprite.isDead()) {
 			characterSprite.getWeapon().draw(spriteBatch);
 			characterSprite.draw(spriteBatch);
 		}
