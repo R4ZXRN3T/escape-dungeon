@@ -12,7 +12,8 @@ import com.badlogic.gdx.graphics.Texture;
  */
 public class GameAssets {
 	public static final String TEX_BLOOD_PUDDLE = "textures/enemy/blood-puddle/blood-puddle.png";
-	public static final String TEX_CHEST = "textures/objects/chest/chest_closed.png";
+	public static final String TEX_CHEST_CLOSED = "textures/objects/chest/chest_closed.png";
+	public static final String TEX_CHEST_OPEN = "textures/objects/chest/chest_open.png";
 
 	private final AssetManager assetManager = new AssetManager();
 
@@ -21,7 +22,8 @@ public class GameAssets {
 	 */
 	public void load() {
 		assetManager.load(TEX_BLOOD_PUDDLE, Texture.class);
-		assetManager.load(TEX_CHEST, Texture.class);
+		assetManager.load(TEX_CHEST_CLOSED, Texture.class);
+		assetManager.load(TEX_CHEST_OPEN, Texture.class);
 		assetManager.finishLoading();
 	}
 
