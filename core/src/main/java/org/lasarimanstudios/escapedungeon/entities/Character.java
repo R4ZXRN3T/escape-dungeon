@@ -88,7 +88,7 @@ public class Character extends Entity {
 
 
 		// Create the sword once; LevelScreen will draw it.
-		this.weapon = new Sword(enemyArray, weaponTexture, 10f, 0.2f, 1.5f);
+		this.weapon = new Sword(enemyArray, weaponTexture, 10f, 0.5f, 1.5f);
 		attachWeapon();
 	}
 

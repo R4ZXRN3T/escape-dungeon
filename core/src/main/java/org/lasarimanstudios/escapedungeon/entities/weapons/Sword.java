@@ -48,8 +48,22 @@ public class Sword extends Weapon {
 
 		elapsedTime += delta;
 
-		float t = MathUtils.clamp(elapsedTime / getAttackSpeed(), 0f, 1f);
-		float angle = MathUtils.lerp(startAngle, endAngle, MathUtils.sin(t * MathUtils.PI));
+		float totalDuration = getAttackSpeed();
+		float t = MathUtils.clamp(elapsedTime / totalDuration, 0f, 1f);
+
+		float forwardPortion = 3f / 5f;
+		float angle;
+
+		if (t < 2f/3f) {
+			float swingT = t / forwardPortion;
+			angle = MathUtils.lerp(startAngle, endAngle,
+				MathUtils.sin(swingT * MathUtils.PI / 2f));
+		} else {
+			float swingT = (t - forwardPortion) / (1f - forwardPortion);
+			angle = MathUtils.lerp(endAngle, startAngle,
+				MathUtils.sin(swingT * MathUtils.PI / 2f));
+		}
+
 		setRotation(angle);
 
 		if (t >= 1f) {
