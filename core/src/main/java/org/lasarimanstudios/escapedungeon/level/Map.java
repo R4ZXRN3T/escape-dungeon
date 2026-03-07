@@ -1,7 +1,5 @@
 package org.lasarimanstudios.escapedungeon.level;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
@@ -12,19 +10,15 @@ import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
  *
  * <p>A {@code Map} bundles:</p>
  * <ul>
- *   <li>Background texture</li>
+ *   <li>Background texture (by asset path)</li>
  *   <li>Static walls</li>
  *   <li>Initial enemies</li>
  *   <li>World dimensions</li>
  *   <li>Player starting position</li>
  * </ul>
- *
- * <h2>Resource ownership</h2>
- * The background texture is loaded in the constructor and must be disposed by the code that owns the
- * map (typically the gameplay screen).
  */
 public class Map {
-	private Texture background;
+	private String backgroundPath;
 	private Array<Wall> walls;
 	private Array<Enemy> enemies;
 	private float width;
@@ -33,18 +27,12 @@ public class Map {
 	private float startPosY;
 
 	/**
-	 * Creates a map and loads the background texture from {@code textures/maps/}.
+	 * Creates a map.
 	 *
-	 * @param backgroundTexture background texture file name (relative to {@code textures/maps/})
-	 * @param walls             wall sprites/colliders in the level
-	 * @param enemies           enemies present at level start
-	 * @param width             map/world width in world units
-	 * @param height            map/world height in world units
-	 * @param startPosX         player start X in world units
-	 * @param startPosY         player start Y in world units
+	 * @param backgroundPath background texture internal path (e.g. {@code textures/maps/test.png})
 	 */
-	public Map(String backgroundTexture, Array<Wall> walls, Array<Enemy> enemies, float width, float height, float startPosX, float startPosY) {
-		this.background = new Texture(Gdx.files.internal("textures/maps/" + backgroundTexture));
+	public Map(String backgroundPath, Array<Wall> walls, Array<Enemy> enemies, float width, float height, float startPosX, float startPosY) {
+		this.backgroundPath = backgroundPath;
 		this.walls = walls;
 		this.enemies = enemies;
 		this.width = width;
@@ -56,15 +44,15 @@ public class Map {
 	/**
 	 * @return background texture
 	 */
-	public Texture getBackground() {
-		return background;
+	public String getBackgroundPath() {
+		return backgroundPath;
 	}
 
 	/**
-	 * @param background background texture
+	 * @param backgroundPath background texture
 	 */
-	public void setBackground(Texture background) {
-		this.background = background;
+	public void setBackgroundPath(String backgroundPath) {
+		this.backgroundPath = backgroundPath;
 	}
 
 	/**
@@ -150,5 +138,4 @@ public class Map {
 	public void setEnemies(Array<Enemy> enemies) {
 		this.enemies = enemies;
 	}
-
 }

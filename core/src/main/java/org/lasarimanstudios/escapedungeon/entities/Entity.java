@@ -2,6 +2,7 @@ package org.lasarimanstudios.escapedungeon.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
  * Base renderable entity type in the game.
@@ -21,5 +22,16 @@ public abstract class Entity extends Sprite {
 	 */
 	public Entity(Texture texture) {
 		super(texture);
+	}
+
+	/**
+	 * Creates an entity sprite using the given texture region.
+	 *
+	 * <p>The texture region must already be loaded and is not owned/disposed by this entity.</p>
+	 *
+	 * @param region texture region to render for this entity
+	 */
+	public Entity(TextureRegion region) {
+		super(region);
 	}
 }

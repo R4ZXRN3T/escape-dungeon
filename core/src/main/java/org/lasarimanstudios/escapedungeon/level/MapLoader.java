@@ -12,15 +12,6 @@ import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
  * Loads {@link Map} instances from JSON level files under {@code assets/levels/}.
- *
- * <p>The loader expects a JSON object with at least these keys:</p>
- * <ul>
- *   <li>{@code background} (string)</li>
- *   <li>{@code width}, {@code height} (numbers)</li>
- *   <li>{@code startPosX}, {@code startPosY} (numbers)</li>
- *   <li>{@code walls} (array of objects: texture/width/height/posX/posY)</li>
- *   <li>{@code enemies} (array of objects: enemyType/texture/width/height/posX/posY/level)</li>
- * </ul>
  */
 public class MapLoader {
 
@@ -34,20 +25,20 @@ public class MapLoader {
 	 */
 	public static Map loadMap(String mapName, GameAssets assets) {
 		try {
-
 			String jsonText = Gdx.files.internal("levels/" + mapName + ".json").readString();
 			JSONObject mapJson = new JSONObject(jsonText);
 
-			String background = mapJson.getString("background");
+			String backgroundFile = mapJson.getString("background");
+			String backgroundPath = "textures/maps/" + backgroundFile;
 			float width = mapJson.getFloat("width");
 			float height = mapJson.getFloat("height");
 			float startPosX = mapJson.getFloat("startPosX");
 			float startPosY = mapJson.getFloat("startPosY");
 
-			Array<Wall> wallArray = getWalls(mapJson);
+			Array<Wall> wallArray = getWalls(mapJson, assets);
 			Array<Enemy> enemyArray = getEnemies(mapJson, assets);
 
-			return new Map(background, wallArray, enemyArray, width, height, startPosX, startPosY);
+			return new Map(backgroundPath, wallArray, enemyArray, width, height, startPosX, startPosY);
 		} catch (Exception e) {
 			throw new RuntimeException("Error reading json: " + e);
 		}
@@ -59,7 +50,7 @@ public class MapLoader {
 	 * @param mapJson root map JSON object
 	 * @return walls array
 	 */
-	private static Array<Wall> getWalls(JSONObject mapJson) {
+	private static Array<Wall> getWalls(JSONObject mapJson, GameAssets assets) {
 		Array<Wall> wallArray = new Array<>();
 
 		for (Object wallValueObject : mapJson.getJSONArray("walls")) {
@@ -69,7 +60,9 @@ public class MapLoader {
 			float wallHeight = wallJson.getFloat("height");
 			float wallPosX = wallJson.getFloat("posX");
 			float wallPosy = wallJson.getFloat("posY");
-			wallArray.add(new Wall(wallTexture, wallWidth, wallHeight, wallPosX, wallPosy));
+
+			Texture tex = assets.createTexture("textures/objects/" + wallTexture);
+			wallArray.add(new Wall(tex, wallWidth, wallHeight, wallPosX, wallPosy));
 		}
 
 		return wallArray;
@@ -88,21 +81,16 @@ public class MapLoader {
 		for (Object enemyValueObject : mapJson.getJSONArray("enemies")) {
 			JSONObject enemyJson = (JSONObject) enemyValueObject;
 			String enemyType = enemyJson.getString("enemyType");
-			String enemyTexturePath = enemyJson.getString("texture");
-			float enemyWidth = enemyJson.getFloat("width");
-			float enemyHeight = enemyJson.getFloat("height");
 			float enemyPosX = enemyJson.getFloat("posX");
 			float enemyPosy = enemyJson.getFloat("posY");
 			int level = enemyJson.getInt("level");
 
-			Texture enemyTexture = assets.createTexture("textures/enemy/goblin-01/" + enemyTexturePath);
-			Enemy enemy = getNewEnemy(enemyType, enemyTexture, enemyWidth, enemyHeight, enemyPosX, enemyPosy, level);
+			Enemy enemy = getNewEnemy(assets, enemyType, enemyPosX, enemyPosy, level);
 
 			enemyArray.add(enemy);
 		}
 
 		return enemyArray;
-
 	}
 
 	/**
@@ -110,9 +98,9 @@ public class MapLoader {
 	 *
 	 * @throws RuntimeException if {@code enemyType} is unknown
 	 */
-	private static Enemy getNewEnemy(String enemyType, Texture enemyTexture, float enemyWidth, float enemyHeight, float enemyPosX, float enemyPosy, int level) {
+	private static Enemy getNewEnemy(GameAssets assets, String enemyType, float enemyPosX, float enemyPosy, int level) {
 		return switch (enemyType) {
-			case "goblin" -> new Goblin(enemyTexture, enemyWidth, enemyHeight, enemyPosX, enemyPosy, level);
+			case "goblin" -> new Goblin(assets, enemyPosX, enemyPosy, level);
 			default -> throw new RuntimeException("Unknown enemy type: " + enemyType);
 		};
 	}

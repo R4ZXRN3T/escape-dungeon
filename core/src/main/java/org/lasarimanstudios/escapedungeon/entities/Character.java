@@ -4,12 +4,15 @@ package org.lasarimanstudios.escapedungeon.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.ConfigManager;
+import org.lasarimanstudios.escapedungeon.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.weapons.Sword;
 import org.lasarimanstudios.escapedungeon.entities.weapons.Weapon;
@@ -52,19 +55,17 @@ public class Character extends Entity {
 	private final Weapon weapon;
 	private final Vector2 weaponOffsetLocal = new Vector2(0f, 0f);
 	private final Vector2 weaponOffsetWorld = new Vector2();
+	private final GameAssets assets;
 	private float MaxHealth;
 	private float RemainingHealth;
 	private float knockbackVx = 0f;
 	private float knockbackVy = 0f;
 	private float damageInvulnerabilityTime = 1f;
-
 	private boolean isDead;
 	private DeathListener deathListener;
-
-	@FunctionalInterface
-	public interface DeathListener {
-		void onDied(Character character);
-	}
+	private Direction facing = Direction.FRONT;
+	private float stateTimeSeconds = 0f;
+	private boolean walking = false;
 
 	/**
 	 * Creates a new player character.
@@ -79,6 +80,7 @@ public class Character extends Entity {
 	 */
 	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, Texture characterTexture, Texture weaponTexture, float width, float height, float MaxHealth) {
 		super(characterTexture);
+		this.assets = null;
 		setMaxHealth(MaxHealth);
 		setRemainingHealth(getMaxHealth());
 		setSize(width, height);
@@ -99,10 +101,33 @@ public class Character extends Entity {
 		attachWeapon();
 	}
 
+	/**
+	 * New constructor: character visuals are provided via {@link GameAssets} so we can swap frames.
+	 */
+	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, Texture weaponTexture, float width, float height, float MaxHealth) {
+		super(assets.getPlayerIdle(Direction.FRONT));
+		this.assets = assets;
+		setMaxHealth(MaxHealth);
+		setRemainingHealth(getMaxHealth());
+		setSize(width, height);
+		this.wallArray = wallArray;
+		this.enemyArray = enemyArray;
+		setOriginCenter();
+		updateCollider();
+
+		KEY_FORWARD = ConfigManager.getInt(ConfigManager.ConfigKey.FORWARD_KEY, 0, 255);
+		KEY_BACKWARD = ConfigManager.getInt(ConfigManager.ConfigKey.BACKWARD_KEY, 0, 255);
+		KEY_LEFT = ConfigManager.getInt(ConfigManager.ConfigKey.LEFT_KEY, 0, 255);
+		KEY_RIGHT = ConfigManager.getInt(ConfigManager.ConfigKey.RIGHT_KEY, 0, 255);
+		BUTTON_ATTACK = ConfigManager.getInt(ConfigManager.ConfigKey.ATTACK_KEY, 0, 255);
+
+		this.weapon = new Sword(enemyArray, weaponTexture, 10f, 0.5f, 1.5f);
+		attachWeapon();
+	}
+
 	public void setDeathListener(DeathListener deathListener) {
 		this.deathListener = deathListener;
 	}
-
 
 	/**
 	 * @return the equipped weapon instance (never {@code null})
@@ -154,8 +179,10 @@ public class Character extends Entity {
 	 * @param camera camera used to unproject mouse screen coordinates into world coordinates
 	 */
 	public void update(float delta, OrthographicCamera camera) {
+		stateTimeSeconds += delta;
 		movement(delta);
 		rotateToMouse(camera);
+		updateVisual();
 
 		if (Gdx.input.isButtonJustPressed(BUTTON_ATTACK)) {
 			weapon.startAttack(getRotation());
@@ -172,14 +199,12 @@ public class Character extends Entity {
 		}
 	}
 
+	private void updateVisual() {
+		if (assets == null) return;
+		TextureRegion idle = assets.getPlayerIdle(facing);
+		setRegion(idle);
+	}
 
-	/**
-	 * Rotates the sprite so its "front" points toward the current mouse position.
-	 *
-	 * <p>The mouse screen coordinates are unprojected via the provided {@link OrthographicCamera}.</p>
-	 *
-	 * @param camera camera used to unproject mouse screen coordinates into world coordinates
-	 */
 	private void rotateToMouse(OrthographicCamera camera) {
 		camera.unproject(mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 
@@ -247,6 +272,15 @@ public class Character extends Entity {
 
 			for (int i = 0; i < steps; i++) {
 				moveWithCollisions(stepDx, stepDy, true);
+			}
+
+			walking = (moveX != 0f || moveY != 0f);
+			if (walking) {
+				if (Math.abs(moveX) > Math.abs(moveY)) {
+					facing = moveX > 0 ? Direction.RIGHT : Direction.LEFT;
+				} else {
+					facing = moveY > 0 ? Direction.BACK : Direction.FRONT;
+				}
 			}
 		}
 	}
@@ -412,5 +446,10 @@ public class Character extends Entity {
 
 	public void setDead(boolean dead) {
 		isDead = dead;
+	}
+
+	@FunctionalInterface
+	public interface DeathListener {
+		void onDied(Character character);
 	}
 }

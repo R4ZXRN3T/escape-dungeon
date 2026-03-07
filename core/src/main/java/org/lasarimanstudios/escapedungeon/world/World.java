@@ -66,7 +66,7 @@ public class World {
 
 		// Spawn test enemy.
 		if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-			Goblin goblin = new Goblin(assets.getTexture("textures/enemy/goblin-01/goblin-01-vorne-stehend.png"), 3, 5, 30, 30, 1);
+			Goblin goblin = new Goblin(assets, 30, 30, 1);
 			registerEnemy(goblin);
 		}
 	}
@@ -85,7 +85,7 @@ public class World {
 		map.getEnemies().removeValue(enemy, true);
 
 		if (MathUtils.random(2) == 0) {
-			chests.add(new Chest(assets.getTexture(GameAssets.TEX_CHEST_CLOSED),(assets.getTexture(GameAssets.TEX_CHEST_OPEN)), x, y, 20f));
+			chests.add(new Chest(assets.getTexture(GameAssets.TEX_CHEST_CLOSED), (assets.getTexture(GameAssets.TEX_CHEST_OPEN)), x, y, 20f));
 		}
 	}
 

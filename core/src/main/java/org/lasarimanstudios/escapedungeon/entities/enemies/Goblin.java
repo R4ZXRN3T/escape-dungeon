@@ -1,6 +1,10 @@
 package org.lasarimanstudios.escapedungeon.entities.enemies;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+import org.lasarimanstudios.escapedungeon.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.Direction;
+import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 
 /**
  * Basic enemy that follows the player character.
@@ -16,23 +20,22 @@ public class Goblin extends Enemy {
 
 	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
+	private final GameAssets assets;
+	private final DirectionalAnimationSet walkAnimations;
 	private float damageInvulnerabilityTime = 0.3f;
-
 	private float knockbackVx = 0f;
 	private float knockbackVy = 0f;
+	private Direction facing = Direction.FRONT;
+	private float stateTimeSeconds = 0f;
+	private boolean walking = false;
 
 	/**
-	 * Creates a goblin at the given position.
-	 *
-	 * @param texture sprite texture (must already be loaded)
-	 * @param width   sprite width in world units
-	 * @param height  sprite height in world units
-	 * @param posX    initial x position in world units
-	 * @param posY    initial y position in world units
-	 * @param level   difficulty level used for stat scaling
+	 * New constructor: uses {@link GameAssets} to support animation frame switching.
 	 */
-	public Goblin(Texture texture, float width, float height, float posX, float posY, int level) {
-		super(texture, width, height, posX, posY);
+	public Goblin(GameAssets assets, float posX, float posY, int level) {
+		super(assets.getTexture(GameAssets.TEX_GOBLIN_FRONT_IDLE), 3.23f, 5f, posX, posY);
+		this.assets = assets;
+		this.walkAnimations = assets.createGoblinWalkAnimations(0.18f);
 		setLevel(level);
 		setMaxHealth((float) (BASE_HEALTH * Math.pow(1.2, level)));
 		setRemainingHealth(getMaxHealth());
@@ -77,6 +80,7 @@ public class Goblin extends Enemy {
 	 */
 	@Override
 	public void update(float delta) {
+		stateTimeSeconds += delta;
 		damageInvulnerabilityTime -= delta;
 		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
 			setX(getX() + knockbackVx * delta);
@@ -88,9 +92,23 @@ public class Goblin extends Enemy {
 
 			if (Math.abs(knockbackVx) < KNOCKBACK_VELOCITY_EPS) knockbackVx = 0f;
 			if (Math.abs(knockbackVy) < KNOCKBACK_VELOCITY_EPS) knockbackVy = 0f;
+			walking = false;
 		} else {
 			following(delta);
 		}
+
+		updateVisual();
+	}
+
+	private void updateVisual() {
+		if (assets == null) return;
+		TextureRegion region;
+		if (walking) {
+			region = walkAnimations.getKeyFrame(facing, stateTimeSeconds, true);
+		} else {
+			region = assets.getGoblinIdle(facing);
+		}
+		setRegion(region);
 	}
 
 	/**
@@ -110,18 +128,32 @@ public class Goblin extends Enemy {
 	 * @param delta time since last frame in seconds
 	 */
 	public void following(float delta) {
+		float oldX = getX();
+		float oldY = getY();
 
 		float diffX = getCharacter().getX() - getX();
 		float diffY = getCharacter().getY() - getY();
 
 		float length = (float) Math.sqrt(diffX * diffX + diffY * diffY);
 
+		walking = false;
 		if (length > 0 && length < 35) {
 			float dirX = diffX / length;
 			float dirY = diffY / length;
 
 			setX(getX() + dirX * getSpeed() * delta);
 			setY(getY() + dirY * getSpeed() * delta);
+			walking = true;
+			updateFacing(getX() - oldX, getY() - oldY);
+		}
+	}
+
+	private void updateFacing(float dx, float dy) {
+		if (dx == 0f && dy == 0f) return;
+		if (Math.abs(dx) > Math.abs(dy)) {
+			facing = dx > 0 ? Direction.RIGHT : Direction.LEFT;
+		} else {
+			facing = dy > 0 ? Direction.BACK : Direction.FRONT;
 		}
 	}
 
