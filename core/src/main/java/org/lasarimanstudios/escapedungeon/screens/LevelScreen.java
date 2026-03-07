@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import org.lasarimanstudios.escapedungeon.DungeonGame;
 import org.lasarimanstudios.escapedungeon.GameAssets;
@@ -26,16 +28,23 @@ import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
  * the background and sprites using a {@link SpriteBatch}.</p>
  */
 public class LevelScreen extends ScreenAdapter {
+	/**
+	 * Base world size used for gameplay rendering.
+	 *
+	 * <p>With an {@link ExtendViewport}, this is the minimum visible world size; on wider/taller windows
+	 * the viewport will extend to fill the screen without stretching (it shows more world instead of
+	 * adding black bars).</p>
+	 */
+	private static final float MIN_WORLD_WIDTH = 80f;
+	private static final float MIN_WORLD_HEIGHT = 50f;
 	private final DungeonGame game;
 	private final Map map;
 	private final SpriteBatch spriteBatch;
-	private final FitViewport viewport;
+	private final Viewport viewport;
 	private final OrthographicCamera camera;
 	private final Character characterSprite;
-
 	private final GameAssets assets;
 	private final World world;
-
 	private boolean deathHandled = false;
 
 	public LevelScreen(DungeonGame game, Map map, GameAssets assets) {
@@ -46,13 +55,13 @@ public class LevelScreen extends ScreenAdapter {
 		world = new World(map, assets);
 
 		spriteBatch = new SpriteBatch();
-		viewport = new FitViewport(map.getWidth(), map.getHeight());
-		camera = new OrthographicCamera(80, 50);
+
+		camera = new OrthographicCamera();
+		viewport = new ExtendViewport(MIN_WORLD_WIDTH, MIN_WORLD_HEIGHT, camera);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		Texture characterTex = assets.createTexture("textures/characters/character.png");
-		Texture weaponTex = assets.createTexture("textures/weapons/sword1.png");
-		characterSprite = new Character(map.getWalls(), map.getEnemies(), characterTex, weaponTex, 5, 5, 100);
+		Texture weaponTex = assets.getTexture(GameAssets.TEX_WEAPON_SWORD_1);
+		characterSprite = new Character(map.getWalls(), map.getEnemies(), assets, weaponTex, 5, 5, 100);
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		// Allow the World to wire dynamically spawned enemies to the player.
@@ -103,35 +112,36 @@ public class LevelScreen extends ScreenAdapter {
 				enemy.update(delta);
 			}
 
-			moveCamera();
 			logic();
+			moveCamera();
 		}
 
 		draw();
 	}
 
 	/**
-	 * Positions the camera to follow the character.
-	 *
-	 * <p>Note: this does not clamp the camera to world bounds.</p>
+	 * Positions the camera to follow the character and clamps it to the map bounds.
 	 */
 	private void moveCamera() {
-		camera.position.set(characterSprite.getX(), characterSprite.getY(), 0);
+		Vector2 target = new Vector2(characterSprite.getX(), characterSprite.getY());
+
+		camera.position.set(target.x, target.y, 0);
 	}
 
 	/**
 	 * Applies gameplay/world constraints.
 	 *
-	 * <p>Currently clamps the character position to the world rectangle defined by the viewport's world size.</p>
+	 * <p>Clamps the character position to the map bounds (not the viewport bounds).
+	 * With {@link ExtendViewport}, the visible world size can change with window aspect ratio.</p>
 	 */
 	private void logic() {
-		float worldWidth = viewport.getWorldWidth();
-		float worldHeight = viewport.getWorldHeight();
+		float mapWidth = map.getWidth();
+		float mapHeight = map.getHeight();
 		float characterWidth = characterSprite.getWidth();
 		float characterHeight = characterSprite.getHeight();
 
-		characterSprite.setX(MathUtils.clamp(characterSprite.getX(), 0, worldWidth - characterWidth));
-		characterSprite.setY(MathUtils.clamp(characterSprite.getY(), 0, worldHeight - characterHeight));
+		characterSprite.setX(MathUtils.clamp(characterSprite.getX(), 0, mapWidth - characterWidth));
+		characterSprite.setY(MathUtils.clamp(characterSprite.getY(), 0, mapHeight - characterHeight));
 	}
 
 	/**
@@ -141,9 +151,9 @@ public class LevelScreen extends ScreenAdapter {
 		ScreenUtils.clear(Color.BLACK);
 		spriteBatch.begin();
 
-		float worldWidth = viewport.getWorldWidth();
-		float worldHeight = viewport.getWorldHeight();
-		spriteBatch.draw(map.getBackground(), 0, 0, worldWidth, worldHeight);
+		Texture background = assets.getTexture(map.getBackgroundPath());
+		// Draw in map/world coordinates so the background isn't stretched by viewport size.
+		spriteBatch.draw(background, 0, 0, map.getWidth(), map.getHeight());
 
 		world.draw(spriteBatch);
 
@@ -168,11 +178,6 @@ public class LevelScreen extends ScreenAdapter {
 	@Override
 	public void dispose() {
 		spriteBatch.dispose();
-
-		if (map.getBackground() != null) map.getBackground().dispose();
-		for (Wall w : map.getWalls()) {
-			if (w.getTexture() != null) w.getTexture().dispose();
-		}
 
 		assets.dispose();
 	}
