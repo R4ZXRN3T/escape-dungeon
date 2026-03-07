@@ -36,6 +36,8 @@ public class SettingsScreen extends ScreenAdapter {
 	private static final int BUTTON_HEIGHT = 96;
 	private static final int FIELD_WIDTH = 360;
 	private static final int ROW_HEIGHT = 62;
+	// Make checkboxes bigger without needing bigger source textures.
+	private static final float CHECKBOX_SCALE = 1.6f;
 
 	private final DungeonGame game;
 
@@ -67,7 +69,13 @@ public class SettingsScreen extends ScreenAdapter {
 	private int backwardKeyCode;
 	private int leftKeyCode;
 	private int rightKeyCode;
-	private int attackMouseButton;
+
+	/**
+	 * ATTACK binding encoding:
+	 * - >= 0: keyboard keycode
+	 * - < 0 : mouse button encoded as -(button + 1)
+	 */
+	private int attackBindCode;
 
 	private KeyBindingTarget captureTarget;
 
@@ -125,6 +133,23 @@ public class SettingsScreen extends ScreenAdapter {
 		};
 	}
 
+	private static boolean isMouseEncoded(int code) {
+		return code < 0;
+	}
+
+	private static int encodeMouseButton(int button) {
+		return -(button + 1);
+	}
+
+	private static int decodeMouseButton(int code) {
+		return (-code) - 1;
+	}
+
+	private static String attackBindName(int code) {
+		if (isMouseEncoded(code)) return mouseButtonName(decodeMouseButton(code));
+		return Input.Keys.toString(code);
+	}
+
 	@Override
 	public void show() {
 		stage = new Stage(new ScreenViewport());
@@ -132,6 +157,12 @@ public class SettingsScreen extends ScreenAdapter {
 		// Match the MenuScreen visuals.
 		buttonBackground = new Texture(Gdx.files.internal("ui/buttons/button_background.png"));
 		buttonBackground.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
+		Texture checboxEmptyTexture = new Texture(Gdx.files.internal("ui/buttons/checkbox_empty.png"));
+		checboxEmptyTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
+		Texture checkboxCheckedTexture = new Texture(Gdx.files.internal("ui/buttons/checkbox_filled.png"));
+		checkboxCheckedTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
 		// Keep these in the same ballpark as MenuScreen so scaling feels consistent.
 		titleFont = createTitleFontFromTtf();
@@ -169,10 +200,23 @@ public class SettingsScreen extends ScreenAdapter {
 
 		CheckBox.CheckBoxStyle checkBoxStyle = new CheckBox.CheckBoxStyle();
 		checkBoxStyle.font = font;
-		// Use the same background as a simple box; not perfect, but consistent and avoids new assets.
-		checkBoxStyle.checkboxOff = new TextureRegionDrawable(new TextureRegion(buttonBackground));
-		checkBoxStyle.checkboxOn = new TextureRegionDrawable(new TextureRegion(buttonBackground));
-		checkBoxStyle.checked = checkBoxStyle.checkboxOn;
+		// Use the dedicated checkbox textures.
+		TextureRegionDrawable off = new TextureRegionDrawable(new TextureRegion(checboxEmptyTexture));
+		TextureRegionDrawable on = new TextureRegionDrawable(new TextureRegion(checkboxCheckedTexture));
+		// Prevent Scene2D from scaling these unexpectedly (they sit inside a 62px row).
+		// Also scale them up a bit so they're easier to read.
+		float offW = checboxEmptyTexture.getWidth() * CHECKBOX_SCALE;
+		float offH = checboxEmptyTexture.getHeight() * CHECKBOX_SCALE;
+		float onW = checkboxCheckedTexture.getWidth() * CHECKBOX_SCALE;
+		float onH = checkboxCheckedTexture.getHeight() * CHECKBOX_SCALE;
+		off.setMinWidth(offW);
+		off.setMinHeight(offH);
+		on.setMinWidth(onW);
+		on.setMinHeight(onH);
+		checkBoxStyle.checkboxOff = off;
+		checkBoxStyle.checkboxOn = on;
+		// IMPORTANT: don't set checkBoxStyle.checked here. 'checked' is an extra overlay drawable,
+		// so assigning it to the same drawable as checkboxOn draws the texture twice when selected.
 		skin.add("default", checkBoxStyle);
 
 		SelectBox.SelectBoxStyle selectBoxStyle = new SelectBox.SelectBoxStyle();
@@ -208,12 +252,11 @@ public class SettingsScreen extends ScreenAdapter {
 						return true;
 					}
 
-					// ATTACK is mouse-only.
-					if (captureTarget != KeyBindingTarget.ATTACK) {
-						setCapturedKey(keycode);
+					// Allow ATTACK to be a keyboard key, too.
+					if (captureTarget == KeyBindingTarget.ATTACK) {
+						setCapturedAttackKey(keycode);
 					} else {
-						captureTarget = null;
-						renderKeyBindingLabels();
+						setCapturedKey(keycode);
 					}
 					return true;
 				}
@@ -356,7 +399,8 @@ public class SettingsScreen extends ScreenAdapter {
 		Label l = new Label(label, skin);
 		l.setAlignment(Align.left);
 		table.add(l).width(340).height(ROW_HEIGHT).left();
-		table.add(widget).width(FIELD_WIDTH).height(ROW_HEIGHT).left();
+		// Right-align the widget inside the fixed-width cell.
+		table.add(widget).width(FIELD_WIDTH).height(ROW_HEIGHT).right();
 		table.row();
 	}
 
@@ -385,7 +429,7 @@ public class SettingsScreen extends ScreenAdapter {
 		if (rightKeyBtn != null)
 			rightKeyBtn.setText(formatKeyButtonText(Input.Keys.toString(rightKeyCode), KeyBindingTarget.RIGHT));
 		if (attackKeyBtn != null)
-			attackKeyBtn.setText(formatKeyButtonText(mouseButtonName(attackMouseButton), KeyBindingTarget.ATTACK));
+			attackKeyBtn.setText(formatKeyButtonText(attackBindName(attackBindCode), KeyBindingTarget.ATTACK));
 	}
 
 	private String formatKeyButtonText(String base, KeyBindingTarget target) {
@@ -404,7 +448,10 @@ public class SettingsScreen extends ScreenAdapter {
 		backwardKeyCode = parseIntSafe(ConfigManager.getConfig(ConfigKey.BACKWARD_KEY), Input.Keys.S);
 		leftKeyCode = parseIntSafe(ConfigManager.getConfig(ConfigKey.LEFT_KEY), Input.Keys.A);
 		rightKeyCode = parseIntSafe(ConfigManager.getConfig(ConfigKey.RIGHT_KEY), Input.Keys.D);
-		attackMouseButton = parseIntSafe(ConfigManager.getConfig(ConfigKey.ATTACK_KEY), Input.Buttons.LEFT);
+
+		// Back-compat: old config stored a mouse button (e.g. 0 for LEFT). New encoding uses negative for mouse.
+		int rawAttack = parseIntSafe(ConfigManager.getConfig(ConfigKey.ATTACK_KEY), Input.Buttons.LEFT);
+		attackBindCode = (rawAttack >= 0 && rawAttack <= 20) ? encodeMouseButton(rawAttack) : rawAttack;
 
 		renderKeyBindingLabels();
 	}
@@ -422,7 +469,13 @@ public class SettingsScreen extends ScreenAdapter {
 	}
 
 	private void setCapturedAttackButton(int button) {
-		attackMouseButton = button;
+		attackBindCode = encodeMouseButton(button);
+		captureTarget = null;
+		renderKeyBindingLabels();
+	}
+
+	private void setCapturedAttackKey(int keycode) {
+		attackBindCode = keycode;
 		captureTarget = null;
 		renderKeyBindingLabels();
 	}
@@ -439,7 +492,7 @@ public class SettingsScreen extends ScreenAdapter {
 		ConfigManager.setConfig(ConfigKey.BACKWARD_KEY, String.valueOf(backwardKeyCode));
 		ConfigManager.setConfig(ConfigKey.LEFT_KEY, String.valueOf(leftKeyCode));
 		ConfigManager.setConfig(ConfigKey.RIGHT_KEY, String.valueOf(rightKeyCode));
-		ConfigManager.setConfig(ConfigKey.ATTACK_KEY, String.valueOf(attackMouseButton));
+		ConfigManager.setConfig(ConfigKey.ATTACK_KEY, String.valueOf(attackBindCode));
 
 		ConfigManager.saveConfig();
 		game.applySettings();
