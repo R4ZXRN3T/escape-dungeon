@@ -84,7 +84,7 @@ public class MenuScreen extends ScreenAdapter {
 		root.defaults().pad(10f);
 		stage.addActor(root);
 
-		root.add(makeTextOnlyButton("PLAY", () -> game.openLevel("map_01"))).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
+		root.add(makeTextOnlyButton("PLAY", () -> game.openLevel("map_02"))).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 		root.add(makeTextOnlyButton("INVENTORY", game::openInventory)).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 		root.add(makeTextOnlyButton("SETTINGS", game::openSettings)).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 		root.add(makeTextOnlyButton("EXIT", () -> Gdx.app.exit())).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();

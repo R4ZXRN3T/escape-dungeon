@@ -1,0 +1,25 @@
+{
+	"background": "Map-01.png",
+	"width": 1000,
+	"height": 1000,
+	"startPosX": 0,
+	"startPosY": 0,
+	"walls": [
+		{
+			"texture": "Wall-A1.png",
+			"width": 10,
+			"height": 990,
+			"posX": 30,
+			"posY": 30
+		}
+	],
+	"enemies": [
+		{
+			"enemyType": "goblin",
+			"posX": 40,
+			"posY": 60,
+			"level": 1
+		}
+	]
+
+}
