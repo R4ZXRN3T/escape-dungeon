@@ -19,6 +19,12 @@
 			"posX": 40,
 			"posY": 60,
 			"level": 1
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 60,
+			"posY": 80,
+			"level": 1
 		}
 	]
 

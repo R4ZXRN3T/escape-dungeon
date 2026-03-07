@@ -1,6 +1,8 @@
 package org.lasarimanstudios.escapedungeon.entities.enemies;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 
 import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.Entity;
@@ -23,6 +25,8 @@ public abstract class Enemy extends Entity {
 	private float attackDamage;
 	private float speed;
 	private Character character;
+	private final Rectangle collisionBounds = new Rectangle();
+	private final float visualBaseHeight;
 
 	private EnemyDeathListener deathListener;
 
@@ -38,15 +42,98 @@ public abstract class Enemy extends Entity {
 	 * Creates an enemy sprite.
 	 *
 	 * @param texture sprite texture (must already be loaded)
-	 * @param width   sprite width in world units
-	 * @param height  sprite height in world units
+	 * @param width   logical collision width in world units
+	 * @param height  logical collision / base visual height in world units
 	 * @param posX    initial x position in world units
 	 * @param posY    initial y position in world units
 	 */
 	public Enemy(Texture texture, float width, float height, float posX, float posY) {
 		super(texture);
+		this.visualBaseHeight = height;
 		setBounds(posX, posY, width, height);
 		setOriginCenter();
+	}
+
+	/**
+	 * Applies a frame while preserving its aspect ratio.
+	 *
+	 * <p>The enemy keeps a stable collision rectangle and base visual height. Only the rendered width
+	 * changes to match the frame's aspect ratio, anchored bottom-center so the sprite does not appear
+	 * to wobble sideways when switching directions.</p>
+	 */
+	protected void applyVisualRegion(TextureRegion region) {
+		if (region == null) return;
+
+		setRegion(region);
+
+		float regionWidth = Math.max(1, region.getRegionWidth());
+		float regionHeight = Math.max(1, region.getRegionHeight());
+		float aspectRatio = regionWidth / regionHeight;
+		float visualWidth = visualBaseHeight * aspectRatio;
+		float visualX = collisionBounds.x + (collisionBounds.width - visualWidth) * 0.5f;
+
+		super.setBounds(visualX, collisionBounds.y, visualWidth, visualBaseHeight);
+		setOriginCenter();
+	}
+
+	/**
+	 * @return stable collision rectangle used for damage and pushback checks
+	 */
+	public Rectangle getCollisionBounds() {
+		return collisionBounds;
+	}
+
+	@Override
+	public Rectangle getBoundingRectangle() {
+		return collisionBounds;
+	}
+
+	@Override
+	public void setBounds(float x, float y, float width, float height) {
+		collisionBounds.set(x, y, width, height);
+		super.setBounds(x, y, width, height);
+	}
+
+	@Override
+	public void setX(float x) {
+		float dx = x - super.getX();
+		collisionBounds.x += dx;
+		super.setX(x);
+	}
+
+	@Override
+	public void setY(float y) {
+		float dy = y - super.getY();
+		collisionBounds.y += dy;
+		super.setY(y);
+	}
+
+	@Override
+	public void setPosition(float x, float y) {
+		float dx = x - super.getX();
+		float dy = y - super.getY();
+		collisionBounds.x += dx;
+		collisionBounds.y += dy;
+		super.setPosition(x, y);
+	}
+
+	@Override
+	public void translate(float xAmount, float yAmount) {
+		collisionBounds.x += xAmount;
+		collisionBounds.y += yAmount;
+		super.translate(xAmount, yAmount);
+	}
+
+	@Override
+	public void translateX(float xAmount) {
+		collisionBounds.x += xAmount;
+		super.translateX(xAmount);
+	}
+
+	@Override
+	public void translateY(float yAmount) {
+		collisionBounds.y += yAmount;
+		super.translateY(yAmount);
 	}
 
 	/**
@@ -197,13 +284,13 @@ public abstract class Enemy extends Entity {
 	 * @return sprite center x coordinate
 	 */
 	public float getCenterX() {
-		return getX() + getWidth() * 0.5f;
+		return collisionBounds.x + collisionBounds.width * 0.5f;
 	}
 
 	/**
 	 * @return sprite center y coordinate
 	 */
 	public float getCenterY() {
-		return getY() + getHeight() * 0.5f;
+		return collisionBounds.y + collisionBounds.height * 0.5f;
 	}
 }

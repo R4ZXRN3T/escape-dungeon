@@ -7,21 +7,21 @@ import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
 
-
 /**
- * Basic enemy that follows the player character.
+ * Ghost enemy that follows the player character.
  *
- * <p>Stats are scaled by level (using {@code 1.2^level}). When hit, the goblin becomes briefly
- * invulnerable and receives knockback velocity that decays over time.</p>
+ * <p>Uses the same follow/knockback logic as {@link Goblin} but with its own sprite set
+ * (auto-discovered from {@code textures/enemy/ghost/}).</p>
  */
-public class Goblin extends Enemy {
+public class Ghost extends Enemy {
 
-	private static final float BASE_HEALTH = 30f;
-	private static final float BASE_ATTACK_DAMAGE = 10f;
-	private static final float BASE_SPEED = 10f;
+	private static final float BASE_HEALTH = 20f;
+	private static final float BASE_ATTACK_DAMAGE = 8f;
+	private static final float BASE_SPEED = 12f;
 
 	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
+
 	private final EnemySpriteSet spriteSet;
 	private final DirectionalAnimationSet walkAnimations;
 	private float damageInvulnerabilityTime = 0.3f;
@@ -31,12 +31,10 @@ public class Goblin extends Enemy {
 	private float stateTimeSeconds = 0f;
 	private boolean walking = false;
 
-	/**
-	 * Constructor: uses {@link GameAssets} to auto-discover goblin sprites via {@link EnemySpriteSet}.
-	 */
-	public Goblin(GameAssets assets, float posX, float posY, int level) {
-		super(assets.getEnemySpriteSet("goblin_01").getFrontIdleTexture(), 3.23f, 5f, posX, posY);
-		this.spriteSet = assets.getEnemySpriteSet("goblin_01");
+	public Ghost(GameAssets assets, float posX, float posY, int level) {
+		super(assets.getEnemySpriteSet("ghost").getFrontIdleTexture(), 3.23f, 5f, posX, posY);
+		this.spriteSet = assets.getEnemySpriteSet("ghost");
+		// Ghost only has idle frames per direction, so walk animation falls back to idle.
 		this.walkAnimations = spriteSet.createWalkAnimations(0.18f);
 		applyVisualRegion(spriteSet.getIdle(Direction.FRONT));
 		setLevel(level);
@@ -46,45 +44,28 @@ public class Goblin extends Enemy {
 		setSpeed(BASE_SPEED);
 	}
 
-	/**
-	 * Applies damage and knockback if not invulnerable.
-	 *
-	 * @param damage           damage amount
-	 * @param knockback        knockback strength
-	 * @param hitAngle         hit direction in radians
-	 * @param attackInstanceId id of the current weapon attack; used to avoid multi-hits per swing
-	 */
 	@Override
 	public void takeDamage(float damage, float knockback, float hitAngle, int attackInstanceId) {
-		// Ensure "only once per attack" even if overlap is detected across multiple frames.
 		if (!shouldAcceptDamageFromAttack(attackInstanceId)) return;
-
-		// Optional additional i-frames across separate attacks.
 		if (damageInvulnerabilityTime > 0f) return;
 
 		markDamagedByAttack(attackInstanceId);
-
 		setRemainingHealth(getRemainingHealth() - damage);
 		damageInvulnerabilityTime = 0.3f;
 
 		float dx = (float) Math.cos(hitAngle);
 		float dy = (float) Math.sin(hitAngle);
-
 		knockbackVx += dx * knockback;
 		knockbackVy += dy * knockback;
 
 		if (getRemainingHealth() <= 0f) die();
 	}
 
-	/**
-	 * Updates invulnerability/knockback and performs follow movement.
-	 *
-	 * @param delta time since last frame in seconds
-	 */
 	@Override
 	public void update(float delta) {
 		stateTimeSeconds += delta;
 		damageInvulnerabilityTime -= delta;
+
 		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
 			setX(getX() + knockbackVx * delta);
 			setY(getY() + knockbackVy * delta);
@@ -114,21 +95,13 @@ public class Goblin extends Enemy {
 		applyVisualRegion(region);
 	}
 
-	/**
-	 * Notifies the death listener.
-	 */
 	@Override
 	public void die() {
 		notifyDied();
 	}
 
 	/**
-	 * Moves toward the configured {@link #getCharacter()}.
-	 *
-	 * <p>This requires that {@link #setCharacter(org.lasarimanstudios.escapedungeon.entities.Character)}
-	 * was called; otherwise {@link #getCharacter()} may be {@code null}.</p>
-	 *
-	 * @param delta time since last frame in seconds
+	 * Moves toward the configured player character.
 	 */
 	public void following(float delta) {
 		float oldX = getX();
@@ -136,7 +109,6 @@ public class Goblin extends Enemy {
 
 		float diffX = getCharacter().getX() - getX();
 		float diffY = getCharacter().getY() - getY();
-
 		float length = (float) Math.sqrt(diffX * diffX + diffY * diffY);
 
 		walking = false;
@@ -160,17 +132,12 @@ public class Goblin extends Enemy {
 		}
 	}
 
-	/**
-	 * @return remaining invulnerability time in seconds
-	 */
 	public float getDamageInvulnerabilityTime() {
 		return damageInvulnerabilityTime;
 	}
 
-	/**
-	 * @param damageInvulnerabilityTime remaining invulnerability time in seconds
-	 */
 	public void setDamageInvulnerabilityTime(float damageInvulnerabilityTime) {
 		this.damageInvulnerabilityTime = damageInvulnerabilityTime;
 	}
 }
+

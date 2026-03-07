@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import org.json.JSONObject;
 import org.lasarimanstudios.escapedungeon.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.entities.enemies.Ghost;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Goblin;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
@@ -98,9 +99,10 @@ public class MapLoader {
 	 *
 	 * @throws RuntimeException if {@code enemyType} is unknown
 	 */
-	private static Enemy getNewEnemy(GameAssets assets, String enemyType, float enemyPosX, float enemyPosy, int level) {
+	private static Enemy getNewEnemy(GameAssets assets, String enemyType, float enemyPosX, float enemyPosY, int level) {
 		return switch (enemyType) {
-			case "goblin" -> new Goblin(assets, enemyPosX, enemyPosy, level);
+			case "goblin" -> new Goblin(assets, enemyPosX, enemyPosY, level);
+			case "ghost" -> new Ghost(assets, enemyPosX, enemyPosY, level);
 			default -> throw new RuntimeException("Unknown enemy type: " + enemyType);
 		};
 	}
