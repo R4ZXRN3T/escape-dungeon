@@ -1,12 +1,12 @@
 {
-	"background": "Map-01.png",
+	"background": "map_02.png",
 	"width": 1000,
 	"height": 1000,
 	"startPosX": 0,
 	"startPosY": 0,
 	"walls": [
 		{
-			"texture": "Wall-A1.png",
+			"texture": "wall_A1.png",
 			"width": 10,
 			"height": 990,
 			"posX": 30,

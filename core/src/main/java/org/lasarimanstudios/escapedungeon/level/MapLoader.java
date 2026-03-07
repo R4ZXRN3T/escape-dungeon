@@ -61,7 +61,7 @@ public class MapLoader {
 			float wallPosX = wallJson.getFloat("posX");
 			float wallPosy = wallJson.getFloat("posY");
 
-			Texture tex = assets.createTexture("textures/objects/" + wallTexture);
+			Texture tex = assets.getWallTexture(wallTexture);
 			wallArray.add(new Wall(tex, wallWidth, wallHeight, wallPosX, wallPosy));
 		}
 

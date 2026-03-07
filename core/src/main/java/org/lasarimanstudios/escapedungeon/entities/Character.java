@@ -68,40 +68,6 @@ public class Character extends Entity {
 	private boolean walking = false;
 
 	/**
-	 * Creates a new player character.
-	 *
-	 * @param wallArray        walls used for collision checks
-	 * @param enemyArray       enemies used for collision/damage checks and weapon targeting
-	 * @param characterTexture character texture (must already be loaded)
-	 * @param weaponTexture    weapon texture (must already be loaded)
-	 * @param width            sprite width in world units
-	 * @param height           sprite height in world units
-	 * @param MaxHealth        maximum health value to start with
-	 */
-	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, Texture characterTexture, Texture weaponTexture, float width, float height, float MaxHealth) {
-		super(characterTexture);
-		this.assets = null;
-		setMaxHealth(MaxHealth);
-		setRemainingHealth(getMaxHealth());
-		setSize(width, height);
-		this.wallArray = wallArray;
-		this.enemyArray = enemyArray;
-		setOriginCenter();
-		updateCollider();
-
-		KEY_FORWARD = ConfigManager.getInt(ConfigManager.ConfigKey.FORWARD_KEY, 0, 255);
-		KEY_BACKWARD = ConfigManager.getInt(ConfigManager.ConfigKey.BACKWARD_KEY, 0, 255);
-		KEY_LEFT = ConfigManager.getInt(ConfigManager.ConfigKey.LEFT_KEY, 0, 255);
-		KEY_RIGHT = ConfigManager.getInt(ConfigManager.ConfigKey.RIGHT_KEY, 0, 255);
-		BUTTON_ATTACK = ConfigManager.getInt(ConfigManager.ConfigKey.ATTACK_KEY, 0, 255);
-
-
-		// Create the sword once; LevelScreen will draw it.
-		this.weapon = new Sword(enemyArray, weaponTexture, 10f, 0.5f, 1.5f);
-		attachWeapon();
-	}
-
-	/**
 	 * New constructor: character visuals are provided via {@link GameAssets} so we can swap frames.
 	 */
 	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, Texture weaponTexture, float width, float height, float MaxHealth) {

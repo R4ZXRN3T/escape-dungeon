@@ -60,7 +60,7 @@ public class LevelScreen extends ScreenAdapter {
 		viewport = new ExtendViewport(MIN_WORLD_WIDTH, MIN_WORLD_HEIGHT, camera);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		Texture weaponTex = assets.getTexture(GameAssets.TEX_WEAPON_SWORD_1);
+		Texture weaponTex = assets.getTexture(GameAssets.TEX_WEAPON_SWORD_BLUE);
 		characterSprite = new Character(map.getWalls(), map.getEnemies(), assets, weaponTex, 5, 5, 100);
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 

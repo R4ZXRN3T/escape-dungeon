@@ -22,10 +22,24 @@ public class GameAssets {
 	public static final String TEX_BLOOD_PUDDLE = "textures/objects/blood-puddle.png";
 	public static final String TEX_CHEST_CLOSED = "textures/objects/chest/chest_closed.png";
 	public static final String TEX_CHEST_OPEN = "textures/objects/chest/chest_open.png";
-	public static final String TEX_WALL = "textures/objects/wall.png";
+
+	public static final String TEX_WALL_ORIGINAL = "textures/objects/walls/wall.png";
+	public static final String TEX_WALL_A1 = "textures/objects/walls/wall_A1.png";
+	public static final String TEX_WALL_A2 = "textures/objects/walls/wall_A2.png";
+	public static final String TEX_WALL_A3 = "textures/objects/walls/wall_A3.png";
+	public static final String TEX_WALL_A4 = "textures/objects/walls/wall_A4.png";
+	public static final String TEX_WALL_H1 = "textures/objects/walls/wall_H1.png";
+	public static final String TEX_WALL_H2 = "textures/objects/walls/wall_H2.png";
+	public static final String TEX_WALL_V1 = "textures/objects/walls/wall_V1.png";
+	public static final String TEX_WALL_V2 = "textures/objects/walls/wall_V2.png";
+	public static final String TEX_WALL_V3 = "textures/objects/walls/wall_V3.png";
+	public static final String TEX_WALL_V4 = "textures/objects/walls/wall_V4.png";
+	public static final String TEX_WALL_V5 = "textures/objects/walls/wall_V5.png";
+	public static final String TEX_WALL_V6 = "textures/objects/walls/wall_V6.png";
 
 	// Player + weapon
-	public static final String TEX_WEAPON_SWORD_1 = "textures/weapons/sword1.png";
+	public static final String TEX_WEAPON_SWORD_BLUE = "textures/weapons/sword_blue.png";
+	public static final String TEX_WEAPON_SWORD_RAINBOW = "textures/weapons/sword_rainbow.png";
 	public static final String TEX_PLAYER_LEFT_IDLE = "textures/characters/character-01/character-01-links-stehend.png";
 	// (we only have a single player frame right now; reuse it for all directions until more art exists)
 
@@ -45,8 +59,35 @@ public class GameAssets {
 
 	// Maps
 	public static final String TEX_MAP_TEST = "textures/maps/test.png";
+	public static final String TEX_MAP_02 = "textures/maps/map_02.png";
 
 	private final AssetManager assetManager = new AssetManager();
+
+	private static String normalizeWallTextureRef(String ref) {
+		if (ref == null || ref.isBlank()) {
+			return TEX_WALL_ORIGINAL;
+		}
+		String trimmed = ref.trim();
+		// Already a full internal assets path.
+		if (trimmed.startsWith("textures/")) {
+			return trimmed;
+		}
+
+		String filename = trimmed;
+		// Legacy: "Wall-A1.png" -> "wall_A1.png"
+		if (filename.startsWith("Wall-")) {
+			filename = "wall_" + filename.substring("Wall-".length());
+		}
+		// Legacy: "Map-01.png" etc. isn't a wall; but for walls we just normalize case a bit.
+		if (filename.equalsIgnoreCase("wall.png")) {
+			filename = "wall.png";
+		}
+		if (filename.toLowerCase().startsWith("wall-") && filename.toLowerCase().endsWith(".png")) {
+			// Another possible legacy: "wall-A1.png" -> "wall_A1.png"
+			filename = "wall_" + filename.substring("wall-".length());
+		}
+		return "textures/objects/walls/" + filename;
+	}
 
 	/**
 	 * Loads all gameplay textures (non-menu UI) and blocks until finished.
@@ -56,10 +97,25 @@ public class GameAssets {
 		assetManager.load(TEX_BLOOD_PUDDLE, Texture.class);
 		assetManager.load(TEX_CHEST_CLOSED, Texture.class);
 		assetManager.load(TEX_CHEST_OPEN, Texture.class);
-		assetManager.load(TEX_WALL, Texture.class);
+
+		// Walls
+		assetManager.load(TEX_WALL_ORIGINAL, Texture.class);
+		assetManager.load(TEX_WALL_A1, Texture.class);
+		assetManager.load(TEX_WALL_A2, Texture.class);
+		assetManager.load(TEX_WALL_A3, Texture.class);
+		assetManager.load(TEX_WALL_A4, Texture.class);
+		assetManager.load(TEX_WALL_H1, Texture.class);
+		assetManager.load(TEX_WALL_H2, Texture.class);
+		assetManager.load(TEX_WALL_V1, Texture.class);
+		assetManager.load(TEX_WALL_V2, Texture.class);
+		assetManager.load(TEX_WALL_V3, Texture.class);
+		assetManager.load(TEX_WALL_V4, Texture.class);
+		assetManager.load(TEX_WALL_V5, Texture.class);
+		assetManager.load(TEX_WALL_V6, Texture.class);
 
 		// Player + weapons
-		assetManager.load(TEX_WEAPON_SWORD_1, Texture.class);
+		assetManager.load(TEX_WEAPON_SWORD_BLUE, Texture.class);
+		assetManager.load(TEX_WEAPON_SWORD_RAINBOW, Texture.class);
 		assetManager.load(TEX_PLAYER_LEFT_IDLE, Texture.class);
 
 		// Enemies
@@ -78,6 +134,7 @@ public class GameAssets {
 
 		// Maps
 		assetManager.load(TEX_MAP_TEST, Texture.class);
+		assetManager.load(TEX_MAP_02, Texture.class);
 
 		assetManager.finishLoading();
 	}
@@ -148,6 +205,26 @@ public class GameAssets {
 	public TextureRegion getPlayerIdle(Direction direction) {
 		// Until there are directional player assets, just reuse the left-standing image.
 		return getRegion(TEX_PLAYER_LEFT_IDLE);
+	}
+
+	/**
+	 * Resolves a wall texture reference coming from level JSON.
+	 *
+	 * <p>Accepts either:</p>
+	 * <ul>
+	 *   <li>full internal path (e.g. {@code textures/objects/walls/wall_A1.png})</li>
+	 *   <li>filename only (e.g. {@code wall_A1.png} or {@code wall.png})</li>
+	 *   <li>legacy filenames (e.g. {@code Wall-A1.png})</li>
+	 * </ul>
+	 */
+	public Texture getWallTexture(String jsonTextureRef) {
+		String internalPath = normalizeWallTextureRef(jsonTextureRef);
+		if (assetManager.isLoaded(internalPath, Texture.class)) {
+			return getTexture(internalPath);
+		}
+		// In case walls are referenced that aren't part of the preload list yet,
+		// keep behavior compatible and load them on demand.
+		return createTexture(internalPath);
 	}
 
 	/**
