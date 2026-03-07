@@ -385,8 +385,8 @@
     },
     {
       "enemyType": "rgbghost",
-      "posX": 30.0,
-      "posY": 40.0,
+      "posX": 99.0,
+      "posY": 182.0,
       "level": 10
     }
   ]
