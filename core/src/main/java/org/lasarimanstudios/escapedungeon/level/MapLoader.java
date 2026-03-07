@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 
 import org.json.JSONObject;
-import org.lasarimanstudios.escapedungeon.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Ghost;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Goblin;

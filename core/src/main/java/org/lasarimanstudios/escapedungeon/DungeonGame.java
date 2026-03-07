@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 
 import org.lasarimanstudios.escapedungeon.ConfigManager.ConfigKey;
+import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.level.Map;
 import org.lasarimanstudios.escapedungeon.level.MapLoader;
 import org.lasarimanstudios.escapedungeon.screens.*;

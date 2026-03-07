@@ -4,8 +4,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import org.lasarimanstudios.escapedungeon.GameAssets;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;

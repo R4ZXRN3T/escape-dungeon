@@ -2,7 +2,7 @@ package org.lasarimanstudios.escapedungeon.entities.weapons;
 
 import com.badlogic.gdx.utils.Array;
 
-import org.lasarimanstudios.escapedungeon.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 
 /**

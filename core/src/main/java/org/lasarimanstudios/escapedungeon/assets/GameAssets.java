@@ -1,12 +1,9 @@
-package org.lasarimanstudios.escapedungeon;
+package org.lasarimanstudios.escapedungeon.assets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
-import org.lasarimanstudios.escapedungeon.assets.Direction;
-import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
 
 import java.util.*;
 
