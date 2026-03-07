@@ -1,395 +1,393 @@
 {
-	"background": "map_02.png",
-	"width": 400,
-	"height": 400,
-	"startPosX": 199,
-	"startPosY": 20,
-	"walls": [
-		{
-			"texture": "wall_A1.png",
-			"width": 4,
-			"height": 396,
-			"posX": 396,
-			"posY": 0
-		},
-		{
-			"texture": "wall_A2.png",
-			"width": 396,
-			"height": 4,
-			"posX": 0,
-			"posY": 0
-		},
-		{
-			"texture": "wall_A3.png",
-			"width": 4,
-			"height": 396,
-			"posX": 0,
-			"posY": 4
-		},
-
-		{
-			"texture": "wall_A4.png",
-			"width": 396,
-			"height": 4,
-			"posX": 4,
-			"posY": 396
-		},
-		{
-			"texture": "wall_V1.png",
-			"width": 2,
-			"height": 38,
-			"posX": 158,
-			"posY": 4
-		},
-		{
-			"texture": "wall_V1.png",
-			"width": 2,
-			"height": 38,
-			"posX": 240,
-			"posY": 4
-		},
-		{
-			"texture": "wall_V2.png",
-			"width": 2,
-			"height": 20,
-			"posX": 106,
-			"posY": 292
-		},
-		{
-			"texture": "wall_V2.png",
-			"width": 2,
-			"height": 20,
-			"posX": 292,
-			"posY": 292
-		},
-		{
-			"texture": "wall_V2.png",
-			"width": 2,
-			"height": 20,
-			"posX": 106,
-			"posY": 190
-		},
-		{
-			"texture": "wall_V2.png",
-			"width": 2,
-			"height": 20,
-			"posX": 292,
-			"posY": 190
-		},
-		{
-			"texture": "wall_V2.png",
-			"width": 2,
-			"height": 20,
-			"posX": 106,
-			"posY": 146
-		},
-		{
-			"texture": "wall_V2.png",
-			"width": 2,
-			"height": 20,
-			"posX": 292,
-			"posY": 146
-		},
-		{
-			"texture": "wall_V2.png",
-			"width": 2,
-			"height": 20,
-			"posX": 106,
-			"posY": 44
-		},
-		{
-			"texture": "wall_V2.png",
-			"width": 2,
-			"height": 20,
-			"posX": 292,
-			"posY": 44
-		},
-		{
-			"texture": "wall_V2.png",
-			"width": 2,
-			"height": 20,
-			"posX": 84,
-			"posY": 44
-		},
-		{
-			"texture": "wall_V2.png",
-			"width": 2,
-			"height": 20,
-			"posX": 314,
-			"posY": 44
-		},
-		{
-			"texture": "wall_V3.png",
-			"width": 2,
-			"height": 42,
-			"posX": 106,
-			"posY": 230
-		},
-		{
-			"texture": "wall_V3.png",
-			"width": 2,
-			"height": 42,
-			"posX": 292,
-			"posY": 230
-		},
-		{
-			"texture": "wall_V3.png",
-			"width": 2,
-			"height": 42,
-			"posX": 106,
-			"posY": 334
-		},
-		{
-			"texture": "wall_V3.png",
-			"width": 2,
-			"height": 42,
-			"posX": 292,
-			"posY": 334
-		},
-		{
-			"texture": "wall_V3.png",
-			"width": 2,
-			"height": 42,
-			"posX": 106,
-			"posY": 84
-		},
-		{
-			"texture": "wall_V3.png",
-			"width": 2,
-			"height": 42,
-			"posX": 292,
-			"posY": 84
-		},
-		{
-			"texture": "wall_V4.png",
-			"width": 2,
-			"height": 84,
-			"posX": 84,
-			"posY": 84
-		},
-		{
-			"texture": "wall_V4.png",
-			"width": 2,
-			"height": 84,
-			"posX": 314,
-			"posY": 84
-		},
-		{
-			"texture": "wall_V5.png",
-			"width": 2,
-			"height": 126,
-			"posX": 84,
-			"posY": 188
-		},
-		{
-			"texture": "wall_V5.png",
-			"width": 2,
-			"height": 126,
-			"posX": 314,
-			"posY": 188
-		},
-		{
-			"texture": "wall_V5.png",
-			"width": 2,
-			"height": 126,
-			"posX": 188,
-			"posY": 188
-		},
-		{
-			"texture": "wall_V5.png",
-			"width": 2,
-			"height": 126,
-			"posX": 210,
-			"posY": 188
-		},
-		{
-			"texture": "wall_V5.png",
-			"width": 2,
-			"height": 126,
-			"posX": 188,
-			"posY": 42
-		},
-		{
-			"texture": "wall_V5.png",
-			"width": 2,
-			"height": 126,
-			"posX": 210,
-			"posY": 42
-		},
-		{
-			"texture": "wall_V6.png",
-			"width": 2,
-			"height": 62,
-			"posX": 84,
-			"posY": 334
-		},
-		{
-			"texture": "wall_V6.png",
-			"width": 2,
-			"height": 62,
-			"posX": 314,
-			"posY": 334
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 108,
-			"posY": 334
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 210,
-			"posY": 334
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 106,
-			"posY": 312
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 212,
-			"posY": 312
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 106,
-			"posY": 188
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 212,
-			"posY": 188
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 106,
-			"posY": 166
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 212,
-			"posY": 166
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 106,
-			"posY": 42
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 212,
-			"posY": 42
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 4,
-			"posY": 42
-		},
-		{
-			"texture": "wall_H1.png",
-			"width": 82,
-			"height": 2,
-			"posX": 314,
-			"posY": 42
-		},
-		{
-			"texture": "wall_H2.png",
-			"width": 80,
-			"height": 2,
-			"posX": 4,
-			"posY": 250
-		},
-		{
-			"texture": "wall_H2.png",
-			"width": 80,
-			"height": 2,
-			"posX": 316,
-			"posY": 250
-		},
-		{
-			"texture": "wall_H2.png",
-			"width": 80,
-			"height": 2,
-			"posX": 4,
-			"posY": 104
-		},
-		{
-			"texture": "wall_H2.png",
-			"width": 80,
-			"height": 2,
-			"posX": 316,
-			"posY": 104
-		},
-		{
-			"texture": "wall_H2.png",
-			"width": 80,
-			"height": 2,
-			"posX": 108,
-			"posY": 250
-		},
-		{
-			"texture": "wall_H2.png",
-			"width": 80,
-			"height": 2,
-			"posX": 212,
-			"posY": 250
-		},
-		{
-			"texture": "wall_H2.png",
-			"width": 80,
-			"height": 2,
-			"posX": 108,
-			"posY": 104
-		},
-		{
-			"texture": "wall_H2.png",
-			"width": 80,
-			"height": 2,
-			"posX": 212,
-			"posY": 104
-		}
-	],
-	"enemies": [
-		{
-			"enemyType": "goblin",
-			"posX": 40,
-			"posY": 60,
-			"level": 1
-		},
-		{
-			"enemyType": "ghost",
-			"posX": 60,
-			"posY": 80,
-			"level": 1
-		},
-		{
-			"enemyType": "rgbghost",
-			"posX": 60,
-			"posY": 80,
-			"level": 10
-		}
-	]
-
+  "background": "map_02.png",
+  "width": 200.0,
+  "height": 200.0,
+  "startPosX": 99.5,
+  "startPosY": 10.0,
+  "walls": [
+    {
+      "texture": "wall_A1.png",
+      "width": 2.0,
+      "height": 198.0,
+      "posX": 198.0,
+      "posY": 0.0
+    },
+    {
+      "texture": "wall_A2.png",
+      "width": 198.0,
+      "height": 2.0,
+      "posX": 0.0,
+      "posY": 0.0
+    },
+    {
+      "texture": "wall_A3.png",
+      "width": 2.0,
+      "height": 198.0,
+      "posX": 0.0,
+      "posY": 2.0
+    },
+    {
+      "texture": "wall_A4.png",
+      "width": 198.0,
+      "height": 2.0,
+      "posX": 2.0,
+      "posY": 198.0
+    },
+    {
+      "texture": "wall_V1.png",
+      "width": 1.0,
+      "height": 19.0,
+      "posX": 79.0,
+      "posY": 2.0
+    },
+    {
+      "texture": "wall_V1.png",
+      "width": 1.0,
+      "height": 19.0,
+      "posX": 120.0,
+      "posY": 2.0
+    },
+    {
+      "texture": "wall_V2.png",
+      "width": 1.0,
+      "height": 10.0,
+      "posX": 53.0,
+      "posY": 146.0
+    },
+    {
+      "texture": "wall_V2.png",
+      "width": 1.0,
+      "height": 10.0,
+      "posX": 146.0,
+      "posY": 146.0
+    },
+    {
+      "texture": "wall_V2.png",
+      "width": 1.0,
+      "height": 10.0,
+      "posX": 53.0,
+      "posY": 95.0
+    },
+    {
+      "texture": "wall_V2.png",
+      "width": 1.0,
+      "height": 10.0,
+      "posX": 146.0,
+      "posY": 95.0
+    },
+    {
+      "texture": "wall_V2.png",
+      "width": 1.0,
+      "height": 10.0,
+      "posX": 53.0,
+      "posY": 73.0
+    },
+    {
+      "texture": "wall_V2.png",
+      "width": 1.0,
+      "height": 10.0,
+      "posX": 146.0,
+      "posY": 73.0
+    },
+    {
+      "texture": "wall_V2.png",
+      "width": 1.0,
+      "height": 10.0,
+      "posX": 53.0,
+      "posY": 22.0
+    },
+    {
+      "texture": "wall_V2.png",
+      "width": 1.0,
+      "height": 10.0,
+      "posX": 146.0,
+      "posY": 22.0
+    },
+    {
+      "texture": "wall_V2.png",
+      "width": 1.0,
+      "height": 10.0,
+      "posX": 42.0,
+      "posY": 22.0
+    },
+    {
+      "texture": "wall_V2.png",
+      "width": 1.0,
+      "height": 10.0,
+      "posX": 157.0,
+      "posY": 22.0
+    },
+    {
+      "texture": "wall_V3.png",
+      "width": 1.0,
+      "height": 21.0,
+      "posX": 53.0,
+      "posY": 115.0
+    },
+    {
+      "texture": "wall_V3.png",
+      "width": 1.0,
+      "height": 21.0,
+      "posX": 146.0,
+      "posY": 115.0
+    },
+    {
+      "texture": "wall_V3.png",
+      "width": 1.0,
+      "height": 21.0,
+      "posX": 53.0,
+      "posY": 167.0
+    },
+    {
+      "texture": "wall_V3.png",
+      "width": 1.0,
+      "height": 21.0,
+      "posX": 146.0,
+      "posY": 167.0
+    },
+    {
+      "texture": "wall_V3.png",
+      "width": 1.0,
+      "height": 21.0,
+      "posX": 53.0,
+      "posY": 42.0
+    },
+    {
+      "texture": "wall_V3.png",
+      "width": 1.0,
+      "height": 21.0,
+      "posX": 146.0,
+      "posY": 42.0
+    },
+    {
+      "texture": "wall_V4.png",
+      "width": 1.0,
+      "height": 42.0,
+      "posX": 42.0,
+      "posY": 42.0
+    },
+    {
+      "texture": "wall_V4.png",
+      "width": 1.0,
+      "height": 42.0,
+      "posX": 157.0,
+      "posY": 42.0
+    },
+    {
+      "texture": "wall_V5.png",
+      "width": 1.0,
+      "height": 63.0,
+      "posX": 42.0,
+      "posY": 94.0
+    },
+    {
+      "texture": "wall_V5.png",
+      "width": 1.0,
+      "height": 63.0,
+      "posX": 157.0,
+      "posY": 94.0
+    },
+    {
+      "texture": "wall_V5.png",
+      "width": 1.0,
+      "height": 63.0,
+      "posX": 94.0,
+      "posY": 94.0
+    },
+    {
+      "texture": "wall_V5.png",
+      "width": 1.0,
+      "height": 63.0,
+      "posX": 105.0,
+      "posY": 94.0
+    },
+    {
+      "texture": "wall_V5.png",
+      "width": 1.0,
+      "height": 63.0,
+      "posX": 94.0,
+      "posY": 21.0
+    },
+    {
+      "texture": "wall_V5.png",
+      "width": 1.0,
+      "height": 63.0,
+      "posX": 105.0,
+      "posY": 21.0
+    },
+    {
+      "texture": "wall_V6.png",
+      "width": 1.0,
+      "height": 31.0,
+      "posX": 42.0,
+      "posY": 167.0
+    },
+    {
+      "texture": "wall_V6.png",
+      "width": 1.0,
+      "height": 31.0,
+      "posX": 157.0,
+      "posY": 167.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 54.0,
+      "posY": 167.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 105.0,
+      "posY": 167.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 53.0,
+      "posY": 156.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 106.0,
+      "posY": 156.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 53.0,
+      "posY": 94.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 106.0,
+      "posY": 94.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 53.0,
+      "posY": 83.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 106.0,
+      "posY": 83.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 53.0,
+      "posY": 21.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 106.0,
+      "posY": 21.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 2.0,
+      "posY": 21.0
+    },
+    {
+      "texture": "wall_H1.png",
+      "width": 41.0,
+      "height": 1.0,
+      "posX": 157.0,
+      "posY": 21.0
+    },
+    {
+      "texture": "wall_H2.png",
+      "width": 40.0,
+      "height": 1.0,
+      "posX": 2.0,
+      "posY": 125.0
+    },
+    {
+      "texture": "wall_H2.png",
+      "width": 40.0,
+      "height": 1.0,
+      "posX": 158.0,
+      "posY": 125.0
+    },
+    {
+      "texture": "wall_H2.png",
+      "width": 40.0,
+      "height": 1.0,
+      "posX": 2.0,
+      "posY": 52.0
+    },
+    {
+      "texture": "wall_H2.png",
+      "width": 40.0,
+      "height": 1.0,
+      "posX": 158.0,
+      "posY": 52.0
+    },
+    {
+      "texture": "wall_H2.png",
+      "width": 40.0,
+      "height": 1.0,
+      "posX": 54.0,
+      "posY": 125.0
+    },
+    {
+      "texture": "wall_H2.png",
+      "width": 40.0,
+      "height": 1.0,
+      "posX": 106.0,
+      "posY": 125.0
+    },
+    {
+      "texture": "wall_H2.png",
+      "width": 40.0,
+      "height": 1.0,
+      "posX": 54.0,
+      "posY": 52.0
+    },
+    {
+      "texture": "wall_H2.png",
+      "width": 40.0,
+      "height": 1.0,
+      "posX": 106.0,
+      "posY": 52.0
+    }
+  ],
+  "enemies": [
+    {
+      "enemyType": "goblin",
+      "posX": 20.0,
+      "posY": 30.0,
+      "level": 1
+    },
+    {
+      "enemyType": "ghost",
+      "posX": 30.0,
+      "posY": 40.0,
+      "level": 1
+    },
+    {
+      "enemyType": "rgbghost",
+      "posX": 30.0,
+      "posY": 40.0,
+      "level": 10
+    }
+  ]
 }

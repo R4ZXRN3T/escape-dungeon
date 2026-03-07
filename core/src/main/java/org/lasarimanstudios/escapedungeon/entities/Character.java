@@ -12,6 +12,8 @@ import com.badlogic.gdx.utils.Array;
 import org.lasarimanstudios.escapedungeon.ConfigManager;
 import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
+import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
+import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.weapons.SwordType;
 import org.lasarimanstudios.escapedungeon.entities.weapons.Weapon;
@@ -66,6 +68,13 @@ public class Character extends Entity {
 	private float stateTimeSeconds = 0f;
 	private boolean walking = false;
 
+	private float currentAttackAngleDeg = 0f;
+
+    // Optional: allow the player to reuse an enemy's sprite set (e.g. goblin) for visuals.
+    private EnemySpriteSet playerSpriteSet;
+    private DirectionalAnimationSet playerWalkAnimations;
+    private float playerWalkFrameDurationSeconds = 0.16f;
+
 	/**
 	 * New constructor: character visuals are provided via {@link GameAssets} so we can swap frames.
 	 */
@@ -93,6 +102,45 @@ public class Character extends Entity {
 	public void setDeathListener(DeathListener deathListener) {
 		this.deathListener = deathListener;
 	}
+
+    /**
+     * Attempts to set the player's visuals to use the sprite set of an enemy type.
+     * If the named enemy sprite set isn't available, this logs and leaves the default player
+     * visuals intact.
+     *
+     * @param enemyId folder name under textures/enemy/ (e.g. "goblin_01")
+     */
+    public void setPlayerSpriteFromEnemy(String enemyId) {
+        if (assets == null || enemyId == null) return;
+        try {
+            EnemySpriteSet set = assets.getEnemySpriteSet(enemyId);
+            setPlayerSpriteSet(set);
+        } catch (IllegalArgumentException e) {
+            Gdx.app.log("Character", "Could not set player sprite from enemy '" + enemyId + "': " + e.getMessage());
+        }
+    }
+
+    /**
+     * Directly assigns an {@link EnemySpriteSet} to the player and builds walk animations.
+     * Pass {@code null} to reset to the default player artwork.
+     */
+    public void setPlayerSpriteSet(EnemySpriteSet set) {
+        this.playerSpriteSet = set;
+        if (set != null) {
+            this.playerWalkAnimations = set.createWalkAnimations(playerWalkFrameDurationSeconds);
+        } else {
+            this.playerWalkAnimations = null;
+        }
+        // Reset animation time so newly assigned sprites start consistently.
+        this.stateTimeSeconds = 0f;
+    }
+
+    /**
+     * Resets the player visuals back to the default character textures.
+     */
+    public void resetPlayerSpritesToDefault() {
+        setPlayerSpriteSet(null);
+    }
 
 	/**
 	 * @return the equipped weapon instance (never {@code null})
@@ -150,7 +198,7 @@ public class Character extends Entity {
 		updateVisual();
 
 		if (Gdx.input.isButtonJustPressed(BUTTON_ATTACK)) {
-			weapon.startAttack(getRotation());
+			weapon.startAttack(currentAttackAngleDeg);
 		}
 		attachWeapon();
 
@@ -166,12 +214,26 @@ public class Character extends Entity {
 
 	private void updateVisual() {
 		if (assets == null) return;
+
+		// If the player has been assigned an enemy sprite set, prefer using it.
+		if (playerSpriteSet != null) {
+			if (walking && playerWalkAnimations != null) {
+				TextureRegion frame = playerWalkAnimations.getKeyFrame(facing, stateTimeSeconds, true);
+				setRegion(frame);
+				return;
+			} else {
+				setRegion(playerSpriteSet.getIdle(facing));
+				return;
+			}
+		}
+
+		// Fallback: use the default player texture provided by GameAssets.
 		TextureRegion idle = assets.getPlayerIdle(facing);
 		setRegion(idle);
 	}
 
 	private void rotateToMouse(OrthographicCamera camera) {
-		camera.unproject(mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+		/*camera.unproject(mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 
 		float characterX = getX() + getWidth() * 0.5f;
 		float characterY = getY() + getHeight() * 0.5f;
@@ -180,14 +242,24 @@ public class Character extends Entity {
 		float dy = mouseWorld.y - characterY;
 
 		float angleDeg = (float) Math.toDegrees(Math.atan2(dy, dx)) + FRONT_ANGLE_OFFSET_DEG;
-		setRotation(angleDeg);
+		setRotation(angleDeg);*/
+
+		camera.unproject(mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+		float characterX = getX() + getWidth() * 0.5f;
+		float characterY = getY() + getHeight() * 0.5f;
+
+		float dx = mouseWorld.x - characterX;
+		float dy = mouseWorld.y - characterY;
+
+		currentAttackAngleDeg = (float) Math.toDegrees(Math.atan2(dy, dx)) + FRONT_ANGLE_OFFSET_DEG;
 	}
 
 	private void attachWeapon() {
 		float characterX = getX() + getWidth() * 0.5f;
 		float characterY = getY() + getHeight() * 0.5f;
 
-		weaponOffsetWorld.set(weaponOffsetLocal).rotateDeg(getRotation());
+		weaponOffsetWorld.set(weaponOffsetLocal).rotateDeg(currentAttackAngleDeg);
 
 		weapon.setOrigin(-0.5f * weapon.getWidth(), -0.5f * weapon.getHeight());
 		weapon.setOriginBasedPosition(
@@ -196,7 +268,7 @@ public class Character extends Entity {
 		);
 
 		if (!weapon.isAttacking()) {
-			weapon.setRotation(getRotation() + 45f);
+			weapon.setRotation(currentAttackAngleDeg + 45f);
 		}
 	}
 
