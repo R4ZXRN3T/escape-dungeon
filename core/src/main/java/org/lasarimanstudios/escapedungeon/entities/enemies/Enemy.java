@@ -19,15 +19,14 @@ import org.lasarimanstudios.escapedungeon.entities.Entity;
  */
 public abstract class Enemy extends Entity {
 
+	private final Rectangle collisionBounds = new Rectangle();
+	private final float visualBaseHeight;
 	private int level;
 	private float maxHealth;
 	private float remainingHealth;
 	private float attackDamage;
 	private float speed;
 	private Character character;
-	private final Rectangle collisionBounds = new Rectangle();
-	private final float visualBaseHeight;
-
 	private EnemyDeathListener deathListener;
 
 	/**

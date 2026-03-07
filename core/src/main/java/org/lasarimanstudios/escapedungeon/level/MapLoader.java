@@ -9,6 +9,7 @@ import org.lasarimanstudios.escapedungeon.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Ghost;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Goblin;
+import org.lasarimanstudios.escapedungeon.entities.enemies.RgbGhost;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
@@ -103,6 +104,7 @@ public class MapLoader {
 		return switch (enemyType) {
 			case "goblin" -> new Goblin(assets, enemyPosX, enemyPosY, level);
 			case "ghost" -> new Ghost(assets, enemyPosX, enemyPosY, level);
+			case "rgbghost" -> new RgbGhost(assets, enemyPosX, enemyPosY, level);
 			default -> throw new RuntimeException("Unknown enemy type: " + enemyType);
 		};
 	}

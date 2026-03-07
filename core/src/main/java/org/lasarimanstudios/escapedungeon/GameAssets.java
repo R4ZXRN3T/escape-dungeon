@@ -8,11 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Small wrapper around LibGDX's {@link com.badlogic.gdx.assets.AssetManager}.
@@ -36,16 +32,26 @@ public class GameAssets {
 	public static final String TEX_WALL_ORIGINAL = "textures/objects/walls/wall.png";
 
 	// Player + weapon
+	public static final String TEX_WEAPON_SWORD_BASIC = "textures/weapons/sword_basic.png";
 	public static final String TEX_WEAPON_SWORD_BLUE = "textures/weapons/sword_blue.png";
+	public static final String TEX_WEAPON_SWORD_FAT = "textures/weapons/sword_fat.png";
+	public static final String TEX_WEAPON_SWORD_GOLD = "textures/weapons/sword_gold.png";
+	public static final String TEX_WEAPON_SWORD_IRON = "textures/weapons/sword_iron.png";
+	public static final String TEX_WEAPON_SWORD_PINK = "textures/weapons/sword_pink.png";
+	public static final String TEX_WEAPON_SWORD_RAINBOW = "textures/weapons/sword_rainbow.png";
+	public static final String TEX_WEAPON_SWORD_YELLOW = "textures/weapons/sword_yellow.png";
+	public static final String TEX_WEAPON_RGB_SABER = "textures/weapons/rgb_saber.png";
 	public static final String TEX_PLAYER_LEFT_IDLE = "textures/characters/character-01/character-01-links-stehend.png";
 
 	private final AssetManager assetManager = new AssetManager();
-
-	/** Paths that were auto-discovered and loaded. */
-	private List<String> loadedTexturePaths = Collections.emptyList();
-
-	/** Cached per-enemy sprite sets, keyed by enemy folder id (e.g. "goblin-01", "ghost"). */
+	/**
+	 * Cached per-enemy sprite sets, keyed by enemy folder id (e.g. "goblin-01", "ghost").
+	 */
 	private final Map<String, EnemySpriteSet> enemySpriteSets = new HashMap<>();
+	/**
+	 * Paths that were auto-discovered and loaded.
+	 */
+	private List<String> loadedTexturePaths = Collections.emptyList();
 
 	private static String normalizeWallTextureRef(String ref) {
 		if (ref == null || ref.isBlank()) {

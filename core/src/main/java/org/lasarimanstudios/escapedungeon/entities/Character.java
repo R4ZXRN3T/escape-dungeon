@@ -3,7 +3,6 @@ package org.lasarimanstudios.escapedungeon.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -14,7 +13,7 @@ import org.lasarimanstudios.escapedungeon.ConfigManager;
 import org.lasarimanstudios.escapedungeon.GameAssets;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
-import org.lasarimanstudios.escapedungeon.entities.weapons.Sword;
+import org.lasarimanstudios.escapedungeon.entities.weapons.SwordType;
 import org.lasarimanstudios.escapedungeon.entities.weapons.Weapon;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
@@ -70,7 +69,7 @@ public class Character extends Entity {
 	/**
 	 * New constructor: character visuals are provided via {@link GameAssets} so we can swap frames.
 	 */
-	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, Texture weaponTexture, float width, float height, float MaxHealth) {
+	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, SwordType swordType, float width, float height, float MaxHealth) {
 		super(assets.getPlayerIdle(Direction.FRONT));
 		this.assets = assets;
 		setMaxHealth(MaxHealth);
@@ -87,7 +86,7 @@ public class Character extends Entity {
 		KEY_RIGHT = ConfigManager.getInt(ConfigManager.ConfigKey.RIGHT_KEY, 0, 255);
 		BUTTON_ATTACK = ConfigManager.getInt(ConfigManager.ConfigKey.ATTACK_KEY, 0, 255);
 
-		this.weapon = new Sword(enemyArray, weaponTexture, 10f, 0.5f, 1.5f);
+		this.weapon = swordType.create(enemyArray, assets);
 		attachWeapon();
 	}
 
@@ -341,21 +340,55 @@ public class Character extends Entity {
 			enemyRect.y + enemyRect.height - collider.y
 		);
 
-		if (overlapX < overlapY) {
+		// Preferred axis: the smaller overlap (push away along that axis)
+		boolean preferX = overlapX < overlapY;
+
+		// Helper to attempt an axis move while ensuring we don't end up overlapping walls.
+		// Returns true if the move was applied.
+		java.util.function.Supplier<Boolean> tryMoveX = () -> {
+			float oldX = getX();
 			if (getCenterX() < enemy.getCenterX()) {
 				setX(getX() - overlapX);
 			} else {
 				setX(getX() + overlapX);
 			}
-		} else {
+			updateCollider();
+			if (overlapsAnyWall()) {
+				// revert
+				setX(oldX);
+				updateCollider();
+				return false;
+			}
+			return true;
+		};
+
+		java.util.function.Supplier<Boolean> tryMoveY = () -> {
+			float oldY = getY();
 			if (getCenterY() < enemy.getCenterY()) {
 				setY(getY() - overlapY);
 			} else {
 				setY(getY() + overlapY);
 			}
+			updateCollider();
+			if (overlapsAnyWall()) {
+				// revert
+				setY(oldY);
+				updateCollider();
+				return false;
+			}
+			return true;
+		};
+
+		boolean moved = false;
+		if (preferX) {
+			moved = tryMoveX.get();
+			if (!moved) moved = tryMoveY.get();
+		} else {
+			moved = tryMoveY.get();
+			if (!moved) moved = tryMoveX.get();
 		}
 
-		updateCollider();
+		// If neither axis could be applied without hitting a wall, don't move the player.
 	}
 
 	private void die() {

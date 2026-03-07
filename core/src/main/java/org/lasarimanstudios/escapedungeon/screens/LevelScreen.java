@@ -16,6 +16,7 @@ import org.lasarimanstudios.escapedungeon.DungeonGame;
 import org.lasarimanstudios.escapedungeon.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.entities.weapons.SwordType;
 import org.lasarimanstudios.escapedungeon.level.Map;
 import org.lasarimanstudios.escapedungeon.world.World;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
@@ -60,8 +61,7 @@ public class LevelScreen extends ScreenAdapter {
 		viewport = new ExtendViewport(MIN_WORLD_WIDTH, MIN_WORLD_HEIGHT, camera);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		Texture weaponTex = assets.getTexture(GameAssets.TEX_WEAPON_SWORD_BLUE);
-		characterSprite = new Character(map.getWalls(), map.getEnemies(), assets, weaponTex, 5, 5, 100);
+		characterSprite = new Character(map.getWalls(), map.getEnemies(), assets, SwordType.RGB_SABER, 5, 5, 100);
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		// Allow the World to wire dynamically spawned enemies to the player.

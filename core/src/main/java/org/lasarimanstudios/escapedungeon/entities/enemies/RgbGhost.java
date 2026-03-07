@@ -1,30 +1,32 @@
 package org.lasarimanstudios.escapedungeon.entities.enemies;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import org.lasarimanstudios.escapedungeon.GameAssets;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
+import org.lasarimanstudios.escapedungeon.graphics.HueShader;
 
 /**
- * Ghost enemy that follows the player character.
+ * A ghost enemy that continuously cycles through hues (RGB rainbow tint) while retaining its
+ * collision and behavioral logic.
  *
- * <p>Uses the same follow/knockback logic as {@link Goblin} but with its own sprite set
- * (auto-discovered from {@code textures/enemy/ghost/}).</p>
+ * <p>The visual hue is applied by tinting the enemy sprite color during drawing. The enemy
+ * supports knockback velocities which are frame-damped and a short damage-invulnerability window.</p>
  */
-public class Ghost extends Enemy {
+public class RgbGhost extends Enemy {
 
-	private static final float BASE_HEALTH = 20f;
-	private static final float BASE_ATTACK_DAMAGE = 8f;
-	private static final float BASE_SPEED = 12f;
+	private static final float BASE_HEALTH = 200f;
+	private static final float BASE_ATTACK_DAMAGE = 15f;
+	private static final float BASE_SPEED = 15f;
 
 	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
-
-	private static final float WIDTH = 3.23f;
-	private static final float HEIGHT = 5f;
-
+	private static final float HUE_SPEED = 0.2f; // tweak for rainbow speed
+	private static final float HUE_SAT = 1f;
+	private static final float HUE_VAL = 1f;
 	private final EnemySpriteSet spriteSet;
 	private final DirectionalAnimationSet walkAnimations;
 	private float damageInvulnerabilityTime = 0.3f;
@@ -33,9 +35,19 @@ public class Ghost extends Enemy {
 	private Direction facing = Direction.FRONT;
 	private float stateTimeSeconds = 0f;
 	private boolean walking = false;
+	// Hue animation fields (0..1)
+	private float hueAnim = 0f;
 
-	public Ghost(GameAssets assets, float posX, float posY, int level) {
-		super(assets.getEnemySpriteSet("ghost").getFrontIdleTexture(), WIDTH, HEIGHT, posX, posY);
+	/**
+	 * Creates an RGB-cycling ghost at the specified world position.
+	 *
+	 * @param assets assets container providing enemy sprites
+	 * @param posX   initial X position in world units
+	 * @param posY   initial Y position in world units
+	 * @param level  enemy level for stat scaling
+	 */
+	public RgbGhost(GameAssets assets, float posX, float posY, int level) {
+		super(assets.getEnemySpriteSet("ghost").getFrontIdleTexture(), 6.46f, 10f, posX, posY);
 		this.spriteSet = assets.getEnemySpriteSet("ghost");
 		// Ghost only has idle frames per direction, so walk animation falls back to idle.
 		this.walkAnimations = spriteSet.createWalkAnimations(0.18f);
@@ -47,6 +59,17 @@ public class Ghost extends Enemy {
 		setSpeed(BASE_SPEED);
 	}
 
+	/**
+	 * Applies damage to this enemy and accumulates knockback velocity.
+	 *
+	 * <p>Damage from the same attack instance is ignored after the first hit; a short
+	 * invulnerability window prevents repeated immediate damage.</p>
+	 *
+	 * @param damage           damage amount to subtract from health
+	 * @param knockback        knockback impulse magnitude to add to the current velocity
+	 * @param hitAngle         angle of the hit in radians (0 = +X axis)
+	 * @param attackInstanceId id of the attacking weapon animation instance
+	 */
 	@Override
 	public void takeDamage(float damage, float knockback, float hitAngle, int attackInstanceId) {
 		if (!shouldAcceptDamageFromAttack(attackInstanceId)) return;
@@ -64,10 +87,19 @@ public class Ghost extends Enemy {
 		if (getRemainingHealth() <= 0f) die();
 	}
 
+	/**
+	 * Per-frame update: advances hue animation, applies knockback with exponential damping,
+	 * and otherwise performs follow behavior.
+	 *
+	 * @param delta time since last frame in seconds
+	 */
 	@Override
 	public void update(float delta) {
 		stateTimeSeconds += delta;
 		damageInvulnerabilityTime -= delta;
+
+		// advance hue animation
+		hueAnim = (hueAnim + delta * HUE_SPEED) % 1f;
 
 		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
 			setX(getX() + knockbackVx * delta);
@@ -98,13 +130,18 @@ public class Ghost extends Enemy {
 		applyVisualRegion(region);
 	}
 
+	/**
+	 * Notifies listeners that this enemy died (no local death effects).
+	 */
 	@Override
 	public void die() {
 		notifyDied();
 	}
 
 	/**
-	 * Moves toward the configured player character.
+	 * Moves toward the configured player character when within aggro range.
+	 *
+	 * @param delta frame time in seconds
 	 */
 	public void following(float delta) {
 		float oldX = getX();
@@ -135,12 +172,30 @@ public class Ghost extends Enemy {
 		}
 	}
 
+	/**
+	 * @return remaining damage invulnerability time in seconds
+	 */
 	public float getDamageInvulnerabilityTime() {
 		return damageInvulnerabilityTime;
 	}
 
+	/**
+	 * Sets the remaining damage invulnerability time.
+	 *
+	 * @param damageInvulnerabilityTime time in seconds
+	 */
 	public void setDamageInvulnerabilityTime(float damageInvulnerabilityTime) {
 		this.damageInvulnerabilityTime = damageInvulnerabilityTime;
 	}
-}
 
+	/**
+	 * Draws the enemy using a hue-tinted sprite. The sprite color is temporarily changed to the
+	 * desired HSV->RGB color and restored after drawing to avoid affecting other draw calls.
+	 *
+	 * @param batch sprite batch used for drawing
+	 */
+	@Override
+	public void draw(Batch batch) {
+		HueShader.apply(batch, hueAnim, () -> super.draw(batch));
+	}
+}

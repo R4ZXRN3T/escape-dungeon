@@ -48,53 +48,6 @@ public class EnemySpriteSet {
 	}
 
 	/**
-	 * Returns the idle texture for a given direction, falling back to FRONT if the direction
-	 * has no dedicated frame.
-	 */
-	public TextureRegion getIdle(Direction direction) {
-		TextureRegion region = idleFrames.get(direction);
-		if (region != null) return region;
-		// Fall back to FRONT (always present).
-		return idleFrames.get(Direction.FRONT);
-	}
-
-	/**
-	 * Returns the idle texture for FRONT.
-	 */
-	public Texture getFrontIdleTexture() {
-		return getIdle(Direction.FRONT).getTexture();
-	}
-
-	/**
-	 * Returns true if this sprite set has walk frames for at least one direction.
-	 */
-	public boolean hasWalkAnimation() {
-		return !walkFrames.isEmpty();
-	}
-
-	/**
-	 * Creates a {@link DirectionalAnimationSet} for walking.
-	 *
-	 * <p>Directions that have no walk frames fall back to the idle frame as a single-frame
-	 * animation, so callers don't need to handle the missing-walk-frames case.</p>
-	 */
-	public DirectionalAnimationSet createWalkAnimations(float frameDurationSeconds) {
-		EnumMap<Direction, Animation<TextureRegion>> map = new EnumMap<>(Direction.class);
-		for (Direction dir : Direction.values()) {
-			List<TextureRegion> frames = walkFrames.get(dir);
-			if (frames != null && !frames.isEmpty()) {
-				map.put(dir, new Animation<>(frameDurationSeconds, frames.toArray(new TextureRegion[0])));
-			} else {
-				// Fall back: single-frame animation from idle.
-				map.put(dir, new Animation<>(frameDurationSeconds, getIdle(dir)));
-			}
-		}
-		return new DirectionalAnimationSet(map);
-	}
-
-	// ── Builder: turns a flat list of loaded paths into an EnemySpriteSet ──────────
-
-	/**
 	 * Builds an {@link EnemySpriteSet} by scanning the provided asset paths for files matching
 	 * the naming conventions described in the class Javadoc.
 	 *
@@ -150,8 +103,6 @@ public class EnemySpriteSet {
 		return new EnemySpriteSet(idles, walks);
 	}
 
-	// ── Private helpers ───────────────────────────────────────────────────────────
-
 	/**
 	 * Detects the {@link Direction} from a lower-cased filename stem.
 	 */
@@ -176,6 +127,55 @@ public class EnemySpriteSet {
 	 */
 	private static boolean isWalkFrame(String lower) {
 		return lower.contains("laufen") || lower.contains("walk") || lower.contains("run");
+	}
+
+	// ── Builder: turns a flat list of loaded paths into an EnemySpriteSet ──────────
+
+	/**
+	 * Returns the idle texture for a given direction, falling back to FRONT if the direction
+	 * has no dedicated frame.
+	 */
+	public TextureRegion getIdle(Direction direction) {
+		TextureRegion region = idleFrames.get(direction);
+		if (region != null) return region;
+		// Fall back to FRONT (always present).
+		return idleFrames.get(Direction.FRONT);
+	}
+
+	// ── Private helpers ───────────────────────────────────────────────────────────
+
+	/**
+	 * Returns the idle texture for FRONT.
+	 */
+	public Texture getFrontIdleTexture() {
+		return getIdle(Direction.FRONT).getTexture();
+	}
+
+	/**
+	 * Returns true if this sprite set has walk frames for at least one direction.
+	 */
+	public boolean hasWalkAnimation() {
+		return !walkFrames.isEmpty();
+	}
+
+	/**
+	 * Creates a {@link DirectionalAnimationSet} for walking.
+	 *
+	 * <p>Directions that have no walk frames fall back to the idle frame as a single-frame
+	 * animation, so callers don't need to handle the missing-walk-frames case.</p>
+	 */
+	public DirectionalAnimationSet createWalkAnimations(float frameDurationSeconds) {
+		EnumMap<Direction, Animation<TextureRegion>> map = new EnumMap<>(Direction.class);
+		for (Direction dir : Direction.values()) {
+			List<TextureRegion> frames = walkFrames.get(dir);
+			if (frames != null && !frames.isEmpty()) {
+				map.put(dir, new Animation<>(frameDurationSeconds, frames.toArray(new TextureRegion[0])));
+			} else {
+				// Fall back: single-frame animation from idle.
+				map.put(dir, new Animation<>(frameDurationSeconds, getIdle(dir)));
+			}
+		}
+		return new DirectionalAnimationSet(map);
 	}
 }
 

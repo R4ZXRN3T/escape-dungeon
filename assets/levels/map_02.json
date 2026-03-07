@@ -25,6 +25,12 @@
 			"posX": 60,
 			"posY": 80,
 			"level": 1
+		},
+		{
+			"enemyType": "rgbghost",
+			"posX": 60,
+			"posY": 80,
+			"level": 10
 		}
 	]
 
