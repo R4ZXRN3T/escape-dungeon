@@ -1,7 +1,7 @@
-// core/src/main/java/org/lasarimanstudios/escapedungeon/Character.java
 package org.lasarimanstudios.escapedungeon.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -10,10 +10,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.ConfigManager;
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
-import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
+import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
+import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.weapons.SwordType;
 import org.lasarimanstudios.escapedungeon.entities.weapons.Weapon;
@@ -70,16 +70,19 @@ public class Character extends Entity {
 
 	private float currentAttackAngleDeg = 0f;
 
-    // Optional: allow the player to reuse an enemy's sprite set (e.g. goblin) for visuals.
-    private EnemySpriteSet playerSpriteSet;
-    private DirectionalAnimationSet playerWalkAnimations;
-    private float playerWalkFrameDurationSeconds = 0.16f;
+	// Toggle: when true the player sprite faces the mouse cursor instead of movement direction.
+	// This is intended as a temporary testing hook and is easy to remove.
+	private boolean useMouseFacing = false;
+
+	// Optional: allow the player to reuse an enemy's sprite set (e.g. goblin) for visuals.
+	private EnemySpriteSet playerSpriteSet;
+	private DirectionalAnimationSet playerWalkAnimations;
 
 	/**
 	 * New constructor: character visuals are provided via {@link GameAssets} so we can swap frames.
 	 */
 	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, SwordType swordType, float width, float height, float MaxHealth) {
-		super(assets.getPlayerIdle(Direction.FRONT));
+		super(assets.getPlayerIdle());
 		this.assets = assets;
 		setMaxHealth(MaxHealth);
 		setRemainingHealth(getMaxHealth());
@@ -103,44 +106,38 @@ public class Character extends Entity {
 		this.deathListener = deathListener;
 	}
 
-    /**
-     * Attempts to set the player's visuals to use the sprite set of an enemy type.
-     * If the named enemy sprite set isn't available, this logs and leaves the default player
-     * visuals intact.
-     *
-     * @param enemyId folder name under textures/enemy/ (e.g. "goblin_01")
-     */
-    public void setPlayerSpriteFromEnemy(String enemyId) {
-        if (assets == null || enemyId == null) return;
-        try {
-            EnemySpriteSet set = assets.getEnemySpriteSet(enemyId);
-            setPlayerSpriteSet(set);
-        } catch (IllegalArgumentException e) {
-            Gdx.app.log("Character", "Could not set player sprite from enemy '" + enemyId + "': " + e.getMessage());
-        }
-    }
+	/**
+	 * Attempts to set the player's visuals to use the sprite set of an enemy type.
+	 * If the named enemy sprite set isn't available, this logs and leaves the default player
+	 * visuals intact.
+	 *
+	 * @param enemyId folder name under textures/enemy/ (e.g. "goblin_01")
+	 */
+	public void setPlayerSpriteFromEnemy(String enemyId) {
+		if (assets == null || enemyId == null) return;
+		try {
+			EnemySpriteSet set = assets.getEnemySpriteSet(enemyId);
+			setPlayerSpriteSet(set);
+		} catch (IllegalArgumentException e) {
+			Gdx.app.log("Character", "Could not set player sprite from enemy '" + enemyId + "': " + e.getMessage());
+		}
+	}
 
-    /**
-     * Directly assigns an {@link EnemySpriteSet} to the player and builds walk animations.
-     * Pass {@code null} to reset to the default player artwork.
-     */
-    public void setPlayerSpriteSet(EnemySpriteSet set) {
-        this.playerSpriteSet = set;
-        if (set != null) {
-            this.playerWalkAnimations = set.createWalkAnimations(playerWalkFrameDurationSeconds);
-        } else {
-            this.playerWalkAnimations = null;
-        }
-        // Reset animation time so newly assigned sprites start consistently.
-        this.stateTimeSeconds = 0f;
-    }
-
-    /**
-     * Resets the player visuals back to the default character textures.
-     */
-    public void resetPlayerSpritesToDefault() {
-        setPlayerSpriteSet(null);
-    }
+	/**
+	 * Directly assigns an {@link EnemySpriteSet} to the player and builds walk animations.
+	 * Pass {@code null} to reset to the default player artwork.
+	 */
+	public void setPlayerSpriteSet(EnemySpriteSet set) {
+		this.playerSpriteSet = set;
+		if (set != null) {
+			float playerWalkFrameDurationSeconds = 0.16f;
+			this.playerWalkAnimations = set.createWalkAnimations(playerWalkFrameDurationSeconds);
+		} else {
+			this.playerWalkAnimations = null;
+		}
+		// Reset animation time so newly assigned sprites start consistently.
+		this.stateTimeSeconds = 0f;
+	}
 
 	/**
 	 * @return the equipped weapon instance (never {@code null})
@@ -195,6 +192,12 @@ public class Character extends Entity {
 		stateTimeSeconds += delta;
 		movement(delta);
 		rotateToMouse(camera);
+		// Toggle facing mode with key 'F' for quick testing. This is intentionally
+		// added as a small, easy-to-remove testing hook.
+		if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+			useMouseFacing = !useMouseFacing;
+			Gdx.app.log("Character", "useMouseFacing = " + useMouseFacing);
+		}
 		updateVisual();
 
 		if (Gdx.input.isButtonJustPressed(BUTTON_ATTACK)) {
@@ -220,30 +223,16 @@ public class Character extends Entity {
 			if (walking && playerWalkAnimations != null) {
 				TextureRegion frame = playerWalkAnimations.getKeyFrame(facing, stateTimeSeconds, true);
 				setRegion(frame);
-				return;
-			} else {
-				setRegion(playerSpriteSet.getIdle(facing));
-				return;
-			}
+			} else setRegion(playerSpriteSet.getIdle(facing));
+			return;
 		}
 
 		// Fallback: use the default player texture provided by GameAssets.
-		TextureRegion idle = assets.getPlayerIdle(facing);
+		TextureRegion idle = assets.getPlayerIdle();
 		setRegion(idle);
 	}
 
 	private void rotateToMouse(OrthographicCamera camera) {
-		/*camera.unproject(mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-
-		float characterX = getX() + getWidth() * 0.5f;
-		float characterY = getY() + getHeight() * 0.5f;
-
-		float dx = mouseWorld.x - characterX;
-		float dy = mouseWorld.y - characterY;
-
-		float angleDeg = (float) Math.toDegrees(Math.atan2(dy, dx)) + FRONT_ANGLE_OFFSET_DEG;
-		setRotation(angleDeg);*/
-
 		camera.unproject(mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 
 		float characterX = getX() + getWidth() * 0.5f;
@@ -252,7 +241,19 @@ public class Character extends Entity {
 		float dx = mouseWorld.x - characterX;
 		float dy = mouseWorld.y - characterY;
 
-		currentAttackAngleDeg = (float) Math.toDegrees(Math.atan2(dy, dx)) + FRONT_ANGLE_OFFSET_DEG;
+		double degrees = Math.toDegrees(Math.atan2(dy, dx));
+		currentAttackAngleDeg = (float) degrees + FRONT_ANGLE_OFFSET_DEG;
+
+		// Determine a coarse 4-way facing from the raw angle (no offset). This is used
+		// only when useMouseFacing is enabled so the player 'looks' toward the cursor.
+		if (useMouseFacing) {
+			float absDx = Math.abs(dx);
+			float absDy = Math.abs(dy);
+
+			// XD wtf is this
+			// nested ternary operators are funny
+			facing = absDx > absDy ? dx > 0 ? Direction.RIGHT : Direction.LEFT : dy > 0 ? Direction.BACK : Direction.FRONT;
+		}
 	}
 
 	private void attachWeapon() {
@@ -267,9 +268,7 @@ public class Character extends Entity {
 			characterY + weaponOffsetWorld.y
 		);
 
-		if (!weapon.isAttacking()) {
-			weapon.setRotation(currentAttackAngleDeg + 45f);
-		}
+		if (!weapon.isAttacking()) weapon.setRotation(currentAttackAngleDeg + 45f);
 	}
 
 	private void movement(float delta) {
@@ -307,17 +306,13 @@ public class Character extends Entity {
 			float stepDx = totalDx / steps;
 			float stepDy = totalDy / steps;
 
-			for (int i = 0; i < steps; i++) {
-				moveWithCollisions(stepDx, stepDy, true);
-			}
+			for (int i = 0; i < steps; i++) moveWithCollisions(stepDx, stepDy, true);
 
 			walking = (moveX != 0f || moveY != 0f);
-			if (walking) {
-				if (Math.abs(moveX) > Math.abs(moveY)) {
-					facing = moveX > 0 ? Direction.RIGHT : Direction.LEFT;
-				} else {
-					facing = moveY > 0 ? Direction.BACK : Direction.FRONT;
-				}
+			// Only update facing from movement if mouse-facing mode is disabled.
+			if (!useMouseFacing && walking) {
+				if (Math.abs(moveX) > Math.abs(moveY)) facing = moveX > 0 ? Direction.RIGHT : Direction.LEFT;
+				else facing = moveY > 0 ? Direction.BACK : Direction.FRONT;
 			}
 		}
 	}
@@ -342,11 +337,6 @@ public class Character extends Entity {
 			if (overlapsAnyWall()) {
 				setX(oldX);
 				updateCollider();
-			} else if (!ignoreEnemyCollision) {
-				Enemy enemy = getOverlappingEnemy();
-				if (enemy != null) {
-					resolveEnemyCollision(enemy);
-				}
 			}
 		}
 
@@ -362,7 +352,6 @@ public class Character extends Entity {
 				Enemy enemy = getOverlappingEnemy();
 				if (enemy != null) {
 					takeDamage(enemy, 10, 150);
-					resolveEnemyCollision(enemy);
 				}
 			}
 		}
@@ -383,84 +372,14 @@ public class Character extends Entity {
 	 * @return {@code true} if overlapping at least one wall; {@code false} otherwise
 	 */
 	private boolean overlapsAnyWall() {
-		for (Wall wall : wallArray) {
-			// Wall collider is also an AABB rectangle.
-			if (collider.overlaps(wall.getBoundingRectangle())) return true;
-		}
+		// Wall collider is also an AABB rectangle.
+		for (Wall wall : wallArray) if (collider.overlaps(wall.getBoundingRectangle())) return true;
 		return false;
 	}
 
 	private Enemy getOverlappingEnemy() {
-		for (Enemy enemy : enemyArray) {
-			if (collider.overlaps(enemy.getBoundingRectangle())) {
-				return enemy;
-			}
-		}
+		for (Enemy enemy : enemyArray) if (collider.overlaps(enemy.getBoundingRectangle())) return enemy;
 		return null;
-	}
-
-	private void resolveEnemyCollision(Enemy enemy) {
-		Rectangle enemyRect = enemy.getBoundingRectangle();
-
-		float overlapX = Math.min(
-			collider.x + collider.width - enemyRect.x,
-			enemyRect.x + enemyRect.width - collider.x
-		);
-
-		float overlapY = Math.min(
-			collider.y + collider.height - enemyRect.y,
-			enemyRect.y + enemyRect.height - collider.y
-		);
-
-		// Preferred axis: the smaller overlap (push away along that axis)
-		boolean preferX = overlapX < overlapY;
-
-		// Helper to attempt an axis move while ensuring we don't end up overlapping walls.
-		// Returns true if the move was applied.
-		java.util.function.Supplier<Boolean> tryMoveX = () -> {
-			float oldX = getX();
-			if (getCenterX() < enemy.getCenterX()) {
-				setX(getX() - overlapX);
-			} else {
-				setX(getX() + overlapX);
-			}
-			updateCollider();
-			if (overlapsAnyWall()) {
-				// revert
-				setX(oldX);
-				updateCollider();
-				return false;
-			}
-			return true;
-		};
-
-		java.util.function.Supplier<Boolean> tryMoveY = () -> {
-			float oldY = getY();
-			if (getCenterY() < enemy.getCenterY()) {
-				setY(getY() - overlapY);
-			} else {
-				setY(getY() + overlapY);
-			}
-			updateCollider();
-			if (overlapsAnyWall()) {
-				// revert
-				setY(oldY);
-				updateCollider();
-				return false;
-			}
-			return true;
-		};
-
-		boolean moved = false;
-		if (preferX) {
-			moved = tryMoveX.get();
-			if (!moved) moved = tryMoveY.get();
-		} else {
-			moved = tryMoveY.get();
-			if (!moved) moved = tryMoveX.get();
-		}
-
-		// If neither axis could be applied without hitting a wall, don't move the player.
 	}
 
 	private void die() {
@@ -513,10 +432,6 @@ public class Character extends Entity {
 
 	public boolean isDead() {
 		return isDead;
-	}
-
-	public void setDead(boolean dead) {
-		isDead = dead;
 	}
 
 	@FunctionalInterface
