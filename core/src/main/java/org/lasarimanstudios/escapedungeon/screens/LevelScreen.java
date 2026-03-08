@@ -17,6 +17,7 @@ import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.weapons.SwordType;
+import org.lasarimanstudios.escapedungeon.graphics.HealthBarHUD;
 import org.lasarimanstudios.escapedungeon.level.Map;
 import org.lasarimanstudios.escapedungeon.world.World;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
@@ -46,6 +47,7 @@ public class LevelScreen extends ScreenAdapter {
 	private final Character characterSprite;
 	private final GameAssets assets;
 	private final World world;
+	private final HealthBarHUD healthBarHUD;
 	private boolean deathHandled = false;
 
 	public LevelScreen(DungeonGame game, Map map, GameAssets assets) {
@@ -78,6 +80,8 @@ public class LevelScreen extends ScreenAdapter {
 
 		characterSprite.setDeathListener(this::onPlayerDied);
 
+		healthBarHUD = new HealthBarHUD();
+
 		camera.update();
 	}
 
@@ -93,6 +97,7 @@ public class LevelScreen extends ScreenAdapter {
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		camera.update();
+		healthBarHUD.resize(width, height);
 	}
 
 	/**
@@ -120,6 +125,10 @@ public class LevelScreen extends ScreenAdapter {
 		}
 
 		draw();
+
+		if (!deathHandled) {
+			healthBarHUD.render(spriteBatch, characterSprite);
+		}
 	}
 
 	/**
@@ -181,11 +190,8 @@ public class LevelScreen extends ScreenAdapter {
 	@Override
 	public void dispose() {
 		spriteBatch.dispose();
+		healthBarHUD.dispose();
 
 		assets.dispose();
-	}
-
-	public Map getMap() {
-		return map;
 	}
 }
