@@ -18,13 +18,13 @@ import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
  * </ul>
  */
 public class Map {
-	private String backgroundPath;
-	private Array<Wall> walls;
+	private final String backgroundPath;
+	private final Array<Wall> walls;
+	private final float startPosX;
+	private final float startPosY;
 	private Array<Enemy> enemies;
 	private float width;
 	private float height;
-	private float startPosX;
-	private float startPosY;
 
 	/**
 	 * Creates a map.
@@ -49,24 +49,10 @@ public class Map {
 	}
 
 	/**
-	 * @param backgroundPath background texture
-	 */
-	public void setBackgroundPath(String backgroundPath) {
-		this.backgroundPath = backgroundPath;
-	}
-
-	/**
 	 * @return walls in this map
 	 */
 	public Array<Wall> getWalls() {
 		return walls;
-	}
-
-	/**
-	 * @param walls new wall list
-	 */
-	public void setWalls(Array<Wall> walls) {
-		this.walls = walls;
 	}
 
 	/**
@@ -105,24 +91,10 @@ public class Map {
 	}
 
 	/**
-	 * @param startPosX player start X in world units
-	 */
-	public void setStartPosX(float startPosX) {
-		this.startPosX = startPosX;
-	}
-
-	/**
 	 * @return player start Y in world units
 	 */
 	public float getStartPosY() {
 		return startPosY;
-	}
-
-	/**
-	 * @param startPosY player start Y in world units
-	 */
-	public void setStartPosY(float startPosY) {
-		this.startPosY = startPosY;
 	}
 
 	/**

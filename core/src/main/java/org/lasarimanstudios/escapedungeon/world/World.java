@@ -95,16 +95,4 @@ public class World {
 
 		bloodPuddles.add(new BloodPuddle(assets.getTexture(GameAssets.TEX_BLOOD_PUDDLE), x, y, 5f));
 	}
-
-	public Array<BloodPuddle> getBloodPuddles() {
-		return bloodPuddles;
-	}
-
-	public Array<Chest> getChests() {
-		return chests;
-	}
-
-	public Map getMap() {
-		return map;
-	}
 }

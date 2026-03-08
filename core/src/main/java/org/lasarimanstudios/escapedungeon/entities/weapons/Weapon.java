@@ -11,11 +11,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  * weapon and perform hit detection.</p>
  */
 public abstract class Weapon extends Sprite {
+	private final float attackDamage;
+	private final float attackSpeed;
+	private final float range;
 	private boolean attacking;
-	private float attackDamage;
-	private float attackSpeed;
-	private float range;
-
 	/**
 	 * Monotonically increasing id that identifies the current/most recent attack.
 	 *
@@ -61,14 +60,11 @@ public abstract class Weapon extends Sprite {
 	 * <p>Subclasses should call this exactly once when they begin an attack animation. The returned id
 	 * should be passed along with damage calls so targets can ignore duplicate hits within the same
 	 * attack.</p>
-	 *
-	 * @return the new attack instance id
 	 */
-	protected int beginAttackInstance() {
+	protected void beginAttackInstance() {
 		// Avoid returning 0 as a valid id (0 can be treated as "no instance" by callers if needed).
 		attackInstanceId++;
 		if (attackInstanceId == 0) attackInstanceId = 1;
-		return attackInstanceId;
 	}
 
 	/**
@@ -100,13 +96,6 @@ public abstract class Weapon extends Sprite {
 	}
 
 	/**
-	 * @param attackDamage attack damage per hit
-	 */
-	public void setAttackDamage(float attackDamage) {
-		this.attackDamage = attackDamage;
-	}
-
-	/**
 	 * @return attack duration in seconds
 	 */
 	public float getAttackSpeed() {
@@ -114,23 +103,9 @@ public abstract class Weapon extends Sprite {
 	}
 
 	/**
-	 * @param attackSpeed attack duration in seconds
-	 */
-	public void setAttackSpeed(float attackSpeed) {
-		this.attackSpeed = attackSpeed;
-	}
-
-	/**
 	 * @return effective range in world units
 	 */
 	public float getRange() {
 		return range;
-	}
-
-	/**
-	 * @param range effective range in world units
-	 */
-	public void setRange(float range) {
-		this.range = range;
 	}
 }

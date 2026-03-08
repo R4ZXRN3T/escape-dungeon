@@ -3,10 +3,10 @@ package org.lasarimanstudios.escapedungeon.entities.enemies;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
+import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.graphics.HueShader;
 
 /**
@@ -25,8 +25,6 @@ public class RgbGhost extends Enemy {
 	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
 	private static final float HUE_SPEED = 0.2f; // tweak for rainbow speed
-	private static final float HUE_SAT = 1f;
-	private static final float HUE_VAL = 1f;
 	private final EnemySpriteSet spriteSet;
 	private final DirectionalAnimationSet walkAnimations;
 	private float damageInvulnerabilityTime = 0.3f;
@@ -170,22 +168,6 @@ public class RgbGhost extends Enemy {
 		} else {
 			facing = dy > 0 ? Direction.BACK : Direction.FRONT;
 		}
-	}
-
-	/**
-	 * @return remaining damage invulnerability time in seconds
-	 */
-	public float getDamageInvulnerabilityTime() {
-		return damageInvulnerabilityTime;
-	}
-
-	/**
-	 * Sets the remaining damage invulnerability time.
-	 *
-	 * @param damageInvulnerabilityTime time in seconds
-	 */
-	public void setDamageInvulnerabilityTime(float damageInvulnerabilityTime) {
-		this.damageInvulnerabilityTime = damageInvulnerabilityTime;
 	}
 
 	/**

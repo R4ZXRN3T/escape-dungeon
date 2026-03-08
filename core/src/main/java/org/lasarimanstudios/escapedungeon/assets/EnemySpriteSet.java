@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class EnemySpriteSet {
 		this.idleFrames = new EnumMap<>(idleFrames);
 		this.walkFrames = new EnumMap<>(Direction.class);
 		for (var entry : walkFrames.entrySet()) {
-			this.walkFrames.put(entry.getKey(), Collections.unmodifiableList(new ArrayList<>(entry.getValue())));
+			this.walkFrames.put(entry.getKey(), List.copyOf(entry.getValue()));
 		}
 	}
 
@@ -147,13 +146,6 @@ public class EnemySpriteSet {
 	 */
 	public Texture getFrontIdleTexture() {
 		return getIdle(Direction.FRONT).getTexture();
-	}
-
-	/**
-	 * Returns true if this sprite set has walk frames for at least one direction.
-	 */
-	public boolean hasWalkAnimation() {
-		return !walkFrames.isEmpty();
 	}
 
 	/**

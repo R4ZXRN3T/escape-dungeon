@@ -2,10 +2,10 @@ package org.lasarimanstudios.escapedungeon.entities.enemies;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
+import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 
 /**
  * Ghost enemy that follows the player character.
@@ -133,14 +133,6 @@ public class Ghost extends Enemy {
 		} else {
 			facing = dy > 0 ? Direction.BACK : Direction.FRONT;
 		}
-	}
-
-	public float getDamageInvulnerabilityTime() {
-		return damageInvulnerabilityTime;
-	}
-
-	public void setDamageInvulnerabilityTime(float damageInvulnerabilityTime) {
-		this.damageInvulnerabilityTime = damageInvulnerabilityTime;
 	}
 }
 
