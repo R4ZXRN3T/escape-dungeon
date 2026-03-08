@@ -38,6 +38,7 @@ public class GameAssets {
 	public static final String TEX_WEAPON_SWORD_RAINBOW = "textures/weapons/sword_rainbow.png";
 	public static final String TEX_WEAPON_SWORD_YELLOW = "textures/weapons/sword_yellow.png";
 	public static final String TEX_WEAPON_RGB_SABER = "textures/weapons/rgb_saber.png";
+	public static final String TEX_WEAPON_SWORD_ARC = "textures/weapons/sword_arc.png";
 	public static final String TEX_PLAYER_LEFT_IDLE = "textures/characters/character-01/character-01-links-stehend.png";
 
 	private final AssetManager assetManager = new AssetManager();
@@ -131,6 +132,19 @@ public class GameAssets {
 	}
 
 	/**
+	 * Returns the sword arc trail texture, or {@code null} if it hasn't been loaded
+	 * (e.g. the asset file doesn't exist yet).
+	 *
+	 * <p>Callers should handle {@code null} by using a programmatic fallback.</p>
+	 */
+	public Texture getArcTexture() {
+		if (assetManager.isLoaded(TEX_WEAPON_SWORD_ARC, Texture.class)) {
+			return assetManager.get(TEX_WEAPON_SWORD_ARC, Texture.class);
+		}
+		return null;
+	}
+
+	/**
 	 * Convenience method that ensures a texture is loaded and then returns it.
 	 *
 	 * <p>This is useful during development as a safe fallback for assets that weren't preloaded.</p>
@@ -167,7 +181,7 @@ public class GameAssets {
 			id -> EnemySpriteSet.build(this, id, loadedTexturePaths));
 	}
 
-	public TextureRegion getPlayerIdle(Direction direction) {
+	public TextureRegion getPlayerIdle() {
 		// Until there are directional player assets, just reuse the left-standing image.
 		return getRegion(TEX_PLAYER_LEFT_IDLE);
 	}

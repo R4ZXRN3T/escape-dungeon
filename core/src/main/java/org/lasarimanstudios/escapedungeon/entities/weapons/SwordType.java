@@ -30,10 +30,11 @@ public enum SwordType {
 	/**
 	 * Special sword that cycles through rainbow hues while swinging.
 	 */
-	RGB_SABER(GameAssets.TEX_WEAPON_RGB_SABER, 30f, 0.10f, 2.0f) {
+	RGB_SABER(GameAssets.TEX_WEAPON_RGB_SABER, 30f, 0.30f, 2.0f) {
 		@Override
 		public Sword create(Array<Enemy> enemies, GameAssets assets) {
-			return new RgbSaber(enemies, assets.getTexture(texturePath), damage, speed, range);
+			return new RgbSaber(enemies, assets.getTexture(texturePath), damage, speed, range,
+				assets.getArcTexture());
 		}
 	};
 
@@ -71,6 +72,7 @@ public enum SwordType {
 	 * @return a new sword instance with the stats defined by this type
 	 */
 	public Sword create(Array<Enemy> enemies, GameAssets assets) {
-		return new Sword(enemies, assets.getTexture(texturePath), damage, speed, range);
+		return new Sword(enemies, assets.getTexture(texturePath), damage, speed, range,
+			assets.getArcTexture());
 	}
 }

@@ -18,8 +18,8 @@ public class RgbSaber extends Sword {
 	private static final float HUE_SPEED = 0.2f;
 	private float hueAnim = 0f;
 
-	public RgbSaber(Array<Enemy> enemies, Texture texture, float attackDamage, float attackSpeed, float range) {
-		super(enemies, texture, attackDamage, attackSpeed, range);
+	public RgbSaber(Array<Enemy> enemies, Texture texture, float attackDamage, float attackSpeed, float range, Texture arcTexture) {
+		super(enemies, texture, attackDamage, attackSpeed, range, arcTexture);
 	}
 
 	@Override
