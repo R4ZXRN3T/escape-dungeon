@@ -109,8 +109,6 @@ public class LevelScreen extends ScreenAdapter {
 	@Override
 	public void render(float delta) {
 		viewport.apply();
-		camera.update();
-		spriteBatch.setProjectionMatrix(camera.combined);
 
 		if (!deathHandled) {
 			characterSprite.update(delta, camera);
@@ -122,6 +120,9 @@ public class LevelScreen extends ScreenAdapter {
 
 			logic();
 			moveCamera();
+
+			camera.update();
+			spriteBatch.setProjectionMatrix(camera.combined);
 		}
 
 		draw();

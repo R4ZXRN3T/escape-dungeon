@@ -1,5 +1,7 @@
 package org.lasarimanstudios.escapedungeon.entities.weapons;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -34,6 +36,8 @@ public class Sword extends Weapon {
 	private float endAngle;
 	private float elapsedTime;
 	private boolean showArc;
+	private static Sound swingSound;
+	private static final float SOUND_DURATION = 0.342f;
 
 	/**
 	 * Creates a sword.
@@ -52,6 +56,8 @@ public class Sword extends Weapon {
 		setSize(size, size);
 		setOrigin(0.5f, getHeight() / 2f);
 		this.enemies = enemies;
+
+		swingSound = Gdx.audio.newSound(Gdx.files.internal("sound/sword_swoosh.mp3"));
 
 		// Set up arc trail sprite.
 		Texture arcTex = arcTexture != null ? arcTexture : createFallbackArcTexture();
@@ -160,6 +166,8 @@ public class Sword extends Weapon {
 		this.showArc = false;
 
 		setRotation(startAngle);
-	}
 
+		float pitch = SOUND_DURATION / getAttackSpeed();
+		swingSound.play(0.5f, pitch, 0f);
+	}
 }
