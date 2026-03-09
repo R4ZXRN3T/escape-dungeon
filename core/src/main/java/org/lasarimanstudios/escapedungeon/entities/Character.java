@@ -15,8 +15,8 @@ import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
 import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
-import org.lasarimanstudios.escapedungeon.entities.weapons.SwordType;
-import org.lasarimanstudios.escapedungeon.entities.weapons.Weapon;
+import org.lasarimanstudios.escapedungeon.weapons.SwordType;
+import org.lasarimanstudios.escapedungeon.weapons.Weapon;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 

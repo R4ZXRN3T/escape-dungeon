@@ -1,4 +1,4 @@
-package org.lasarimanstudios.escapedungeon.entities.weapons;
+package org.lasarimanstudios.escapedungeon.weapons;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;

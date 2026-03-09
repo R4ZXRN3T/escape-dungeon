@@ -1,4 +1,4 @@
-package org.lasarimanstudios.escapedungeon.graphics;
+package org.lasarimanstudios.escapedungeon.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -18,7 +18,7 @@ import org.lasarimanstudios.escapedungeon.entities.Character;
  */
 public class HealthBarHUD implements Disposable {
 
-	private static final float BAR_WIDTH = 384f;   // display width of the bar in screen pixels
+	private static final float BAR_WIDTH = 384f;    // display width of the bar in screen pixels
 	private static final float BAR_HEIGHT = 32f;    // display height of the bar in screen pixels
 	private static final float HEART_SIZE = 32f;    // display size of the heart icon
 	private static final float PADDING = 4f;        // gap between heart and bar

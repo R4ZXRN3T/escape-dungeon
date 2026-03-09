@@ -1,4 +1,4 @@
-package org.lasarimanstudios.escapedungeon.entities.weapons;
+package org.lasarimanstudios.escapedungeon.weapons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
