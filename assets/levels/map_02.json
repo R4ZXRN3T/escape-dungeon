@@ -1,393 +1,1233 @@
 {
-  "background": "map_02.png",
-  "width": 200.0,
-  "height": 200.0,
-  "startPosX": 99.5,
-  "startPosY": 10.0,
-  "walls": [
-    {
-      "texture": "wall_A1.png",
-      "width": 2.0,
-      "height": 198.0,
-      "posX": 198.0,
-      "posY": 0.0
-    },
-    {
-      "texture": "wall_A2.png",
-      "width": 198.0,
-      "height": 2.0,
-      "posX": 0.0,
-      "posY": 0.0
-    },
-    {
-      "texture": "wall_A3.png",
-      "width": 2.0,
-      "height": 198.0,
-      "posX": 0.0,
-      "posY": 2.0
-    },
-    {
-      "texture": "wall_A4.png",
-      "width": 198.0,
-      "height": 2.0,
-      "posX": 2.0,
-      "posY": 198.0
-    },
-    {
-      "texture": "wall_V1.png",
-      "width": 1.0,
-      "height": 19.0,
-      "posX": 79.0,
-      "posY": 2.0
-    },
-    {
-      "texture": "wall_V1.png",
-      "width": 1.0,
-      "height": 19.0,
-      "posX": 120.0,
-      "posY": 2.0
-    },
-    {
-      "texture": "wall_V2.png",
-      "width": 1.0,
-      "height": 10.0,
-      "posX": 53.0,
-      "posY": 146.0
-    },
-    {
-      "texture": "wall_V2.png",
-      "width": 1.0,
-      "height": 10.0,
-      "posX": 146.0,
-      "posY": 146.0
-    },
-    {
-      "texture": "wall_V2.png",
-      "width": 1.0,
-      "height": 10.0,
-      "posX": 53.0,
-      "posY": 95.0
-    },
-    {
-      "texture": "wall_V2.png",
-      "width": 1.0,
-      "height": 10.0,
-      "posX": 146.0,
-      "posY": 95.0
-    },
-    {
-      "texture": "wall_V2.png",
-      "width": 1.0,
-      "height": 10.0,
-      "posX": 53.0,
-      "posY": 73.0
-    },
-    {
-      "texture": "wall_V2.png",
-      "width": 1.0,
-      "height": 10.0,
-      "posX": 146.0,
-      "posY": 73.0
-    },
-    {
-      "texture": "wall_V2.png",
-      "width": 1.0,
-      "height": 10.0,
-      "posX": 53.0,
-      "posY": 22.0
-    },
-    {
-      "texture": "wall_V2.png",
-      "width": 1.0,
-      "height": 10.0,
-      "posX": 146.0,
-      "posY": 22.0
-    },
-    {
-      "texture": "wall_V2.png",
-      "width": 1.0,
-      "height": 10.0,
-      "posX": 42.0,
-      "posY": 22.0
-    },
-    {
-      "texture": "wall_V2.png",
-      "width": 1.0,
-      "height": 10.0,
-      "posX": 157.0,
-      "posY": 22.0
-    },
-    {
-      "texture": "wall_V3.png",
-      "width": 1.0,
-      "height": 21.0,
-      "posX": 53.0,
-      "posY": 115.0
-    },
-    {
-      "texture": "wall_V3.png",
-      "width": 1.0,
-      "height": 21.0,
-      "posX": 146.0,
-      "posY": 115.0
-    },
-    {
-      "texture": "wall_V3.png",
-      "width": 1.0,
-      "height": 21.0,
-      "posX": 53.0,
-      "posY": 167.0
-    },
-    {
-      "texture": "wall_V3.png",
-      "width": 1.0,
-      "height": 21.0,
-      "posX": 146.0,
-      "posY": 167.0
-    },
-    {
-      "texture": "wall_V3.png",
-      "width": 1.0,
-      "height": 21.0,
-      "posX": 53.0,
-      "posY": 42.0
-    },
-    {
-      "texture": "wall_V3.png",
-      "width": 1.0,
-      "height": 21.0,
-      "posX": 146.0,
-      "posY": 42.0
-    },
-    {
-      "texture": "wall_V4.png",
-      "width": 1.0,
-      "height": 42.0,
-      "posX": 42.0,
-      "posY": 42.0
-    },
-    {
-      "texture": "wall_V4.png",
-      "width": 1.0,
-      "height": 42.0,
-      "posX": 157.0,
-      "posY": 42.0
-    },
-    {
-      "texture": "wall_V5.png",
-      "width": 1.0,
-      "height": 63.0,
-      "posX": 42.0,
-      "posY": 94.0
-    },
-    {
-      "texture": "wall_V5.png",
-      "width": 1.0,
-      "height": 63.0,
-      "posX": 157.0,
-      "posY": 94.0
-    },
-    {
-      "texture": "wall_V5.png",
-      "width": 1.0,
-      "height": 63.0,
-      "posX": 94.0,
-      "posY": 94.0
-    },
-    {
-      "texture": "wall_V5.png",
-      "width": 1.0,
-      "height": 63.0,
-      "posX": 105.0,
-      "posY": 94.0
-    },
-    {
-      "texture": "wall_V5.png",
-      "width": 1.0,
-      "height": 63.0,
-      "posX": 94.0,
-      "posY": 21.0
-    },
-    {
-      "texture": "wall_V5.png",
-      "width": 1.0,
-      "height": 63.0,
-      "posX": 105.0,
-      "posY": 21.0
-    },
-    {
-      "texture": "wall_V6.png",
-      "width": 1.0,
-      "height": 31.0,
-      "posX": 42.0,
-      "posY": 167.0
-    },
-    {
-      "texture": "wall_V6.png",
-      "width": 1.0,
-      "height": 31.0,
-      "posX": 157.0,
-      "posY": 167.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 54.0,
-      "posY": 167.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 105.0,
-      "posY": 167.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 53.0,
-      "posY": 156.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 106.0,
-      "posY": 156.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 53.0,
-      "posY": 94.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 106.0,
-      "posY": 94.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 53.0,
-      "posY": 83.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 106.0,
-      "posY": 83.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 53.0,
-      "posY": 21.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 106.0,
-      "posY": 21.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 2.0,
-      "posY": 21.0
-    },
-    {
-      "texture": "wall_H1.png",
-      "width": 41.0,
-      "height": 1.0,
-      "posX": 157.0,
-      "posY": 21.0
-    },
-    {
-      "texture": "wall_H2.png",
-      "width": 40.0,
-      "height": 1.0,
-      "posX": 2.0,
-      "posY": 125.0
-    },
-    {
-      "texture": "wall_H2.png",
-      "width": 40.0,
-      "height": 1.0,
-      "posX": 158.0,
-      "posY": 125.0
-    },
-    {
-      "texture": "wall_H2.png",
-      "width": 40.0,
-      "height": 1.0,
-      "posX": 2.0,
-      "posY": 52.0
-    },
-    {
-      "texture": "wall_H2.png",
-      "width": 40.0,
-      "height": 1.0,
-      "posX": 158.0,
-      "posY": 52.0
-    },
-    {
-      "texture": "wall_H2.png",
-      "width": 40.0,
-      "height": 1.0,
-      "posX": 54.0,
-      "posY": 125.0
-    },
-    {
-      "texture": "wall_H2.png",
-      "width": 40.0,
-      "height": 1.0,
-      "posX": 106.0,
-      "posY": 125.0
-    },
-    {
-      "texture": "wall_H2.png",
-      "width": 40.0,
-      "height": 1.0,
-      "posX": 54.0,
-      "posY": 52.0
-    },
-    {
-      "texture": "wall_H2.png",
-      "width": 40.0,
-      "height": 1.0,
-      "posX": 106.0,
-      "posY": 52.0
-    }
-  ],
-  "enemies": [
-    {
-      "enemyType": "goblin",
-      "posX": 20.0,
-      "posY": 30.0,
-      "level": 1
-    },
-    {
-      "enemyType": "ghost",
-      "posX": 30.0,
-      "posY": 40.0,
-      "level": 1
-    },
-    {
-      "enemyType": "rgbghost",
-      "posX": 99.0,
-      "posY": 182.0,
-      "level": 10
-    }
-  ]
+	"background": "map_02.png",
+	"width": 200.0,
+	"height": 200.0,
+	"startPosX": 99.5,
+	"startPosY": 10.0,
+	"walls": [
+		{
+			"texture": "wall_A1.png",
+			"width": 2.0,
+			"height": 198.0,
+			"posX": 198.0,
+			"posY": 0.0
+		},
+		{
+			"texture": "wall_A2.png",
+			"width": 198.0,
+			"height": 2.0,
+			"posX": 0.0,
+			"posY": 0.0
+		},
+		{
+			"texture": "wall_A3.png",
+			"width": 2.0,
+			"height": 198.0,
+			"posX": 0.0,
+			"posY": 2.0
+		},
+		{
+			"texture": "wall_A4.png",
+			"width": 198.0,
+			"height": 2.0,
+			"posX": 2.0,
+			"posY": 198.0
+		},
+		{
+			"texture": "wall_V1.png",
+			"width": 1.0,
+			"height": 19.0,
+			"posX": 79.0,
+			"posY": 2.0
+		},
+		{
+			"texture": "wall_V1.png",
+			"width": 1.0,
+			"height": 19.0,
+			"posX": 120.0,
+			"posY": 2.0
+		},
+		{
+			"texture": "wall_V2.png",
+			"width": 1.0,
+			"height": 10.0,
+			"posX": 53.0,
+			"posY": 146.0
+		},
+		{
+			"texture": "wall_V2.png",
+			"width": 1.0,
+			"height": 10.0,
+			"posX": 146.0,
+			"posY": 146.0
+		},
+		{
+			"texture": "wall_V2.png",
+			"width": 1.0,
+			"height": 10.0,
+			"posX": 53.0,
+			"posY": 95.0
+		},
+		{
+			"texture": "wall_V2.png",
+			"width": 1.0,
+			"height": 10.0,
+			"posX": 146.0,
+			"posY": 95.0
+		},
+		{
+			"texture": "wall_V2.png",
+			"width": 1.0,
+			"height": 10.0,
+			"posX": 53.0,
+			"posY": 73.0
+		},
+		{
+			"texture": "wall_V2.png",
+			"width": 1.0,
+			"height": 10.0,
+			"posX": 146.0,
+			"posY": 73.0
+		},
+		{
+			"texture": "wall_V2.png",
+			"width": 1.0,
+			"height": 10.0,
+			"posX": 53.0,
+			"posY": 22.0
+		},
+		{
+			"texture": "wall_V2.png",
+			"width": 1.0,
+			"height": 10.0,
+			"posX": 146.0,
+			"posY": 22.0
+		},
+		{
+			"texture": "wall_V2.png",
+			"width": 1.0,
+			"height": 10.0,
+			"posX": 42.0,
+			"posY": 22.0
+		},
+		{
+			"texture": "wall_V2.png",
+			"width": 1.0,
+			"height": 10.0,
+			"posX": 157.0,
+			"posY": 22.0
+		},
+		{
+			"texture": "wall_V3.png",
+			"width": 1.0,
+			"height": 21.0,
+			"posX": 53.0,
+			"posY": 115.0
+		},
+		{
+			"texture": "wall_V3.png",
+			"width": 1.0,
+			"height": 21.0,
+			"posX": 146.0,
+			"posY": 115.0
+		},
+		{
+			"texture": "wall_V3.png",
+			"width": 1.0,
+			"height": 21.0,
+			"posX": 53.0,
+			"posY": 167.0
+		},
+		{
+			"texture": "wall_V3.png",
+			"width": 1.0,
+			"height": 21.0,
+			"posX": 146.0,
+			"posY": 167.0
+		},
+		{
+			"texture": "wall_V3.png",
+			"width": 1.0,
+			"height": 21.0,
+			"posX": 53.0,
+			"posY": 42.0
+		},
+		{
+			"texture": "wall_V3.png",
+			"width": 1.0,
+			"height": 21.0,
+			"posX": 146.0,
+			"posY": 42.0
+		},
+		{
+			"texture": "wall_V4.png",
+			"width": 1.0,
+			"height": 42.0,
+			"posX": 42.0,
+			"posY": 42.0
+		},
+		{
+			"texture": "wall_V4.png",
+			"width": 1.0,
+			"height": 42.0,
+			"posX": 157.0,
+			"posY": 42.0
+		},
+		{
+			"texture": "wall_V5.png",
+			"width": 1.0,
+			"height": 63.0,
+			"posX": 42.0,
+			"posY": 94.0
+		},
+		{
+			"texture": "wall_V5.png",
+			"width": 1.0,
+			"height": 63.0,
+			"posX": 157.0,
+			"posY": 94.0
+		},
+		{
+			"texture": "wall_V5.png",
+			"width": 1.0,
+			"height": 63.0,
+			"posX": 94.0,
+			"posY": 94.0
+		},
+		{
+			"texture": "wall_V5.png",
+			"width": 1.0,
+			"height": 63.0,
+			"posX": 105.0,
+			"posY": 94.0
+		},
+		{
+			"texture": "wall_V5.png",
+			"width": 1.0,
+			"height": 63.0,
+			"posX": 94.0,
+			"posY": 21.0
+		},
+		{
+			"texture": "wall_V5.png",
+			"width": 1.0,
+			"height": 63.0,
+			"posX": 105.0,
+			"posY": 21.0
+		},
+		{
+			"texture": "wall_V6.png",
+			"width": 1.0,
+			"height": 31.0,
+			"posX": 42.0,
+			"posY": 167.0
+		},
+		{
+			"texture": "wall_V6.png",
+			"width": 1.0,
+			"height": 31.0,
+			"posX": 157.0,
+			"posY": 167.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 54.0,
+			"posY": 167.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 105.0,
+			"posY": 167.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 53.0,
+			"posY": 156.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 106.0,
+			"posY": 156.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 53.0,
+			"posY": 94.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 106.0,
+			"posY": 94.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 53.0,
+			"posY": 83.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 106.0,
+			"posY": 83.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 53.0,
+			"posY": 21.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 106.0,
+			"posY": 21.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 2.0,
+			"posY": 21.0
+		},
+		{
+			"texture": "wall_H1.png",
+			"width": 41.0,
+			"height": 1.0,
+			"posX": 157.0,
+			"posY": 21.0
+		},
+		{
+			"texture": "wall_H2.png",
+			"width": 40.0,
+			"height": 1.0,
+			"posX": 2.0,
+			"posY": 125.0
+		},
+		{
+			"texture": "wall_H2.png",
+			"width": 40.0,
+			"height": 1.0,
+			"posX": 158.0,
+			"posY": 125.0
+		},
+		{
+			"texture": "wall_H2.png",
+			"width": 40.0,
+			"height": 1.0,
+			"posX": 2.0,
+			"posY": 52.0
+		},
+		{
+			"texture": "wall_H2.png",
+			"width": 40.0,
+			"height": 1.0,
+			"posX": 158.0,
+			"posY": 52.0
+		},
+		{
+			"texture": "wall_H2.png",
+			"width": 40.0,
+			"height": 1.0,
+			"posX": 54.0,
+			"posY": 125.0
+		},
+		{
+			"texture": "wall_H2.png",
+			"width": 40.0,
+			"height": 1.0,
+			"posX": 106.0,
+			"posY": 125.0
+		},
+		{
+			"texture": "wall_H2.png",
+			"width": 40.0,
+			"height": 1.0,
+			"posX": 54.0,
+			"posY": 52.0
+		},
+		{
+			"texture": "wall_H2.png",
+			"width": 40.0,
+			"height": 1.0,
+			"posX": 106.0,
+			"posY": 52.0
+		}
+	],
+	"enemies": [
+		{
+			"enemyType": "goblin",
+			"posX": 40.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 65.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 135.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 160.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 75.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 125.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 75.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 125.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 75.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 125.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 180.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 180.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 40.0,
+			"posY": 8.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 8.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 65.0,
+			"posY": 8.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 135.0,
+			"posY": 8.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 160.0,
+			"posY": 8.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 8.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 33.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 75.0,
+			"posY": 33.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 125.0,
+			"posY": 33.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 33.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 108.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 75.0,
+			"posY": 108.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 125.0,
+			"posY": 108.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 108.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 138.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 75.0,
+			"posY": 138.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 125.0,
+			"posY": 138.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 138.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 178.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 178.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 38.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 18.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 63.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 133.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 158.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 178.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 18.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 73.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 123.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 178.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 18.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 73.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 123.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 178.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 18.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 73.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 123.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 178.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 18.0,
+			"posY": 180.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 178.0,
+			"posY": 180.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 40.0,
+			"posY": 12.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 12.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 65.0,
+			"posY": 12.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 135.0,
+			"posY": 12.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 160.0,
+			"posY": 12.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 12.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 37.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 75.0,
+			"posY": 37.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 125.0,
+			"posY": 37.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 37.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 112.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 75.0,
+			"posY": 112.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 125.0,
+			"posY": 112.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 112.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 142.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 75.0,
+			"posY": 142.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 125.0,
+			"posY": 142.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 142.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 20.0,
+			"posY": 182.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 180.0,
+			"posY": 182.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 42.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 22.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 67.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 137.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 162.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 182.0,
+			"posY": 10.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 22.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 77.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 127.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 182.0,
+			"posY": 35.0,
+			"level": 1
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 22.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 77.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 127.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 182.0,
+			"posY": 110.0,
+			"level": 2
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 22.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 77.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 127.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 182.0,
+			"posY": 140.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 22.0,
+			"posY": 180.0,
+			"level": 3
+		},
+		{
+			"enemyType": "goblin",
+			"posX": 182.0,
+			"posY": 180.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 50.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 90.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 50.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 90.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 50.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 90.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 125.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 125.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 125.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 160.0,
+			"level": 4
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 160.0,
+			"level": 4
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 160.0,
+			"level": 4
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 190.0,
+			"level": 5
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 190.0,
+			"level": 5
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 48.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 88.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 48.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 88.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 48.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 88.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 123.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 123.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 123.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 158.0,
+			"level": 4
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 158.0,
+			"level": 4
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 158.0,
+			"level": 4
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 188.0,
+			"level": 5
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 188.0,
+			"level": 5
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 52.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 92.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 52.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 92.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 52.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 92.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 127.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 127.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 127.0,
+			"level": 3
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 162.0,
+			"level": 4
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 162.0,
+			"level": 4
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 150.0,
+			"posY": 162.0,
+			"level": 4
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 50.0,
+			"posY": 192.0,
+			"level": 5
+		},
+		{
+			"enemyType": "ghost",
+			"posX": 100.0,
+			"posY": 192.0,
+			"level": 5
+		},
+		{
+			"enemyType": "rgbghost",
+			"posX": 100.0,
+			"posY": 182.0,
+			"level": 10
+		}
+	]
 }
