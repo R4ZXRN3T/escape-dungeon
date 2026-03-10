@@ -27,7 +27,7 @@ public class DevSword extends Sword {
 	@Override
 	public void update(float delta) {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
-			setRange(highRange ? 20f : 2f);
+			setRange(highRange ? 2f : 20f);
 			highRange = !highRange;
 		}
 
