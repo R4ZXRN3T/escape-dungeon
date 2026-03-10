@@ -6,6 +6,11 @@ import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
 import org.lasarimanstudios.escapedungeon.assets.GameAssets;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
+import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
+
+
 
 
 /**
@@ -15,7 +20,8 @@ import org.lasarimanstudios.escapedungeon.assets.GameAssets;
  * invulnerable and receives knockback velocity that decays over time.</p>
  */
 public class Goblin extends Enemy {
-
+	private final Array<Wall> wallArray;
+	private final Rectangle collider = new Rectangle();
 	private static final float BASE_HEALTH = 30f;
 	private static final float BASE_ATTACK_DAMAGE = 10f;
 	private static final float BASE_SPEED = 10f;
@@ -34,8 +40,9 @@ public class Goblin extends Enemy {
 	/**
 	 * Constructor: uses {@link GameAssets} to auto-discover goblin sprites via {@link EnemySpriteSet}.
 	 */
-	public Goblin(GameAssets assets, float posX, float posY, int level) {
+	public Goblin(GameAssets assets, Array<Wall> wallArray, float posX, float posY, int level) {
 		super(assets.getEnemySpriteSet("goblin_01").getFrontIdleTexture(), 3.23f, 5f, posX, posY);
+		this.wallArray = wallArray;
 		this.spriteSet = assets.getEnemySpriteSet("goblin_01");
 		this.walkAnimations = spriteSet.createWalkAnimations(0.18f);
 		applyVisualRegion(spriteSet.getIdle(Direction.FRONT));
@@ -86,8 +93,7 @@ public class Goblin extends Enemy {
 		stateTimeSeconds += delta;
 		damageInvulnerabilityTime -= delta;
 		if (Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f) {
-			setX(getX() + knockbackVx * delta);
-			setY(getY() + knockbackVy * delta);
+			moveWithCollisions(knockbackVx * delta, knockbackVy * delta);
 
 			float decay = (float) Math.exp(-KNOCKBACK_DAMPING_PER_SECOND * delta);
 			knockbackVx *= decay;
@@ -114,6 +120,42 @@ public class Goblin extends Enemy {
 		applyVisualRegion(region);
 	}
 
+	private void updateCollider() {
+		collider.set(getX(), getY(), getWidth(), getHeight());
+	}
+	private boolean overlapsAnyWall() {
+		for (Wall wall : wallArray) {
+			if (collider.overlaps(wall.getBoundingRectangle())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void moveWithCollisions(float dx, float dy) {
+
+		if (dx != 0f) {
+			float oldX = getX();
+			setX(oldX + dx);
+			updateCollider();
+
+			if (overlapsAnyWall()) {
+				setX(oldX);
+				updateCollider();
+			}
+		}
+
+		if (dy != 0f) {
+			float oldY = getY();
+			setY(oldY + dy);
+			updateCollider();
+
+			if (overlapsAnyWall()) {
+				setY(oldY);
+				updateCollider();
+			}
+		}
+	}
 	/**
 	 * Notifies the death listener.
 	 */
@@ -144,8 +186,10 @@ public class Goblin extends Enemy {
 			float dirX = diffX / length;
 			float dirY = diffY / length;
 
-			setX(getX() + dirX * getSpeed() * delta);
-			setY(getY() + dirY * getSpeed() * delta);
+			float dx = dirX * getSpeed() * delta;
+			float dy = dirY * getSpeed() * delta;
+			moveWithCollisions(dx, dy);
+
 			walking = true;
 			updateFacing(getX() - oldX, getY() - oldY);
 		}

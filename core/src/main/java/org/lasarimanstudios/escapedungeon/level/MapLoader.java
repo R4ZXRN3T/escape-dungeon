@@ -38,7 +38,7 @@ public class MapLoader {
 			float startPosY = mapJson.getFloat("startPosY");
 
 			Array<Wall> wallArray = getWalls(mapJson, assets);
-			Array<Enemy> enemyArray = getEnemies(mapJson, assets);
+			Array<Enemy> enemyArray = getEnemies(mapJson, assets, wallArray);
 
 			return new Map(backgroundPath, wallArray, enemyArray, width, height, startPosX, startPosY);
 		} catch (Exception e) {
@@ -77,7 +77,7 @@ public class MapLoader {
 	 * @param assets  shared asset registry used to load enemy textures
 	 * @return enemies array
 	 */
-	private static Array<Enemy> getEnemies(JSONObject mapJson, GameAssets assets) {
+	private static Array<Enemy> getEnemies(JSONObject mapJson, GameAssets assets, Array<Wall> wallArray) {
 		Array<Enemy> enemyArray = new Array<>();
 
 		for (Object enemyValueObject : mapJson.getJSONArray("enemies")) {
@@ -87,8 +87,7 @@ public class MapLoader {
 			float enemyPosy = enemyJson.getFloat("posY");
 			int level = enemyJson.getInt("level");
 
-			Enemy enemy = getNewEnemy(assets, enemyType, enemyPosX, enemyPosy, level);
-
+			Enemy enemy = getNewEnemy(assets, wallArray, enemyType, enemyPosX, enemyPosy, level);
 			enemyArray.add(enemy);
 		}
 
@@ -100,9 +99,9 @@ public class MapLoader {
 	 *
 	 * @throws RuntimeException if {@code enemyType} is unknown
 	 */
-	private static Enemy getNewEnemy(GameAssets assets, String enemyType, float enemyPosX, float enemyPosY, int level) {
+	private static Enemy getNewEnemy(GameAssets assets, Array<Wall> wallArray, String enemyType, float enemyPosX, float enemyPosY, int level) {
 		return switch (enemyType) {
-			case "goblin" -> new Goblin(assets, enemyPosX, enemyPosY, level);
+			case "goblin" -> new Goblin(assets, wallArray, enemyPosX, enemyPosY, level);
 			case "ghost" -> new Ghost(assets, enemyPosX, enemyPosY, level);
 			case "rgbghost" -> new RgbGhost(assets, enemyPosX, enemyPosY, level);
 			default -> throw new RuntimeException("Unknown enemy type: " + enemyType);
