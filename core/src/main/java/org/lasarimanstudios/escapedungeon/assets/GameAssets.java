@@ -39,13 +39,13 @@ public class GameAssets {
 	public static final String TEX_WEAPON_SWORD_YELLOW = "textures/weapons/sword_yellow.png";
 	public static final String TEX_WEAPON_RGB_SABER = "textures/weapons/rgb_saber.png";
 	public static final String TEX_WEAPON_SWORD_ARC = "textures/weapons/sword_arc.png";
-	public static final String TEX_PLAYER_LEFT_IDLE = "textures/characters/character-01/character_01_left_idle.png";
 
 	private final AssetManager assetManager = new AssetManager();
 	/**
 	 * Cached per-enemy sprite sets, keyed by enemy folder id (e.g. "goblin-01", "ghost").
 	 */
 	private final Map<String, EnemySpriteSet> enemySpriteSets = new HashMap<>();
+	private final Map<String, CharacterSpriteSet> characterSpriteSets = new HashMap<>();
 	/**
 	 * Paths that were auto-discovered and loaded.
 	 */
@@ -181,9 +181,9 @@ public class GameAssets {
 			id -> EnemySpriteSet.build(this, id, loadedTexturePaths));
 	}
 
-	public TextureRegion getPlayerIdle() {
-		// Until there are directional player assets, just reuse the left-standing image.
-		return getRegion(TEX_PLAYER_LEFT_IDLE);
+	public CharacterSpriteSet getCharacterSpriteSet(String characterId) {
+		return characterSpriteSets.computeIfAbsent(characterId,
+			id -> CharacterSpriteSet.build(this, id, loadedTexturePaths));
 	}
 
 	/**

@@ -68,7 +68,7 @@ public class LevelScreen extends ScreenAdapter {
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		// Use goblin textures for the player sprite until player art is available.
-		characterSprite.setPlayerSpriteFromEnemy("goblin_01");
+		characterSprite.setPlayerSprite("goblin_01");
 
 		// Allow the World to wire dynamically spawned enemies to the player.
 		world.setPlayerCharacter(characterSprite);

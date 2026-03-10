@@ -10,10 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.ConfigManager;
-import org.lasarimanstudios.escapedungeon.assets.Direction;
-import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
-import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.*;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.weapons.SwordType;
 import org.lasarimanstudios.escapedungeon.weapons.Weapon;
@@ -75,14 +72,14 @@ public class Character extends Entity {
 	private boolean useMouseFacing = false;
 
 	// Optional: allow the player to reuse an enemy's sprite set (e.g. goblin) for visuals.
-	private EnemySpriteSet playerSpriteSet;
+	private CharacterSpriteSet playerSpriteSet;
 	private DirectionalAnimationSet playerWalkAnimations;
 
 	/**
 	 * New constructor: character visuals are provided via {@link GameAssets} so we can swap frames.
 	 */
 	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, SwordType swordType, float width, float height, float MaxHealth) {
-		super(assets.getPlayerIdle());
+		super(assets.getCharacterSpriteSet("character_01").getIdle(Direction.FRONT));
 		this.assets = assets;
 		setMaxHealth(MaxHealth);
 		setRemainingHealth(getMaxHealth());
@@ -113,23 +110,23 @@ public class Character extends Entity {
 	 * If the named enemy sprite set isn't available, this logs and leaves the default player
 	 * visuals intact.
 	 *
-	 * @param enemyId folder name under textures/enemy/ (e.g. "goblin_01")
+	 * @param characterId folder name under textures/enemy/ (e.g. "goblin_01")
 	 */
-	public void setPlayerSpriteFromEnemy(String enemyId) {
-		if (assets == null || enemyId == null) return;
+	public void setPlayerSprite(String characterId) {
+		if (assets == null || characterId == null) return;
 		try {
-			EnemySpriteSet set = assets.getEnemySpriteSet(enemyId);
+			CharacterSpriteSet set = assets.getCharacterSpriteSet(characterId);
 			setPlayerSpriteSet(set);
 		} catch (IllegalArgumentException e) {
-			Gdx.app.log("Character", "Could not set player sprite from enemy '" + enemyId + "': " + e.getMessage());
+			Gdx.app.log("Character", "Could not set player sprite from enemy '" + characterId + "': " + e.getMessage());
 		}
 	}
 
 	/**
-	 * Directly assigns an {@link EnemySpriteSet} to the player and builds walk animations.
+	 * Directly assigns an {@link CharacterSpriteSet} to the player and builds walk animations.
 	 * Pass {@code null} to reset to the default player artwork.
 	 */
-	public void setPlayerSpriteSet(EnemySpriteSet set) {
+	public void setPlayerSpriteSet(CharacterSpriteSet set) {
 		this.playerSpriteSet = set;
 		if (set != null) {
 			float playerWalkFrameDurationSeconds = 0.16f;
@@ -230,7 +227,7 @@ public class Character extends Entity {
 		}
 
 		// Fallback: use the default player texture provided by GameAssets.
-		TextureRegion idle = assets.getPlayerIdle();
+		TextureRegion idle = assets.getCharacterSpriteSet("character_01").getIdle(facing);
 		setRegion(idle);
 	}
 
