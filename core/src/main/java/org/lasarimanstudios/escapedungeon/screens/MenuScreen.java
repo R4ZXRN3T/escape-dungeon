@@ -1,6 +1,7 @@
 package org.lasarimanstudios.escapedungeon.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -38,8 +39,11 @@ public class MenuScreen extends ScreenAdapter {
 	 *
 	 * @param game game instance used to open other screens
 	 */
-	public MenuScreen(DungeonGame game) {
+	private final Screen previousScreen;
+
+	public MenuScreen(DungeonGame game, Screen previousScreen) {
 		this.game = game;
+		this.previousScreen = previousScreen;
 	}
 
 	/**
@@ -83,11 +87,20 @@ public class MenuScreen extends ScreenAdapter {
 		root.setFillParent(true);
 		root.defaults().pad(10f);
 		stage.addActor(root);
-
-		root.add(makeTextOnlyButton("PLAY", () -> game.openLevel("map_02"))).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
+		if (previousScreen != null) {
+			root.add(makeTextOnlyButton("RESUME", () -> game.setScreen(previousScreen)))
+				.width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
+		}
+		root.add(makeTextOnlyButton("NEW GAME", () -> game.openLevel("map_02"))).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 		root.add(makeTextOnlyButton("INVENTORY", game::openInventory)).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
-		root.add(makeTextOnlyButton("SETTINGS", game::openSettings)).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
-		root.add(makeTextOnlyButton("EXIT", () -> Gdx.app.exit())).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
+		if (previousScreen != null) {
+			root.add(makeTextOnlyButton("RETURN TO MENU", () -> game.setScreen(new MenuScreen(game, null))))
+				.width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
+		}
+		if (previousScreen == null) {
+			root.add(makeTextOnlyButton("SETTINGS", game::openSettings)).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
+			root.add(makeTextOnlyButton("EXIT", () -> Gdx.app.exit())).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
+		}
 	}
 
 	private TextButton makeTextOnlyButton(String text, Runnable onClick) {

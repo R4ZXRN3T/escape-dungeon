@@ -72,7 +72,7 @@ public class IntroScreen extends ScreenAdapter {
 		batch.end();
 
 		if (progress >= 1f || Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
-			game.setScreen(new MenuScreen(game));
+			game.setScreen(new MenuScreen(game, null));
 		}
 	}
 
