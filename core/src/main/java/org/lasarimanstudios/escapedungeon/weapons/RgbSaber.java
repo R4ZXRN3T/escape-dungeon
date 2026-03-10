@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.graphics.HueShader;
+import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
  * A sword that continuously cycles through rainbow hues while being drawn.
@@ -18,8 +19,8 @@ public class RgbSaber extends Sword {
 	private static final float HUE_SPEED = 0.2f;
 	private float hueAnim = 0f;
 
-	public RgbSaber(Array<Enemy> enemies, Texture texture, float attackDamage, float attackSpeed, float range, Texture arcTexture) {
-		super(enemies, texture, attackDamage, attackSpeed, range, arcTexture);
+	public RgbSaber(Array<Enemy> enemies, Array<Wall> walls, Texture texture, float attackDamage, float attackSpeed, float range, Texture arcTexture) {
+		super(enemies, walls, texture, attackDamage, attackSpeed, range, arcTexture);
 	}
 
 	@Override

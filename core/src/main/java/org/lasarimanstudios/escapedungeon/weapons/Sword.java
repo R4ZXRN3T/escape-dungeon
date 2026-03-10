@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.world.LineOfSight;
+import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
  * Sword weapon that swings in an arc.
@@ -30,32 +32,34 @@ public class Sword extends Weapon {
 	 */
 	private static final float BASE_SIZE = 3f;
 
-	private final Array<Enemy> enemies;
-	private final Sprite arcSprite;
-	private float startAngle;
-	private float endAngle;
-	private float elapsedTime;
-	private boolean showArc;
-	private static Sound swingSound;
-	private static final float SOUND_DURATION = 0.342f;
+	protected final Array<Enemy> enemies;
+	protected final Array<Wall> walls;
+	protected final Sprite arcSprite;
+	protected float startAngle;
+	protected float endAngle;
+	protected float elapsedTime;
+	protected boolean showArc;
+	protected static Sound swingSound;
+	protected static final float SOUND_DURATION = 0.342f;
 
 	/**
 	 * Creates a sword.
 	 *
 	 * @param enemies      enemies that can be hit (iterated every frame while attacking)
+	 * @param walls        walls used for line-of-sight checks (enemies behind walls cannot be hit)
 	 * @param texture      sword texture (must already be loaded)
 	 * @param attackDamage damage dealt per hit
 	 * @param attackSpeed  attack duration in seconds
 	 * @param range        effective range – uniformly scales the sword sprite
 	 * @param arcTexture   sword arc trail texture, or {@code null} to use a generated fallback
 	 */
-	public Sword(Array<Enemy> enemies, Texture texture, float attackDamage, float attackSpeed, float range, Texture arcTexture) {
-		super(texture, attackDamage, attackSpeed, range);
+	public Sword(Array<Enemy> enemies, Array<Wall> walls, Texture texture, float attackDamage, float attackSpeed, float range, Texture arcTexture) {
+		super(texture, attackDamage, attackSpeed);
 		// Range uniformly scales both dimensions so the diagonal texture isn't distorted.
 		float size = BASE_SIZE * range;
 		setSize(size, size);
-		setOrigin(0.5f, getHeight() / 2f);
 		this.enemies = enemies;
+		this.walls = walls;
 
 		swingSound = Gdx.audio.newSound(Gdx.files.internal("sound/sword_swoosh.mp3"));
 
@@ -111,11 +115,9 @@ public class Sword extends Weapon {
 			showArc = false;
 		}
 
-		for (Enemy enemy : enemies) {
-			if (enemy.getBoundingRectangle().overlaps(getBoundingRectangle())) {
+		for (Enemy enemy : enemies)
+			if (enemy.getBoundingRectangle().overlaps(getBoundingRectangle()) && LineOfSight.hasLineOfSight(walls, getOriginX() + getX(), getOriginY() + getY(), enemy.getCenterX(), enemy.getCenterY()))
 				enemy.takeDamage(getAttackDamage(), 0f, angle, getAttackInstanceId());
-			}
-		}
 	}
 
 	/**
@@ -169,5 +171,22 @@ public class Sword extends Weapon {
 
 		float pitch = SOUND_DURATION / getAttackSpeed();
 		swingSound.play(0.5f, pitch, 0f);
+	}
+
+	public void setRange(float range) {
+		float size = BASE_SIZE * range;
+		setSize(size, size);
+		float arcSize = size * 1.3f;
+		this.arcSprite.setSize(arcSize, arcSize);
+	}
+
+	@Override
+	public float getAttachmentOriginX() {
+		return -1f * BASE_SIZE;
+	}
+
+	@Override
+	public float getAttachmentOriginY() {
+		return -1f * BASE_SIZE;
 	}
 }

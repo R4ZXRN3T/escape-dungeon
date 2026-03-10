@@ -17,9 +17,9 @@ import org.lasarimanstudios.escapedungeon.DungeonGame;
 import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.level.Map;
 import org.lasarimanstudios.escapedungeon.weapons.SwordType;
 import org.lasarimanstudios.escapedungeon.ui.HealthBarHUD;
-import org.lasarimanstudios.escapedungeon.level.Map;
 import org.lasarimanstudios.escapedungeon.world.World;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
@@ -64,11 +64,11 @@ public class LevelScreen extends ScreenAdapter {
 		viewport = new ExtendViewport(MIN_WORLD_WIDTH, MIN_WORLD_HEIGHT, camera);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		characterSprite = new Character(map.getWalls(), map.getEnemies(), assets, SwordType.FAT, 5, 5, 100);
+		characterSprite = new Character(map.getWalls(), map.getEnemies(), assets, SwordType.DEV, 100);
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		// Use goblin textures for the player sprite until player art is available.
-		characterSprite.setPlayerSprite("goblin_01");
+		characterSprite.setPlayerSprite("character_01");
 
 		// Allow the World to wire dynamically spawned enemies to the player.
 		world.setPlayerCharacter(characterSprite);
@@ -82,7 +82,6 @@ public class LevelScreen extends ScreenAdapter {
 		characterSprite.setDeathListener(this::onPlayerDied);
 
 		healthBarHUD = new HealthBarHUD();
-
 		camera.update();
 	}
 

@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 public abstract class Weapon extends Sprite {
 	private final float attackDamage;
 	private final float attackSpeed;
-	private final float range;
 	private boolean attacking;
 	/**
 	 * Monotonically increasing id that identifies the current/most recent attack.
@@ -29,13 +28,12 @@ public abstract class Weapon extends Sprite {
 	 * @param texture      weapon texture (must already be loaded)
 	 * @param attackDamage damage dealt per hit
 	 * @param attackSpeed  attack duration in seconds
-	 * @param range        effective range in world units (interpretation depends on weapon)
 	 */
-	public Weapon(Texture texture, float attackDamage, float attackSpeed, float range) {
+	public Weapon(Texture texture, float attackDamage, float attackSpeed) {
 		super(texture);
+		setOrigin(getAttachmentOriginX(), getAttachmentOriginY());
 		this.attackDamage = attackDamage;
 		this.attackSpeed = attackSpeed;
-		this.range = range;
 	}
 
 	/**
@@ -103,9 +101,17 @@ public abstract class Weapon extends Sprite {
 	}
 
 	/**
-	 * @return effective range in world units
+	 * Attachment-origin helpers:
+	 * By default these return -0.5 * current width/height which matches the previous behaviour
+	 * (origin placed to the left/below the sprite center). Subclasses can override these to provide
+	 * a fixed origin that doesn't change when the visual size (width/height) changes.
 	 */
-	public float getRange() {
-		return range;
+	public float getAttachmentOriginX() {
+		return -0.5f * getWidth();
 	}
+
+	public float getAttachmentOriginY() {
+		return -0.5f * getHeight();
+	}
+
 }

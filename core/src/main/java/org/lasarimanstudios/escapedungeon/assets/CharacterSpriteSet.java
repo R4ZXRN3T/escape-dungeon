@@ -92,7 +92,7 @@ public class CharacterSpriteSet {
 		}
 
 		if (idles.isEmpty()) {
-			throw new IllegalArgumentException("No idle frames found for enemy '" + characterId
+			throw new IllegalArgumentException("No idle frames found for character '" + characterId
 				+ "'. Expected files matching convention under " + prefix);
 		}
 

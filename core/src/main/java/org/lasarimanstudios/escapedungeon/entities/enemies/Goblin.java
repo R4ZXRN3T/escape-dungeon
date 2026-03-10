@@ -8,6 +8,7 @@ import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
 import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import org.lasarimanstudios.escapedungeon.world.LineOfSight;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 
@@ -132,6 +133,14 @@ public class Goblin extends Enemy {
 		return false;
 	}
 
+	/**
+	 * Returns {@code true} if the straight line from this goblin's center to the given target
+	 * position is not blocked by any wall.
+	 */
+	private boolean hasLineOfSight(float targetX, float targetY) {
+		return LineOfSight.hasLineOfSight(wallArray, getCenterX(), getCenterY(), targetX, targetY);
+	}
+
 	private void moveWithCollisions(float dx, float dy) {
 
 		if (dx != 0f) {
@@ -183,6 +192,11 @@ public class Goblin extends Enemy {
 
 		walking = false;
 		if (length > 0 && length < 35) {
+			// Don't follow the player if a wall blocks line of sight.
+			float charCenterX = getCharacter().getX() + getCharacter().getWidth() / 2f;
+			float charCenterY = getCharacter().getY() + getCharacter().getHeight() / 2f;
+			if (!hasLineOfSight(charCenterX, charCenterY)) return;
+
 			float dirX = diffX / length;
 			float dirY = diffY / length;
 

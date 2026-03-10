@@ -78,12 +78,12 @@ public class Character extends Entity {
 	/**
 	 * New constructor: character visuals are provided via {@link GameAssets} so we can swap frames.
 	 */
-	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, SwordType swordType, float width, float height, float MaxHealth) {
+	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, SwordType swordType, float MaxHealth) {
 		super(assets.getCharacterSpriteSet("character_01").getIdle(Direction.FRONT));
 		this.assets = assets;
 		setMaxHealth(MaxHealth);
 		setRemainingHealth(getMaxHealth());
-		setSize(width, height);
+		setSize(4.24f, 6f);
 		this.wallArray = wallArray;
 		this.enemyArray = enemyArray;
 		setOriginCenter();
@@ -95,7 +95,7 @@ public class Character extends Entity {
 		KEY_RIGHT = ConfigManager.getInt(ConfigManager.ConfigKey.RIGHT_KEY, 0, 255);
 		BUTTON_ATTACK = ConfigManager.getInt(ConfigManager.ConfigKey.ATTACK_KEY, 0, 255);
 
-		this.weapon = swordType.create(enemyArray, assets);
+		this.weapon = swordType.create(enemyArray, wallArray, assets);
 		attachWeapon();
 	}
 
@@ -118,7 +118,7 @@ public class Character extends Entity {
 			CharacterSpriteSet set = assets.getCharacterSpriteSet(characterId);
 			setPlayerSpriteSet(set);
 		} catch (IllegalArgumentException e) {
-			Gdx.app.log("Character", "Could not set player sprite from enemy '" + characterId + "': " + e.getMessage());
+			Gdx.app.log("Character", "Could not set player sprite from character '" + characterId + "': " + e.getMessage());
 		}
 	}
 
@@ -261,7 +261,6 @@ public class Character extends Entity {
 
 		weaponOffsetWorld.set(weaponOffsetLocal).rotateDeg(currentAttackAngleDeg);
 
-		weapon.setOrigin(-0.5f * weapon.getWidth(), -0.5f * weapon.getHeight());
 		weapon.setOriginBasedPosition(
 			characterX + weaponOffsetWorld.x,
 			characterY + weaponOffsetWorld.y
