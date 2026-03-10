@@ -24,7 +24,7 @@ public enum SwordType {
 	GOLD(GameAssets.TEX_WEAPON_SWORD_GOLD, 25f, 0.40f, 1.5f),
 	PINK(GameAssets.TEX_WEAPON_SWORD_PINK, 18f, 0.50f, 1.5f),
 	YELLOW(GameAssets.TEX_WEAPON_SWORD_YELLOW, 14f, 0.35f, 1.5f),
-	FAT(GameAssets.TEX_WEAPON_SWORD_FAT, 40f, 0.60f, 2.5f),
+	FAT(GameAssets.TEX_WEAPON_SWORD_FAT, 2147483647f, 0.60f, 5f),
 	RAINBOW(GameAssets.TEX_WEAPON_SWORD_RAINBOW, 20f, 0.45f, 2.0f),
 
 	/**

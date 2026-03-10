@@ -64,7 +64,7 @@ public class LevelScreen extends ScreenAdapter {
 		viewport = new ExtendViewport(MIN_WORLD_WIDTH, MIN_WORLD_HEIGHT, camera);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-		characterSprite = new Character(map.getWalls(), map.getEnemies(), assets, SwordType.RGB_SABER, 5, 5, 100);
+		characterSprite = new Character(map.getWalls(), map.getEnemies(), assets, SwordType.FAT, 5, 5, 100);
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		// Use goblin textures for the player sprite until player art is available.
