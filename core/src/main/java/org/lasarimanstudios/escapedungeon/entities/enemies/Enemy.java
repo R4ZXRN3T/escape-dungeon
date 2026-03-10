@@ -218,6 +218,23 @@ public abstract class Enemy extends Entity {
 	}
 
 	/**
+	 * Increases the enemy's effective level by the given bonus and scales stats accordingly.
+	 *
+	 * <p>Uses the same {@code 1.2^bonusLevels} multiplier that subclass constructors use for
+	 * their initial stat scaling. Health is fully restored after scaling.</p>
+	 *
+	 * @param bonusLevels number of extra levels to add (must be &ge; 0)
+	 */
+	public void applyLevelBonus(int bonusLevels) {
+		if (bonusLevels <= 0) return;
+		float multiplier = (float) Math.pow(1.2, bonusLevels);
+		setLevel(getLevel() + bonusLevels);
+		setMaxHealth(getMaxHealth() * multiplier);
+		setRemainingHealth(getMaxHealth());
+		setAttackDamage(getAttackDamage() * multiplier);
+	}
+
+	/**
 	 * @return maximum health
 	 */
 	public float getMaxHealth() {

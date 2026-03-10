@@ -1,6 +1,7 @@
 package org.lasarimanstudios.escapedungeon.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -14,6 +15,7 @@ import org.lasarimanstudios.escapedungeon.assets.CharacterSpriteSet;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.roguelike.PlayerStats;
 import org.lasarimanstudios.escapedungeon.weapons.SwordType;
 import org.lasarimanstudios.escapedungeon.weapons.Weapon;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
@@ -68,19 +70,31 @@ public class Character extends Entity {
 
 	private CharacterSpriteSet playerSpriteSet;
 	private DirectionalAnimationSet playerWalkAnimations;
+	private final PlayerStats playerStats;
+
+	// ── dash state ──
+	private static final float DASH_DURATION = 0.15f;
+	private static final float DASH_SPEED_MULTIPLIER = 5f;
+	private static final float DASH_COOLDOWN = 1.0f;
+	private float dashTimeRemaining = 0f;
+	private float dashCooldownRemaining = 0f;
+	private float dashDirX = 0f;
+	private float dashDirY = 0f;
 
 	/**
-	 * Creates a player character with visuals provided via {@link AssetManager}.
+	 * Creates a player character with visuals provided via {@link AssetManager} and per-run stats.
 	 *
-	 * @param wallArray  walls used for collision detection
-	 * @param enemyArray enemies used for contact-damage checks
-	 * @param assets     game asset registry providing character sprites
-	 * @param swordType  the type of sword the character starts with
-	 * @param maxHealth  initial maximum health
+	 * @param wallArray   walls used for collision detection
+	 * @param enemyArray  enemies used for contact-damage checks
+	 * @param assets      game asset registry providing character sprites
+	 * @param swordType   the type of sword the character starts with
+	 * @param maxHealth   initial maximum health
+	 * @param playerStats per-run stat modifiers from roguelike perks
 	 */
-	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, AssetManager assets, SwordType swordType, float maxHealth) {
+	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, AssetManager assets, SwordType swordType, float maxHealth, PlayerStats playerStats) {
 		super(assets.getCharacterSpriteSet("character_01").getIdle(Direction.FRONT));
 		this.assets = assets;
+		this.playerStats = playerStats;
 		setMaxHealth(maxHealth);
 		setRemainingHealth(getMaxHealth());
 		setSize(4.24f, 6f);
@@ -96,6 +110,7 @@ public class Character extends Entity {
 		BUTTON_ATTACK = ConfigManager.getInt(ConfigManager.ConfigKey.ATTACK_KEY, 0, 255);
 
 		this.weapon = swordType.create(enemyArray, wallArray, assets);
+		this.weapon.setPlayerStats(playerStats);
 		attachWeapon();
 	}
 
@@ -164,9 +179,17 @@ public class Character extends Entity {
 	 */
 	public void takeDamage(Enemy enemy, float damage, float knockback) {
 		if (damageInvulnerabilityTime > 0f) return;
+		if (dashTimeRemaining > 0f) return; // invulnerable during dash
 
-		setRemainingHealth(getRemainingHealth() - damage);
+		float effectiveDamage = playerStats.applyDefense(damage);
+		setRemainingHealth(getRemainingHealth() - effectiveDamage);
 		damageInvulnerabilityTime = 1f;
+
+		// Thorns: reflect a portion of the received damage back to the attacker
+		if (playerStats.hasThorns()) {
+			float reflected = effectiveDamage * playerStats.getThornsPercent();
+			enemy.takeDamage(reflected, 0f, 0f, -1);
+		}
 
 		float dx = getCenterX() - enemy.getCenterX();
 		float dy = getCenterY() - enemy.getCenterY();
@@ -196,7 +219,22 @@ public class Character extends Entity {
 	 */
 	public void update(float delta, OrthographicCamera camera) {
 		stateTimeSeconds += delta;
-		movement(delta);
+
+		// ── dash logic ──
+		dashCooldownRemaining -= delta;
+		if (dashTimeRemaining > 0f) {
+			dashTimeRemaining -= delta;
+			float dashSpeed = SPEED * DASH_SPEED_MULTIPLIER;
+			moveWithCollisions(dashDirX * dashSpeed * delta, dashDirY * dashSpeed * delta, false);
+		} else {
+			movement(delta);
+		}
+
+		// Trigger dash on SHIFT press
+		if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && dashCooldownRemaining <= 0f) {
+			startDash();
+		}
+
 		rotateToMouse(camera);
 
 		updateVisual();
@@ -206,14 +244,68 @@ public class Character extends Entity {
 		}
 		attachWeapon();
 
-		weapon.update(delta);
-		damageInvulnerabilityTime -= delta;
-		for (Enemy enemy : enemyArray) {
-			if (collider.overlaps(enemy.getBoundingRectangle())) {
-				takeDamage(enemy, enemy.getAttackDamage(), 150);
-				break;
+		// Remember enemy health before weapon update for lifesteal
+		float totalEnemyHealthBefore = 0f;
+		if (playerStats.hasLifesteal()) {
+			for (Enemy enemy : enemyArray) {
+				totalEnemyHealthBefore += enemy.getRemainingHealth();
 			}
 		}
+
+		weapon.update(delta);
+
+		// Lifesteal: heal based on damage dealt this frame
+		if (playerStats.hasLifesteal()) {
+			float totalEnemyHealthAfter = 0f;
+			for (Enemy enemy : enemyArray) {
+				totalEnemyHealthAfter += enemy.getRemainingHealth();
+			}
+			float damageDealt = totalEnemyHealthBefore - totalEnemyHealthAfter;
+			if (damageDealt > 0f) {
+				float heal = damageDealt * playerStats.getLifestealPercent();
+				setRemainingHealth(Math.min(getRemainingHealth() + heal, getMaxHealth()));
+			}
+		}
+
+		damageInvulnerabilityTime -= delta;
+		if (dashTimeRemaining <= 0f) {
+			for (Enemy enemy : enemyArray) {
+				if (collider.overlaps(enemy.getBoundingRectangle())) {
+					takeDamage(enemy, enemy.getAttackDamage(), 150);
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Initiates a dash in the current movement direction (or facing direction if stationary).
+	 */
+	private void startDash() {
+		float moveX = 0f;
+		float moveY = 0f;
+		if (Gdx.input.isKeyPressed(KEY_FORWARD)) moveY += 1f;
+		if (Gdx.input.isKeyPressed(KEY_BACKWARD)) moveY -= 1f;
+		if (Gdx.input.isKeyPressed(KEY_RIGHT)) moveX += 1f;
+		if (Gdx.input.isKeyPressed(KEY_LEFT)) moveX -= 1f;
+
+		// If no direction keys are pressed, dash in the facing direction
+		if (moveX == 0f && moveY == 0f) {
+			switch (facing) {
+				case FRONT -> moveY = -1f;
+				case BACK -> moveY = 1f;
+				case LEFT -> moveX = -1f;
+				case RIGHT -> moveX = 1f;
+			}
+		}
+
+		float len = (float) Math.sqrt(moveX * moveX + moveY * moveY);
+		if (len != 0f) {
+			dashDirX = moveX / len;
+			dashDirY = moveY / len;
+		}
+		dashTimeRemaining = DASH_DURATION;
+		dashCooldownRemaining = DASH_COOLDOWN;
 	}
 
 	/**
@@ -304,8 +396,8 @@ public class Character extends Entity {
 				moveY *= DIAGONAL_MULTIPLIER;
 			}
 
-			float totalDx = moveX * SPEED * delta;
-			float totalDy = moveY * SPEED * delta;
+			float totalDx = moveX * playerStats.applySpeed(SPEED) * delta;
+			float totalDy = moveY * playerStats.applySpeed(SPEED) * delta;
 
 			float distance = (float) Math.sqrt(totalDx * totalDx + totalDy * totalDy);
 			int steps = Math.max(1, (int) Math.ceil(distance / MAX_STEP_DISTANCE));

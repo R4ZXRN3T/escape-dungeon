@@ -19,6 +19,7 @@ import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.level.Map;
+import org.lasarimanstudios.escapedungeon.roguelike.PlayerStats;
 import org.lasarimanstudios.escapedungeon.ui.HealthBarHUD;
 import org.lasarimanstudios.escapedungeon.ui.MoneyHUD;
 import org.lasarimanstudios.escapedungeon.weapons.SwordType;
@@ -41,6 +42,13 @@ public class LevelScreen extends ScreenAdapter {
 	 */
 	private static final float MIN_WORLD_WIDTH = 80f;
 	private static final float MIN_WORLD_HEIGHT = 50f;
+
+	/**
+	 * Ordered sequence of map names that form a run.
+	 * Add more map names here as new levels are created.
+	 */
+	private static final String[] LEVEL_SEQUENCE = {"map_01", "map_02"};
+
 	private final DungeonGame game;
 	private final Map map;
 	private final SpriteBatch spriteBatch;
@@ -51,6 +59,8 @@ public class LevelScreen extends ScreenAdapter {
 	private final World world;
 	private final HealthBarHUD healthBarHUD;
 	private final MoneyHUD moneyHUD;
+	private final PlayerStats playerStats;
+	private final String currentMapName;
 	private boolean deathHandled = false;
 
 	private int currentMoney;
@@ -61,14 +71,19 @@ public class LevelScreen extends ScreenAdapter {
 	 * <p>Sets up the camera, viewport, player character (with the currently equipped sword),
 	 * and wires all map-loaded enemies to the player and world death listener.</p>
 	 *
-	 * @param game   the game instance used to change screens
-	 * @param map    the map to play
-	 * @param assets shared asset registry
+	 * @param game        the game instance used to change screens
+	 * @param map         the map to play
+	 * @param mapName     map identifier (e.g. {@code "map_02"})
+	 * @param assets      shared asset registry
+	 * @param playerStats per-run stats carrying perk bonuses
+	 * @param earnedMoney money earned so far in this run
 	 */
-	public LevelScreen(DungeonGame game, Map map, AssetManager assets) {
+	public LevelScreen(DungeonGame game, Map map, String mapName, AssetManager assets, PlayerStats playerStats, int earnedMoney) {
 		this.game = game;
 		this.map = map;
 		this.assets = assets;
+		this.playerStats = playerStats;
+		this.currentMapName = mapName;
 
         world = new org.lasarimanstudios.escapedungeon.world.World(map, assets, this);
 
@@ -79,7 +94,8 @@ public class LevelScreen extends ScreenAdapter {
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
 		SwordType equippedSword = SwordType.getEquipped();
-		characterSprite = new Character(map.getWalls(), map.getEnemies(), assets, equippedSword, 100);
+		float maxHealth = 100 + playerStats.getMaxHealthBonus();
+		characterSprite = new Character(map.getWalls(), map.getEnemies(), assets, equippedSword, maxHealth, playerStats);
 		characterSprite.setPosition(map.getStartPosX(), map.getStartPosY());
 
 		characterSprite.setPlayerSprite("character_01");
@@ -87,13 +103,14 @@ public class LevelScreen extends ScreenAdapter {
 		world.setPlayerCharacter(characterSprite);
 
 		for (Enemy enemy : map.getEnemies()) {
+			enemy.applyLevelBonus(playerStats.getEnemyLevelBonus());
 			enemy.setCharacter(this.characterSprite);
 			enemy.setDeathListener(world::onEnemyDied);
 		}
 
 		characterSprite.setDeathListener(this::onPlayerDied);
 
-		currentMoney = 0;
+		currentMoney = earnedMoney;
 
 		healthBarHUD = new HealthBarHUD();
 		moneyHUD = new MoneyHUD();
@@ -162,7 +179,17 @@ public class LevelScreen extends ScreenAdapter {
 			}
 			if (map.getEnemies().isEmpty()) {
 				SaveManager.addMoney(currentMoney);
-				game.setScreen(new WinScreen(game, currentMoney));
+
+				String nextMap = getNextMapName();
+				if (nextMap != null) {
+					// enemies on the next map will be stronger
+					playerStats.addEnemyLevelBonus(1);
+					// more levels to go – show upgrade screen
+					game.openUpgradeScreen(playerStats, nextMap, currentMoney);
+				} else {
+					// final level – show win screen
+					game.setScreen(new WinScreen(game, currentMoney));
+				}
 				return;
 			}
 
@@ -179,6 +206,20 @@ public class LevelScreen extends ScreenAdapter {
 			healthBarHUD.render(spriteBatch, characterSprite);
 			moneyHUD.render(spriteBatch, currentMoney);
 		}
+	}
+
+	/**
+	 * Determines the next map in the level sequence, or {@code null} if this is the last level.
+	 *
+	 * @return next map name, or {@code null}
+	 */
+	private String getNextMapName() {
+		for (int i = 0; i < LEVEL_SEQUENCE.length - 1; i++) {
+			if (LEVEL_SEQUENCE[i].equals(currentMapName)) {
+				return LEVEL_SEQUENCE[i + 1];
+			}
+		}
+		return null; // last level or not found in sequence
 	}
 
 	/**

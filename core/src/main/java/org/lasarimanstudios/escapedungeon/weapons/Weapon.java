@@ -3,6 +3,8 @@ package org.lasarimanstudios.escapedungeon.weapons;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import org.lasarimanstudios.escapedungeon.roguelike.PlayerStats;
+
 /**
  * Base class for weapons.
  *
@@ -15,6 +17,7 @@ public abstract class Weapon extends Sprite {
 	private final float attackSpeed;
 	private boolean attacking;
 	private final float knockback;
+	private PlayerStats playerStats;
 	/**
 	 * Monotonically increasing id that identifies the current/most recent attack.
 	 *
@@ -93,21 +96,31 @@ public abstract class Weapon extends Sprite {
 	public abstract void startAttack(float angle);
 
 	/**
-	 * Returns the attack damage per hit.
+	 * Sets per-run player stats so that perk bonuses (damage, attack speed, range)
+	 * are automatically applied.
 	 *
-	 * @return attack damage
+	 * @param playerStats player stats to use (may be {@code null} for no bonuses)
 	 */
-	public float getAttackDamage() {
-		return attackDamage;
+	public void setPlayerStats(PlayerStats playerStats) {
+		this.playerStats = playerStats;
 	}
 
 	/**
-	 * Returns the attack duration in seconds.
+	 * Returns the attack damage per hit, with perk damage bonus applied.
 	 *
-	 * @return attack speed (duration)
+	 * @return effective attack damage
+	 */
+	public float getAttackDamage() {
+		return playerStats != null ? playerStats.applyDamage(attackDamage) : attackDamage;
+	}
+
+	/**
+	 * Returns the attack duration in seconds, with perk attack speed bonus applied.
+	 *
+	 * @return effective attack speed (duration)
 	 */
 	public float getAttackSpeed() {
-		return attackSpeed;
+		return playerStats != null ? playerStats.applyAttackSpeed(attackSpeed) : attackSpeed;
 	}
 
 	/**

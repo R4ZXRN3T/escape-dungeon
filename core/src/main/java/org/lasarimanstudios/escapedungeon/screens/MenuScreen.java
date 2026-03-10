@@ -109,7 +109,7 @@ public class MenuScreen extends ScreenAdapter {
 			root.add(makeTextOnlyButton("RESUME", () -> game.setScreen(previousScreen)))
 				.width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 		}
-		root.add(makeTextOnlyButton("NEW GAME", () -> game.openLevel("map_02"))).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
+		root.add(makeTextOnlyButton("NEW GAME", () -> game.openLevel("map_01"))).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 		if (previousScreen != null) {
 			root.add(makeTextOnlyButton("RETURN TO MENU", () -> game.setScreen(new MenuScreen(game, null))))
 				.width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
