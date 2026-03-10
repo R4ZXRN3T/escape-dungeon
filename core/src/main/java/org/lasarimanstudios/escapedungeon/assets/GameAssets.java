@@ -39,7 +39,7 @@ public class GameAssets {
 	public static final String TEX_WEAPON_SWORD_YELLOW = "textures/weapons/sword_yellow.png";
 	public static final String TEX_WEAPON_RGB_SABER = "textures/weapons/rgb_saber.png";
 	public static final String TEX_WEAPON_SWORD_ARC = "textures/weapons/sword_arc.png";
-	public static final String TEX_PLAYER_LEFT_IDLE = "textures/characters/character-01/character_01_left_sidle.png";
+	public static final String TEX_PLAYER_LEFT_IDLE = "textures/characters/character-01/character_01_left_idle.png";
 
 	private final AssetManager assetManager = new AssetManager();
 	/**

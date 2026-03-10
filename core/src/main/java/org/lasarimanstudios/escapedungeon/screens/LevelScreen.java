@@ -122,6 +122,10 @@ public class LevelScreen extends ScreenAdapter {
 			for (Enemy enemy : map.getEnemies()) {
 				enemy.update(delta);
 			}
+			if (map.getEnemies().isEmpty()) {
+				game.setScreen(new WinScreen(game));
+				return;
+			}
 
 			logic();
 			moveCamera();
