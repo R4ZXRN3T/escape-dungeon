@@ -77,7 +77,7 @@ public class DungeonGame extends Game {
 	 * Switches to the main menu.
 	 */
 	public void openMenu() {
-		setScreen(new MenuScreen(this));
+		setScreen(new MenuScreen(this, null));
 	}
 
 	/**
