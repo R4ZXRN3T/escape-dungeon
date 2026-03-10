@@ -66,7 +66,7 @@ public class World {
 
 		// Spawn test enemy.
 		if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-			Goblin goblin = new Goblin(assets, 30, 30, 1);
+			Goblin goblin = new Goblin(assets, map.getWalls(), 30, 30, 1);
 			registerEnemy(goblin);
 		}
 	}
