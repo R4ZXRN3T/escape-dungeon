@@ -43,12 +43,14 @@ public class Chest extends Entity {
 		this.expired = false;
 	}
 
-	public void open() {
+	public void open(Character player) {
 		if (opened) return;
 
 		opened = true;
 		setTexture(openTexture);
-
+		if (player.getRemainingHealth() < 100){
+			player.setRemainingHealth(player.getRemainingHealth() + 10);
+		}
 	}
 
 	public void update(float delta, Character player) {
@@ -64,7 +66,7 @@ public class Chest extends Entity {
 		if (!opened && isPlayerNear(player)) {
 
 			if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-				open();
+				open(player);
 			}
 		}
 	}

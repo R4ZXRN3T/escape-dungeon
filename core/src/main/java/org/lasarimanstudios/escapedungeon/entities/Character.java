@@ -106,6 +106,8 @@ public class Character extends Entity {
 		this.deathListener = deathListener;
 	}
 
+
+
 	/**
 	 * Attempts to set the player's visuals to use the sprite set of an enemy type.
 	 * If the named enemy sprite set isn't available, this logs and leaves the default player
@@ -271,6 +273,7 @@ public class Character extends Entity {
 		if (!weapon.isAttacking()) weapon.setRotation(currentAttackAngleDeg + 45f);
 	}
 
+
 	private void movement(float delta) {
 		delta = Math.min(delta, MAX_DELTA);
 
@@ -356,6 +359,8 @@ public class Character extends Entity {
 			}
 		}
 	}
+
+
 
 	/**
 	 * Updates the axis-aligned collider to match the sprite's current position and size.
