@@ -1,6 +1,5 @@
 package org.lasarimanstudios.escapedungeon.assets;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -9,16 +8,16 @@ import java.util.EnumMap;
 import java.util.List;
 
 /**
- * A set of directional idle and walk textures for a single enemy type.
+ * A set of directional idle and walk textures for a single character type.
  *
- * <p>Instances are built by {@link GameAssets#getEnemySpriteSet(String)} which auto-discovers
+ * <p>Instances are built by {@link GameAssets#getCharacterSpriteSet(String)} which auto-discovers
  * textures from the loaded asset list using a naming convention:</p>
  *
  * <h3>Naming conventions</h3>
- * <p>Files must live under {@code textures/enemy/<id>/} and follow <strong>one</strong> of two
- * schemes. The system auto-detects which one is in use.</p>
+ * <p>Files must live under {@code textures/character/<id>/} and follow the scheme below.
+ * The system auto-detects which naming variant is in use.</p>
  *
- * <h4>Scheme B – English names (preferred for new art)</h4>
+ * <h4>English names (preferred for new art)</h4>
  * <pre>
  *   &lt;id&gt;_front.png           → FRONT idle
  *   &lt;id&gt;_front_walk_1.png    → FRONT walk frame 1
@@ -33,6 +32,12 @@ public class CharacterSpriteSet {
 	private final EnumMap<Direction, TextureRegion> idleFrames;
 	private final EnumMap<Direction, List<TextureRegion>> walkFrames;
 
+	/**
+	 * Creates a new character sprite set from pre-built idle and walk frame maps.
+	 *
+	 * @param idleFrames map of idle texture regions per direction
+	 * @param walkFrames map of walk texture region lists per direction
+	 */
 	public CharacterSpriteSet(
 		EnumMap<Direction, TextureRegion> idleFrames,
 		EnumMap<Direction, List<TextureRegion>> walkFrames
@@ -45,17 +50,18 @@ public class CharacterSpriteSet {
 	}
 
 	/**
-	 * Builds an {@link EnemySpriteSet} by scanning the provided asset paths for files matching
+	 * Builds a {@link CharacterSpriteSet} by scanning the provided asset paths for files matching
 	 * the naming conventions described in the class Javadoc.
 	 *
 	 * @param assets      used to retrieve already-loaded textures
-	 * @param characterId folder name under {@code textures/enemy/}, e.g. {@code "goblin-01"} or {@code "ghost"}
+	 * @param characterId folder name under {@code textures/character/}, e.g. {@code "knight"}
 	 * @param allPaths    all auto-discovered texture paths (from {@link GameAssets#getLoadedPaths()})
+	 * @return the built sprite set (never {@code null})
+	 * @throws IllegalArgumentException if no idle frames are found for the given character id
 	 */
 	public static CharacterSpriteSet build(GameAssets assets, String characterId, List<String> allPaths) {
 		String prefix = "textures/character/" + characterId + "/";
 
-		// Collect only paths belonging to this enemy.
 		List<String> characterPaths = new ArrayList<>();
 		for (String p : allPaths) {
 			if (p.startsWith(prefix)) {
@@ -67,13 +73,12 @@ public class CharacterSpriteSet {
 		EnumMap<Direction, List<TextureRegion>> walks = new EnumMap<>(Direction.class);
 
 		for (String path : characterPaths) {
-			// Strip prefix and extension: "goblin-01-vorne-stehend.png" -> "goblin-01-vorne-stehend"
 			String filename = path.substring(prefix.length());
 			String name = filename.endsWith(".png") ? filename.substring(0, filename.length() - 4) : filename;
 			String lower = name.toLowerCase();
 
 			Direction dir = detectDirection(lower);
-			if (dir == null) continue; // Can't map this file; skip.
+			if (dir == null) continue;
 
 			boolean isWalk = isWalkFrame(lower);
 			boolean isIdle = isIdleFrame(lower);
@@ -84,7 +89,6 @@ public class CharacterSpriteSet {
 				walks.computeIfAbsent(dir, d -> new ArrayList<>())
 					.add(new TextureRegion(assets.getTexture(path)));
 			} else {
-				// Single-frame per direction (e.g. ghost_front.png with no _idle / _stehend suffix) → treat as idle.
 				if (!idles.containsKey(dir)) {
 					idles.put(dir, new TextureRegion(assets.getTexture(path)));
 				}
@@ -96,15 +100,16 @@ public class CharacterSpriteSet {
 				+ "'. Expected files matching convention under " + prefix);
 		}
 
-		// Walk frames are already in deterministic order because assets.txt is sorted alphabetically.
 		return new CharacterSpriteSet(idles, walks);
 	}
 
 	/**
 	 * Detects the {@link Direction} from a lower-cased filename stem.
+	 *
+	 * @param lower lower-cased filename without extension
+	 * @return the detected direction, or {@code null} if none matched
 	 */
 	private static Direction detectDirection(String lower) {
-		// English naming
 		if (lower.contains("front")) return Direction.FRONT;
 		if (lower.contains("back")) return Direction.BACK;
 		if (lower.contains("left")) return Direction.LEFT;
@@ -113,39 +118,36 @@ public class CharacterSpriteSet {
 	}
 
 	/**
-	 * Returns true if the filename indicates an idle / standing frame.
+	 * Returns {@code true} if the filename indicates an idle / standing frame.
+	 *
+	 * @param lower lower-cased filename without extension
+	 * @return {@code true} if the filename contains an idle keyword
 	 */
 	private static boolean isIdleFrame(String lower) {
 		return lower.contains("stehend") || lower.contains("idle") || lower.contains("standing");
 	}
 
 	/**
-	 * Returns true if the filename indicates a walk / movement frame.
+	 * Returns {@code true} if the filename indicates a walk / movement frame.
+	 *
+	 * @param lower lower-cased filename without extension
+	 * @return {@code true} if the filename contains a walk keyword
 	 */
 	private static boolean isWalkFrame(String lower) {
 		return lower.contains("laufen") || lower.contains("walk") || lower.contains("run");
 	}
 
-	// ── Builder: turns a flat list of loaded paths into an EnemySpriteSet ──────────
-
 	/**
-	 * Returns the idle texture for a given direction, falling back to FRONT if the direction
-	 * has no dedicated frame.
+	 * Returns the idle texture for a given direction, falling back to {@link Direction#FRONT}
+	 * if the direction has no dedicated frame.
+	 *
+	 * @param direction the desired facing direction
+	 * @return the idle texture region (never {@code null} if a FRONT idle exists)
 	 */
 	public TextureRegion getIdle(Direction direction) {
 		TextureRegion region = idleFrames.get(direction);
 		if (region != null) return region;
-		// Fall back to FRONT (always present).
 		return idleFrames.get(Direction.FRONT);
-	}
-
-	// ── Private helpers ───────────────────────────────────────────────────────────
-
-	/**
-	 * Returns the idle texture for FRONT.
-	 */
-	public Texture getFrontIdleTexture() {
-		return getIdle(Direction.FRONT).getTexture();
 	}
 
 	/**
@@ -153,6 +155,9 @@ public class CharacterSpriteSet {
 	 *
 	 * <p>Directions that have no walk frames fall back to the idle frame as a single-frame
 	 * animation, so callers don't need to handle the missing-walk-frames case.</p>
+	 *
+	 * @param frameDurationSeconds duration of each animation frame in seconds
+	 * @return a directional animation set for walking
 	 */
 	public DirectionalAnimationSet createWalkAnimations(float frameDurationSeconds) {
 		EnumMap<Direction, Animation<TextureRegion>> map = new EnumMap<>(Direction.class);
@@ -161,7 +166,6 @@ public class CharacterSpriteSet {
 			if (frames != null && !frames.isEmpty()) {
 				map.put(dir, new Animation<>(frameDurationSeconds, frames.toArray(new TextureRegion[0])));
 			} else {
-				// Fall back: single-frame animation from idle.
 				map.put(dir, new Animation<>(frameDurationSeconds, getIdle(dir)));
 			}
 		}

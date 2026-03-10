@@ -18,12 +18,12 @@ import org.lasarimanstudios.escapedungeon.entities.Character;
  */
 public class HealthBarHUD implements Disposable {
 
-	private static final float BAR_WIDTH = 384f;    // display width of the bar in screen pixels
-	private static final float BAR_HEIGHT = 32f;    // display height of the bar in screen pixels
-	private static final float HEART_SIZE = 32f;    // display size of the heart icon
-	private static final float PADDING = 4f;        // gap between heart and bar
-	private static final float BOTTOM_MARGIN = 20f; // distance from bottom edge of the screen
-	private static final float BAR_FILL_INSET_X = 4f; // inset from bar edges for the fill
+	private static final float BAR_WIDTH = 384f;
+	private static final float BAR_HEIGHT = 32f;
+	private static final float HEART_SIZE = 32f;
+	private static final float PADDING = 4f;
+	private static final float BOTTOM_MARGIN = 20f;
+	private static final float BAR_FILL_INSET_X = 4f;
 	private static final float BAR_FILL_INSET_Y = 4f;
 
 	private final Texture emptyBarTexture;
@@ -31,6 +31,9 @@ public class HealthBarHUD implements Disposable {
 	private final OrthographicCamera hudCamera;
 	private final ShapeRenderer shapeRenderer;
 
+	/**
+	 * Creates the health bar HUD and loads its textures.
+	 */
 	public HealthBarHUD() {
 		emptyBarTexture = new Texture(Gdx.files.internal("ui/health_bar/empty_bar.png"));
 		heartTexture = new Texture(Gdx.files.internal("ui/health_bar/heart.png"));
@@ -40,7 +43,11 @@ public class HealthBarHUD implements Disposable {
 	}
 
 	/**
-	 * Call this from the screen's {@code resize()} to keep the HUD projection in sync.
+	 * Updates the HUD camera projection to match the new screen dimensions.
+	 * Call this from the screen's {@code resize()} method.
+	 *
+	 * @param screenWidth  new screen width in pixels
+	 * @param screenHeight new screen height in pixels
 	 */
 	public void resize(int screenWidth, int screenHeight) {
 		hudCamera.setToOrtho(false, screenWidth, screenHeight);
@@ -56,31 +63,24 @@ public class HealthBarHUD implements Disposable {
 	public void render(SpriteBatch batch, Character character) {
 		float screenWidth = hudCamera.viewportWidth;
 
-		// Total width of the group: heart + padding + bar
 		float groupWidth = HEART_SIZE + PADDING + BAR_WIDTH;
 		float heartX = (screenWidth - groupWidth) / 2f;
 		float barY = BOTTOM_MARGIN;
 
-		// Heart is vertically centered relative to the bar
 		float heartY = barY + (BAR_HEIGHT - HEART_SIZE) / 2f;
-
 		float barX = heartX + HEART_SIZE + PADDING;
 
-		// Health ratio
 		float ratio = Math.max(0f, Math.min(1f, character.getRemainingHealth() / character.getMaxHealth()));
 
-		// Draw the empty bar background first
 		batch.setProjectionMatrix(hudCamera.combined);
 		batch.begin();
 		batch.draw(emptyBarTexture, barX, barY, BAR_WIDTH, BAR_HEIGHT);
 		batch.end();
 
-		// Draw the filled health portion on top
 		Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(com.badlogic.gdx.graphics.GL20.GL_SRC_ALPHA, com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA);
 		shapeRenderer.setProjectionMatrix(hudCamera.combined);
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-		// Green → red gradient depending on health
 		Color barColor = new Color(1f - ratio, ratio, 0f, 1f);
 		shapeRenderer.setColor(barColor);
 		float fillX = barX + BAR_FILL_INSET_X;
@@ -90,12 +90,14 @@ public class HealthBarHUD implements Disposable {
 		shapeRenderer.rect(fillX, fillY, maxFillWidth * ratio, fillHeight);
 		shapeRenderer.end();
 
-		// Draw the heart icon
 		batch.begin();
 		batch.draw(heartTexture, heartX, heartY, HEART_SIZE, HEART_SIZE);
 		batch.end();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void dispose() {
 		emptyBarTexture.dispose();

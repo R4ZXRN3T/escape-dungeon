@@ -14,6 +14,15 @@ import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 public class Wall extends Sprite {
 	private final Texture texture;
 
+	/**
+	 * Creates a wall sprite at the specified position and size.
+	 *
+	 * @param texture wall texture (must already be loaded; not owned by this instance)
+	 * @param width   wall width in world units
+	 * @param height  wall height in world units
+	 * @param posX    X position in world units
+	 * @param posY    Y position in world units
+	 */
 	public Wall(Texture texture, float width, float height, float posX, float posY) {
 		super(texture);
 		this.texture = texture;
@@ -21,6 +30,11 @@ public class Wall extends Sprite {
 		setOriginCenter();
 	}
 
+	/**
+	 * Returns the texture used by this wall.
+	 *
+	 * @return the wall texture
+	 */
 	public Texture getTexture() {
 		return texture;
 	}

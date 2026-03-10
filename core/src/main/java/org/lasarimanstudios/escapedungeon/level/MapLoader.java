@@ -50,6 +50,7 @@ public class MapLoader {
 	 * Parses wall objects from the {@code walls} JSON array.
 	 *
 	 * @param mapJson root map JSON object
+	 * @param assets  shared asset registry used to load wall textures
 	 * @return walls array
 	 */
 	private static Array<Wall> getWalls(JSONObject mapJson, GameAssets assets) {
@@ -84,10 +85,10 @@ public class MapLoader {
 			JSONObject enemyJson = (JSONObject) enemyValueObject;
 			String enemyType = enemyJson.getString("enemyType");
 			float enemyPosX = enemyJson.getFloat("posX");
-			float enemyPosy = enemyJson.getFloat("posY");
+			float enemyPosY = enemyJson.getFloat("posY");
 			int level = enemyJson.getInt("level");
 
-			Enemy enemy = getNewEnemy(assets, wallArray, enemyType, enemyPosX, enemyPosy, level);
+			Enemy enemy = getNewEnemy(assets, wallArray, enemyType, enemyPosX, enemyPosY, level);
 			enemyArray.add(enemy);
 		}
 
@@ -95,8 +96,15 @@ public class MapLoader {
 	}
 
 	/**
-	 * Factory method for enemies based on {@code enemyType}.
+	 * Factory method that creates an {@link Enemy} subclass based on the type string.
 	 *
+	 * @param assets    shared asset registry
+	 * @param wallArray walls for collision detection
+	 * @param enemyType enemy type identifier from JSON (e.g. {@code "goblin"}, {@code "ghost"})
+	 * @param enemyPosX initial X position in world units
+	 * @param enemyPosY initial Y position in world units
+	 * @param level     enemy level for stat scaling
+	 * @return the new enemy instance
 	 * @throws RuntimeException if {@code enemyType} is unknown
 	 */
 	private static Enemy getNewEnemy(GameAssets assets, Array<Wall> wallArray, String enemyType, float enemyPosX, float enemyPosY, int level) {

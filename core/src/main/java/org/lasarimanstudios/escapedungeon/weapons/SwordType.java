@@ -24,26 +24,26 @@ import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
  * }</pre>
  */
 public enum SwordType {
-	BASIC("Basic Sword", GameAssets.TEX_WEAPON_SWORD_BASIC, 8f, 0.55f, 1.5f),
-	IRON("Iron Sword", GameAssets.TEX_WEAPON_SWORD_IRON, 12f, 0.50f, 1.5f),
-	BLUE("Blue Sword", GameAssets.TEX_WEAPON_SWORD_BLUE, 15f, 0.45f, 1.5f),
-	YELLOW("Yellow Sword", GameAssets.TEX_WEAPON_SWORD_YELLOW, 14f, 0.35f, 1.5f),
-	PINK("Pink Sword", GameAssets.TEX_WEAPON_SWORD_PINK, 18f, 0.50f, 1.5f),
-	RAINBOW("Rainbow Sword", GameAssets.TEX_WEAPON_SWORD_RAINBOW, 20f, 0.45f, 2.0f),
-	GOLD("Gold Sword", GameAssets.TEX_WEAPON_SWORD_GOLD, 25f, 0.40f, 1.5f),
-	FAT("Fat Sword", GameAssets.TEX_WEAPON_SWORD_FAT, 30f, 0.60f, 2.5f),
+	BASIC("Basic Sword", GameAssets.TEX_WEAPON_SWORD_BASIC, 8f, 0.55f, 1.5f, 0.75f),
+	IRON("Iron Sword", GameAssets.TEX_WEAPON_SWORD_IRON, 12f, 0.50f, 1.5f, 1f),
+	BLUE("Blue Sword", GameAssets.TEX_WEAPON_SWORD_BLUE, 15f, 0.45f, 1.5f, 1.3f),
+	YELLOW("Yellow Sword", GameAssets.TEX_WEAPON_SWORD_YELLOW, 14f, 0.35f, 1.5f, 1.1f),
+	PINK("Pink Sword", GameAssets.TEX_WEAPON_SWORD_PINK, 18f, 0.50f, 1.5f, 1.5f),
+	RAINBOW("Rainbow Sword", GameAssets.TEX_WEAPON_SWORD_RAINBOW, 20f, 0.45f, 2.0f, 1.7f),
+	GOLD("Gold Sword", GameAssets.TEX_WEAPON_SWORD_GOLD, 25f, 0.40f, 1.5f, 1.6f),
+	FAT("Fat Sword", GameAssets.TEX_WEAPON_SWORD_FAT, 30f, 0.60f, 2.5f, 3f),
 
-	RGB_SABER("RGB Saber", GameAssets.TEX_WEAPON_RGB_SABER, 30f, 0.30f, 1.5f) {
+	RGB_SABER("RGB Saber", GameAssets.TEX_WEAPON_RGB_SABER, 30f, 0.30f, 1.5f, 2f) {
 		@Override
 		public Sword create(Array<Enemy> enemies, Array<Wall> walls, GameAssets assets) {
-			return new RgbSaber(enemies, walls, assets.getTexture(texturePath), damage, speed, range, assets.getArcTexture());
+			return new RgbSaber(enemies, walls, assets.getTexture(texturePath), damage, speed, range, knockback, assets.getArcTexture());
 		}
 	},
 
-	DEV("Dev Sword", GameAssets.TEX_WEAPON_SWORD_DEV, Float.MAX_VALUE, 0.35f, 20f) {
+	DEV("Dev Sword", GameAssets.TEX_WEAPON_SWORD_DEV, Float.MAX_VALUE, 0.35f, 20f, 10f) {
 		@Override
 		public Sword create(Array<Enemy> enemies, Array<Wall> walls, GameAssets assets) {
-			return new DevSword(enemies, walls, assets.getTexture(texturePath), damage, speed, range, assets.getArcTexture());
+			return new DevSword(enemies, walls, assets.getTexture(texturePath), damage, speed, range, knockback, assets.getArcTexture());
 		}
 	};
 
@@ -52,13 +52,40 @@ public enum SwordType {
 	public final float damage;
 	public final float speed;
 	public final float range;
+	public final float knockback;
 
-	SwordType(String displayName, String texturePath, float damage, float speed, float range) {
+	/**
+	 * Creates a sword type constant.
+	 *
+	 * @param displayName display name shown in the equipment UI
+	 * @param texturePath internal texture asset path
+	 * @param damage      base damage per hit
+	 * @param speed       attack duration in seconds
+	 * @param range       range multiplier
+	 * @param knockback   knockback strength
+	 */
+	SwordType(String displayName, String texturePath, float damage, float speed, float range, float knockback) {
 		this.displayName = displayName;
 		this.texturePath = texturePath;
 		this.damage = damage;
 		this.speed = speed;
 		this.range = range;
+		this.knockback = knockback;
+	}
+
+	/**
+	 * Returns the currently equipped sword type from save data.
+	 * Falls back to {@link #BASIC} if the saved value is invalid.
+	 *
+	 * @return the equipped sword type
+	 */
+	public static SwordType getEquipped() {
+		String name = SaveManager.get(SaveManager.SaveKey.EQUIPPED_SWORD);
+		try {
+			return SwordType.valueOf(name);
+		} catch (IllegalArgumentException e) {
+			return BASIC;
+		}
 	}
 
 	/**
@@ -71,20 +98,17 @@ public enum SwordType {
 	}
 
 	/**
-	 * Returns the currently equipped sword type from save data.
-	 * Falls back to {@link #BASIC} if the saved value is invalid.
+	 * Creates a new {@link Sword} instance from this type's stats.
+	 *
+	 * <p>Special sword types (e.g. {@link #RGB_SABER}, {@link #DEV}) override this method
+	 * to return a specialised subclass.</p>
+	 *
+	 * @param enemies enemies that can be hit
+	 * @param walls   walls used for line-of-sight checks
+	 * @param assets  game asset registry providing textures
+	 * @return a new sword instance
 	 */
-	public static SwordType getEquipped() {
-		String name = SaveManager.get(SaveManager.SaveKey.EQUIPPED_SWORD);
-		try {
-			return SwordType.valueOf(name);
-		} catch (IllegalArgumentException e) {
-			return BASIC;
-		}
-	}
-
 	public Sword create(Array<Enemy> enemies, Array<Wall> walls, GameAssets assets) {
-		return new Sword(enemies, walls, assets.getTexture(texturePath), damage, speed, range,
-			assets.getArcTexture());
+		return new Sword(enemies, walls, assets.getTexture(texturePath), damage, speed, range, knockback, assets.getArcTexture());
 	}
 }

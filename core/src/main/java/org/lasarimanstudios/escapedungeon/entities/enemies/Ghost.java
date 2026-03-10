@@ -34,10 +34,17 @@ public class Ghost extends Enemy {
 	private float stateTimeSeconds = 0f;
 	private boolean walking = false;
 
+	/**
+	 * Creates a ghost enemy at the specified world position.
+	 *
+	 * @param assets assets container providing enemy sprites
+	 * @param posX   initial X position in world units
+	 * @param posY   initial Y position in world units
+	 * @param level  enemy level for stat scaling
+	 */
 	public Ghost(GameAssets assets, float posX, float posY, int level) {
 		super(assets.getEnemySpriteSet("ghost").getFrontIdleTexture(), WIDTH, HEIGHT, posX, posY);
 		this.spriteSet = assets.getEnemySpriteSet("ghost");
-		// Ghost only has idle frames per direction, so walk animation falls back to idle.
 		this.walkAnimations = spriteSet.createWalkAnimations(0.18f);
 		applyVisualRegion(spriteSet.getIdle(Direction.FRONT));
 		setLevel(level);
@@ -47,6 +54,9 @@ public class Ghost extends Enemy {
 		setSpeed(BASE_SPEED);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void takeDamage(float damage, float knockback, float hitAngle, int attackInstanceId) {
 		if (!shouldAcceptDamageFromAttack(attackInstanceId)) return;
@@ -64,6 +74,9 @@ public class Ghost extends Enemy {
 		if (getRemainingHealth() <= 0f) die();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void update(float delta) {
 		stateTimeSeconds += delta;
@@ -87,6 +100,9 @@ public class Ghost extends Enemy {
 		updateVisual();
 	}
 
+	/**
+	 * Updates the sprite region based on the current facing direction and walking state.
+	 */
 	private void updateVisual() {
 		if (spriteSet == null) return;
 		TextureRegion region;
@@ -98,13 +114,18 @@ public class Ghost extends Enemy {
 		applyVisualRegion(region);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void die() {
 		notifyDied();
 	}
 
 	/**
-	 * Moves toward the configured player character.
+	 * Moves toward the configured player character when within aggro range.
+	 *
+	 * @param delta time since last frame in seconds
 	 */
 	public void following(float delta) {
 		float oldX = getX();
@@ -126,6 +147,12 @@ public class Ghost extends Enemy {
 		}
 	}
 
+	/**
+	 * Updates the facing direction based on the movement delta.
+	 *
+	 * @param dx horizontal movement since last frame
+	 * @param dy vertical movement since last frame
+	 */
 	private void updateFacing(float dx, float dy) {
 		if (dx == 0f && dy == 0f) return;
 		if (Math.abs(dx) > Math.abs(dy)) {

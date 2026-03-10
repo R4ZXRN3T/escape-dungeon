@@ -6,16 +6,21 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 
 /**
- * Utility wrapper that provides a lazily-initialized hue-rotation shader and an "apply" helper
- * that sets up the shader on a SpriteBatch, invokes a drawing callback, and restores the
- * previous shader.
+ * Utility wrapper that provides a lazily-initialized hue-rotation shader and a convenience
+ * method to apply it to a {@link SpriteBatch} for the duration of a drawing callback.
  */
 public final class HueShader {
 	private static ShaderProgram shader = null;
 	private static boolean attemptedInit = false;
 
-	private HueShader() { /* no instances */ }
+	private HueShader() {
+	}
 
+	/**
+	 * Compiles the hue-rotation shader program on first call.
+	 *
+	 * @return the compiled shader, or {@code null} if compilation failed
+	 */
 	private static synchronized ShaderProgram createShader() {
 		if (attemptedInit) return shader;
 		attemptedInit = true;
@@ -69,7 +74,10 @@ public final class HueShader {
 	}
 
 	/**
-	 * Returns the shader instance if available (compilation succeeded), or {@code null} otherwise.
+	 * Returns the hue-rotation shader if available (compilation succeeded), or {@code null}
+	 * otherwise. The shader is lazily compiled on the first call.
+	 *
+	 * @return the shader program, or {@code null} if compilation failed
 	 */
 	public static ShaderProgram get() {
 		if (shader != null) return shader;
@@ -77,21 +85,22 @@ public final class HueShader {
 	}
 
 	/**
-	 * Applies the hue shader to the provided Batch for the duration of the drawAction. This
-	 * currently only supports SpriteBatch; if the provided batch is not a SpriteBatch the method
-	 * returns false and does not invoke the shader.
+	 * Applies the hue-rotation shader to the provided {@link Batch} for the duration of
+	 * {@code drawAction}.
 	 *
-	 * @param batch      drawing batch (expected to be a SpriteBatch)
-	 * @param hue        hue offset in the range [0,1)
-	 * @param drawAction callback that performs the draw calls while the shader is active
-	 * @return true if the shader was used, false if the shader is unavailable or the batch type isn't supported
+	 * <p>This currently only supports {@link SpriteBatch}. If the provided batch is not a
+	 * {@code SpriteBatch}, the method returns {@code false} without invoking the callback.</p>
+	 *
+	 * @param batch      drawing batch (expected to be a {@link SpriteBatch})
+	 * @param hue        hue offset in the range {@code [0, 1)}
+	 * @param drawAction callback that performs draw calls while the shader is active
+	 * @return {@code true} if the shader was applied, {@code false} if unavailable or unsupported batch type
 	 */
 	public static boolean apply(Batch batch, float hue, Runnable drawAction) {
 		ShaderProgram s = get();
 		if (s == null) return false;
 		if (!(batch instanceof SpriteBatch sb)) return false;
 
-		// Flush pending geometry before switching shaders
 		sb.flush();
 		ShaderProgram prev = sb.getShader();
 		sb.setShader(s);
@@ -100,14 +109,11 @@ public final class HueShader {
 		Matrix4 combined = new Matrix4(sb.getProjectionMatrix());
 		combined.mul(sb.getTransformMatrix());
 		s.setUniformMatrix("u_projTrans", combined);
-		// texture unit 0
 		s.setUniformi("u_texture", 0);
 
-		// Invoke drawing while shader is active
 		try {
 			drawAction.run();
 		} finally {
-			// Flush and restore previous shader
 			sb.flush();
 			sb.setShader(prev);
 		}

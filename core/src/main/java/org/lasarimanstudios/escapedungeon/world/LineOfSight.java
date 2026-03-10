@@ -33,7 +33,6 @@ public final class LineOfSight {
 			float tMin = 0f;
 			float tMax = 1f;
 
-			// X slab
 			if (dirX != 0f) {
 				float tx1 = (rect.x - originX) / dirX;
 				float tx2 = (rect.x + rect.width - originX) / dirX;
@@ -42,13 +41,12 @@ public final class LineOfSight {
 				tMin = Math.max(tMin, txMin);
 				tMax = Math.min(tMax, txMax);
 			} else {
-				// Ray is parallel to the Y axis – check if origin X is inside the slab
+				// Ray parallel to Y axis — skip if origin X is outside the slab
 				if (originX < rect.x || originX > rect.x + rect.width) {
-					continue; // no intersection possible
+					continue;
 				}
 			}
 
-			// Y slab
 			if (dirY != 0f) {
 				float ty1 = (rect.y - originY) / dirY;
 				float ty2 = (rect.y + rect.height - originY) / dirY;
@@ -57,13 +55,14 @@ public final class LineOfSight {
 				tMin = Math.max(tMin, tyMin);
 				tMax = Math.min(tMax, tyMax);
 			} else {
+				// Ray parallel to X axis — skip if origin Y is outside the slab
 				if (originY < rect.y || originY > rect.y + rect.height) {
 					continue;
 				}
 			}
 
 			if (tMin <= tMax) {
-				return false; // a wall blocks line of sight
+				return false;
 			}
 		}
 		return true;

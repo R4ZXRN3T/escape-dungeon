@@ -12,8 +12,8 @@ import org.lasarimanstudios.escapedungeon.entities.Entity;
  * {@code true}.</p>
  */
 public class BloodPuddle extends Entity {
-	private final float duration; // Duration in seconds before the puddle disappears
-	private float elapsedTime; // Time elapsed since the puddle was created
+	private final float duration;
+	private float elapsedTime;
 	private boolean expired;
 
 	/**

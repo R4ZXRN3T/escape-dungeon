@@ -14,8 +14,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import org.lasarimanstudios.escapedungeon.DungeonGame;
 
 /**
- * Displays an intro texture with a simple zoom animation and transitions to the MenuScreen
- * when the animation completes.
+ * Displays the death screen texture with a simple zoom animation and transitions to the
+ * {@link MenuScreen} when the animation completes.
  */
 public class DeathScreen extends ScreenAdapter {
 	private final SpriteBatch batch;
@@ -27,7 +27,7 @@ public class DeathScreen extends ScreenAdapter {
 	private float elapsed = 0f;
 
 	/**
-	 * Creates a new IntroScreen.
+	 * Creates a new DeathScreen.
 	 *
 	 * @param game the game instance used to change screens
 	 */
@@ -45,8 +45,8 @@ public class DeathScreen extends ScreenAdapter {
 	}
 
 	/**
-	 * Renders the intro with a zoom animation. After the animation duration elapses,
-	 * the screen is switched to the MenuScreen.
+	 * Renders the death screen with a zoom animation. After the animation duration elapses,
+	 * the screen is switched to the {@link MenuScreen}.
 	 *
 	 * @param delta time in seconds since the last frame
 	 */
@@ -70,7 +70,7 @@ public class DeathScreen extends ScreenAdapter {
 		batch.draw(texture, 0, 0, texture.getWidth(), texture.getHeight());
 		batch.end();
 
-		if (progress >= 1f/* || Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) || Gdx.input.justTouched()*/) {
+		if (progress >= 1f) {
 			game.setScreen(new MenuScreen(game, null));
 		}
 	}

@@ -14,6 +14,7 @@ public abstract class Weapon extends Sprite {
 	private final float attackDamage;
 	private final float attackSpeed;
 	private boolean attacking;
+	private float knockback;
 	/**
 	 * Monotonically increasing id that identifies the current/most recent attack.
 	 *
@@ -29,15 +30,18 @@ public abstract class Weapon extends Sprite {
 	 * @param attackDamage damage dealt per hit
 	 * @param attackSpeed  attack duration in seconds
 	 */
-	public Weapon(Texture texture, float attackDamage, float attackSpeed) {
+	public Weapon(Texture texture, float attackDamage, float attackSpeed, float knockback) {
 		super(texture);
 		setOrigin(getAttachmentOriginX(), getAttachmentOriginY());
 		this.attackDamage = attackDamage;
 		this.attackSpeed = attackSpeed;
+		this.knockback = knockback;
 	}
 
 	/**
-	 * @return whether the weapon is currently attacking
+	 * Returns whether the weapon is currently in an attacking state.
+	 *
+	 * @return {@code true} if attacking
 	 */
 	public boolean isAttacking() {
 		return attacking;
@@ -46,7 +50,7 @@ public abstract class Weapon extends Sprite {
 	/**
 	 * Sets the current attacking state.
 	 *
-	 * <p>For subclass use.</p>
+	 * @param attacking {@code true} to mark the weapon as attacking
 	 */
 	protected void setAttacking(boolean attacking) {
 		this.attacking = attacking;
@@ -66,7 +70,9 @@ public abstract class Weapon extends Sprite {
 	}
 
 	/**
-	 * @return id that identifies the current/most recent attack instance
+	 * Returns the id that identifies the current/most recent attack instance.
+	 *
+	 * @return current attack instance id
 	 */
 	public int getAttackInstanceId() {
 		return attackInstanceId;
@@ -87,31 +93,53 @@ public abstract class Weapon extends Sprite {
 	public abstract void startAttack(float angle);
 
 	/**
-	 * @return attack damage per hit
+	 * Returns the attack damage per hit.
+	 *
+	 * @return attack damage
 	 */
 	public float getAttackDamage() {
 		return attackDamage;
 	}
 
 	/**
-	 * @return attack duration in seconds
+	 * Returns the attack duration in seconds.
+	 *
+	 * @return attack speed (duration)
 	 */
 	public float getAttackSpeed() {
 		return attackSpeed;
 	}
 
 	/**
-	 * Attachment-origin helpers:
-	 * By default these return -0.5 * current width/height which matches the previous behaviour
-	 * (origin placed to the left/below the sprite center). Subclasses can override these to provide
-	 * a fixed origin that doesn't change when the visual size (width/height) changes.
+	 * Returns the X origin offset used to attach the weapon to the player.
+	 *
+	 * <p>By default returns {@code -0.5 * width}, placing the origin to the left of
+	 * the sprite center. Subclasses can override to provide a fixed origin.</p>
+	 *
+	 * @return attachment origin X in world units
 	 */
 	public float getAttachmentOriginX() {
 		return -0.5f * getWidth();
 	}
 
+	/**
+	 * Returns the Y origin offset used to attach the weapon to the player.
+	 *
+	 * <p>By default returns {@code -0.5 * height}, placing the origin below the
+	 * sprite center. Subclasses can override to provide a fixed origin.</p>
+	 *
+	 * @return attachment origin Y in world units
+	 */
 	public float getAttachmentOriginY() {
 		return -0.5f * getHeight();
 	}
 
+	/**
+	 * Returns the knockback strength applied to enemies on hit.
+	 *
+	 * @return knockback value
+	 */
+	public float getKnockback() {
+		return knockback;
+	}
 }

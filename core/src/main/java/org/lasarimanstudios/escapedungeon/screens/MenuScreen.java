@@ -41,8 +41,8 @@ public class MenuScreen extends ScreenAdapter {
 	/**
 	 * Creates the menu screen.
 	 *
-	 * @param game game instance used to open other screens
-	 * @param previousScreen previous screen to return to (nullable)
+	 * @param game           game instance used to open other screens
+	 * @param previousScreen previous screen to return to (nullable; when non-null a RESUME button is shown)
 	 */
 	public MenuScreen(DungeonGame game, Screen previousScreen) {
 		this.game = game;
@@ -50,7 +50,9 @@ public class MenuScreen extends ScreenAdapter {
 	}
 
 	/**
-	 * Loads the TTF and generates a bitmap font.
+	 * Generates a {@link BitmapFont} from the bundled TTF file at a fixed size.
+	 *
+	 * @return the generated bitmap font
 	 */
 	private static BitmapFont createFontFromTtf() {
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ui/font.ttf"));
@@ -66,6 +68,12 @@ public class MenuScreen extends ScreenAdapter {
 		}
 	}
 
+	/**
+	 * Initializes the Scene2D stage, skin, fonts, logo, and builds the button layout.
+	 *
+	 * <p>When {@code previousScreen} is non-null, a RESUME and RETURN TO MENU button are shown.
+	 * Otherwise EQUIPMENT, SETTINGS, and EXIT buttons are displayed.</p>
+	 */
 	@Override
 	public void show() {
 		stage = new Stage(new ScreenViewport());
@@ -88,16 +96,15 @@ public class MenuScreen extends ScreenAdapter {
 
 		Table root = new Table();
 		root.setFillParent(true);
-		// keep the menu centered on screen; logo will sit above the buttons inside the table
 		root.center();
 		root.defaults().pad(10f);
 		stage.addActor(root);
-		// Load and add the game logo at the top of the menu. The texture is disposed in dispose().
+
 		logoTexture = new Texture(Gdx.files.internal("ui/logo.png"));
 		logoTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 		Image logoImage = new Image(logoTexture);
-		// constrain logo width to the button width and give a fixed height; adjust as needed
 		root.add(logoImage).width(BUTTON_WIDTH).height(150).padBottom(20).row();
+
 		if (previousScreen != null) {
 			root.add(makeTextOnlyButton("RESUME", () -> game.setScreen(previousScreen)))
 				.width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
@@ -114,6 +121,13 @@ public class MenuScreen extends ScreenAdapter {
 		}
 	}
 
+	/**
+	 * Creates a {@link TextButton} with the given label that executes a callback on click.
+	 *
+	 * @param text    button label
+	 * @param onClick action to run when the button is clicked
+	 * @return the configured text button
+	 */
 	private TextButton makeTextOnlyButton(String text, Runnable onClick) {
 		TextButton button = new TextButton(text, skin);
 		button.addListener(new ClickListener() {
@@ -125,6 +139,11 @@ public class MenuScreen extends ScreenAdapter {
 		return button;
 	}
 
+	/**
+	 * Clears the screen and draws the menu UI.
+	 *
+	 * @param delta time in seconds since the last frame
+	 */
 	@Override
 	public void render(float delta) {
 		ScreenUtils.clear(99f / 255f, 99f / 255f, 99f / 255f, 1f);
@@ -133,6 +152,12 @@ public class MenuScreen extends ScreenAdapter {
 		stage.draw();
 	}
 
+	/**
+	 * Updates the stage viewport when the window is resized.
+	 *
+	 * @param width  new width in pixels
+	 * @param height new height in pixels
+	 */
 	@Override
 	public void resize(int width, int height) {
 		if (stage != null) {
@@ -140,14 +165,19 @@ public class MenuScreen extends ScreenAdapter {
 		}
 	}
 
+	/**
+	 * Clears the input processor when the screen is hidden to prevent input leaking.
+	 */
 	@Override
 	public void hide() {
-		// Avoid leaking the input processor when switching screens.
 		if (Gdx.input.getInputProcessor() == stage) {
 			Gdx.input.setInputProcessor(null);
 		}
 	}
 
+	/**
+	 * Disposes of GPU and UI resources owned by this screen.
+	 */
 	@Override
 	public void dispose() {
 		if (stage != null) stage.dispose();

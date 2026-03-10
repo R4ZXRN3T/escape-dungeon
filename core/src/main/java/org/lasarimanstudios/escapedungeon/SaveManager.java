@@ -31,7 +31,21 @@ public final class SaveManager {
 	private static final Object LOCK = new Object();
 	private static final Path SAVE_PATH = getSaveFilePath();
 	private static final Map<SaveKey, String> saveData = new EnumMap<>(SaveKey.class);
+	private static final Map<String, SaveKey> SWORD_OWNERSHIP_LOOKUP = new HashMap<>();
 	private static boolean initialized = false;
+
+	static {
+		SWORD_OWNERSHIP_LOOKUP.put("BASIC", SaveKey.HAS_BASIC_SWORD);
+		SWORD_OWNERSHIP_LOOKUP.put("IRON", SaveKey.HAS_IRON_SWORD);
+		SWORD_OWNERSHIP_LOOKUP.put("BLUE", SaveKey.HAS_BLUE_SWORD);
+		SWORD_OWNERSHIP_LOOKUP.put("GOLD", SaveKey.HAS_GOLD_SWORD);
+		SWORD_OWNERSHIP_LOOKUP.put("PINK", SaveKey.HAS_PINK_SWORD);
+		SWORD_OWNERSHIP_LOOKUP.put("YELLOW", SaveKey.HAS_YELLOW_SWORD);
+		SWORD_OWNERSHIP_LOOKUP.put("FAT", SaveKey.HAS_FAT_SWORD);
+		SWORD_OWNERSHIP_LOOKUP.put("RAINBOW", SaveKey.HAS_RAINBOW_SWORD);
+		SWORD_OWNERSHIP_LOOKUP.put("DEV", SaveKey.HAS_DEV_SWORD);
+		SWORD_OWNERSHIP_LOOKUP.put("RGB_SABER", SaveKey.HAS_RGB_SABER);
+	}
 
 	/**
 	 * Initializes the save system.
@@ -173,27 +187,16 @@ public final class SaveManager {
 		return SWORD_OWNERSHIP_LOOKUP.get(swordTypeName);
 	}
 
-	private static final Map<String, SaveKey> SWORD_OWNERSHIP_LOOKUP = new HashMap<>();
-
-	static {
-		SWORD_OWNERSHIP_LOOKUP.put("BASIC", SaveKey.HAS_BASIC_SWORD);
-		SWORD_OWNERSHIP_LOOKUP.put("IRON", SaveKey.HAS_IRON_SWORD);
-		SWORD_OWNERSHIP_LOOKUP.put("BLUE", SaveKey.HAS_BLUE_SWORD);
-		SWORD_OWNERSHIP_LOOKUP.put("GOLD", SaveKey.HAS_GOLD_SWORD);
-		SWORD_OWNERSHIP_LOOKUP.put("PINK", SaveKey.HAS_PINK_SWORD);
-		SWORD_OWNERSHIP_LOOKUP.put("YELLOW", SaveKey.HAS_YELLOW_SWORD);
-		SWORD_OWNERSHIP_LOOKUP.put("FAT", SaveKey.HAS_FAT_SWORD);
-		SWORD_OWNERSHIP_LOOKUP.put("RAINBOW", SaveKey.HAS_RAINBOW_SWORD);
-		SWORD_OWNERSHIP_LOOKUP.put("DEV", SaveKey.HAS_DEV_SWORD);
-		SWORD_OWNERSHIP_LOOKUP.put("RGB_SABER", SaveKey.HAS_RGB_SABER);
-	}
-
 	private static void ensureInitialized() {
 		if (!initialized) {
 			init();
 		}
 	}
 
+	/**
+	 * Reads the save file from disk into the in-memory map. If the file is missing,
+	 * empty, or contains invalid JSON, defaults are applied (and persisted).
+	 */
 	private static void readSaveLocked() {
 		try {
 			if (!Files.exists(SAVE_PATH) || Files.size(SAVE_PATH) == 0) {
@@ -223,6 +226,10 @@ public final class SaveManager {
 		}
 	}
 
+	/**
+	 * Writes the in-memory save data to disk atomically. A temporary file is written
+	 * first and then moved into place to avoid corruption on crash.
+	 */
 	private static void writeSaveAtomicallyLocked() {
 		try {
 			Path parent = SAVE_PATH.getParent();
@@ -245,12 +252,21 @@ public final class SaveManager {
 		}
 	}
 
+	/**
+	 * Populates the in-memory map with default values for any keys not already present.
+	 */
 	private static void setDefaultsLocked() {
 		for (SaveKey key : SaveKey.values()) {
 			saveData.putIfAbsent(key, getDefault(key));
 		}
 	}
 
+	/**
+	 * Returns the default value for the given save key.
+	 *
+	 * @param key save key
+	 * @return the default value as a string
+	 */
 	private static String getDefault(SaveKey key) {
 		return switch (key) {
 			case HAS_BASIC_SWORD -> "true";
@@ -310,7 +326,9 @@ public final class SaveManager {
 		}
 
 		/**
-		 * @return JSON property name for this key
+		 * Returns the JSON property name for this key.
+		 *
+		 * @return JSON property name
 		 */
 		@Override
 		public String toString() {

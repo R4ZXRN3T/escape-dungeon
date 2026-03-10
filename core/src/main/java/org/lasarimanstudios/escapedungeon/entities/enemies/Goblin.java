@@ -36,7 +36,15 @@ public class Goblin extends Enemy {
 	private boolean walking = false;
 
 	/**
-	 * Constructor: uses {@link GameAssets} to auto-discover goblin sprites via {@link EnemySpriteSet}.
+	 * Creates a goblin enemy at the specified world position.
+	 *
+	 * <p>Sprites are auto-discovered via {@link EnemySpriteSet} from {@code textures/enemy/goblin_01/}.</p>
+	 *
+	 * @param assets    assets container providing enemy sprites
+	 * @param wallArray walls used for collision detection and line-of-sight checks
+	 * @param posX      initial X position in world units
+	 * @param posY      initial Y position in world units
+	 * @param level     enemy level for stat scaling
 	 */
 	public Goblin(GameAssets assets, Array<Wall> wallArray, float posX, float posY, int level) {
 		super(assets.getEnemySpriteSet("goblin_01").getFrontIdleTexture(), 3.23f, 5f, posX, posY);
@@ -107,6 +115,9 @@ public class Goblin extends Enemy {
 		updateVisual();
 	}
 
+	/**
+	 * Updates the sprite region based on the current facing direction and walking state.
+	 */
 	private void updateVisual() {
 		if (spriteSet == null) return;
 		TextureRegion region;
@@ -118,10 +129,18 @@ public class Goblin extends Enemy {
 		applyVisualRegion(region);
 	}
 
+	/**
+	 * Syncs the internal collider rectangle with the current sprite bounds.
+	 */
 	private void updateCollider() {
 		collider.set(getX(), getY(), getWidth(), getHeight());
 	}
 
+	/**
+	 * Returns {@code true} if the internal collider overlaps any wall in the wall array.
+	 *
+	 * @return {@code true} if a wall collision is detected
+	 */
 	private boolean overlapsAnyWall() {
 		for (Wall wall : wallArray) {
 			if (collider.overlaps(wall.getBoundingRectangle())) {
@@ -134,11 +153,22 @@ public class Goblin extends Enemy {
 	/**
 	 * Returns {@code true} if the straight line from this goblin's center to the given target
 	 * position is not blocked by any wall.
+	 *
+	 * @param targetX target X coordinate
+	 * @param targetY target Y coordinate
+	 * @return {@code true} if the line of sight is clear
 	 */
 	private boolean hasLineOfSight(float targetX, float targetY) {
 		return LineOfSight.hasLineOfSight(wallArray, getCenterX(), getCenterY(), targetX, targetY);
 	}
 
+	/**
+	 * Moves the goblin by the given deltas, reverting each axis independently if the
+	 * movement causes a wall collision.
+	 *
+	 * @param dx horizontal movement delta
+	 * @param dy vertical movement delta
+	 */
 	private void moveWithCollisions(float dx, float dy) {
 
 		if (dx != 0f) {
@@ -173,10 +203,10 @@ public class Goblin extends Enemy {
 	}
 
 	/**
-	 * Moves toward the configured {@link #getCharacter()}.
+	 * Moves toward the configured player character when within aggro range and line of sight.
 	 *
-	 * <p>This requires that {@link #setCharacter(org.lasarimanstudios.escapedungeon.entities.Character)}
-	 * was called; otherwise {@link #getCharacter()} may be {@code null}.</p>
+	 * <p>Requires that {@link #setCharacter(org.lasarimanstudios.escapedungeon.entities.Character)}
+	 * was called beforehand.</p>
 	 *
 	 * @param delta time since last frame in seconds
 	 */
@@ -191,7 +221,6 @@ public class Goblin extends Enemy {
 
 		walking = false;
 		if (length > 0 && length < 35) {
-			// Don't follow the player if a wall blocks line of sight.
 			float charCenterX = getCharacter().getX() + getCharacter().getWidth() / 2f;
 			float charCenterY = getCharacter().getY() + getCharacter().getHeight() / 2f;
 			if (!hasLineOfSight(charCenterX, charCenterY)) return;
@@ -199,15 +228,21 @@ public class Goblin extends Enemy {
 			float dirX = diffX / length;
 			float dirY = diffY / length;
 
-			float dx = dirX * getSpeed() * delta;
-			float dy = dirY * getSpeed() * delta;
-			moveWithCollisions(dx, dy);
+			float moveX = dirX * getSpeed() * delta;
+			float moveY = dirY * getSpeed() * delta;
+			moveWithCollisions(moveX, moveY);
 
 			walking = true;
 			updateFacing(getX() - oldX, getY() - oldY);
 		}
 	}
 
+	/**
+	 * Updates the facing direction based on the movement delta.
+	 *
+	 * @param dx horizontal movement since last frame
+	 * @param dy vertical movement since last frame
+	 */
 	private void updateFacing(float dx, float dy) {
 		if (dx == 0f && dy == 0f) return;
 		if (Math.abs(dx) > Math.abs(dy)) {

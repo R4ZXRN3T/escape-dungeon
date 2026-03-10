@@ -24,7 +24,7 @@ public class RgbGhost extends Enemy {
 
 	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
-	private static final float HUE_SPEED = 0.2f; // tweak for rainbow speed
+	private static final float HUE_SPEED = 0.2f;
 	private final EnemySpriteSet spriteSet;
 	private final DirectionalAnimationSet walkAnimations;
 	private float damageInvulnerabilityTime = 0.3f;
@@ -33,7 +33,6 @@ public class RgbGhost extends Enemy {
 	private Direction facing = Direction.FRONT;
 	private float stateTimeSeconds = 0f;
 	private boolean walking = false;
-	// Hue animation fields (0..1)
 	private float hueAnim = 0f;
 
 	/**
@@ -117,6 +116,9 @@ public class RgbGhost extends Enemy {
 		updateVisual();
 	}
 
+	/**
+	 * Updates the sprite region based on the current facing direction and walking state.
+	 */
 	private void updateVisual() {
 		if (spriteSet == null) return;
 		TextureRegion region;
@@ -129,7 +131,7 @@ public class RgbGhost extends Enemy {
 	}
 
 	/**
-	 * Notifies listeners that this enemy died (no local death effects).
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void die() {
@@ -161,6 +163,12 @@ public class RgbGhost extends Enemy {
 		}
 	}
 
+	/**
+	 * Updates the facing direction based on the movement delta.
+	 *
+	 * @param dx horizontal movement since last frame
+	 * @param dy vertical movement since last frame
+	 */
 	private void updateFacing(float dx, float dy) {
 		if (dx == 0f && dy == 0f) return;
 		if (Math.abs(dx) > Math.abs(dy)) {

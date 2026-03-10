@@ -7,23 +7,41 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
-import org.lasarimanstudios.escapedungeon.graphics.HueShader;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
 /**
- * A sword that continuously cycles through rainbow hues while being drawn.
+ * Developer / debug sword with togglable range and infinite damage.
  *
- * <p>Uses the existing {@link HueShader} to apply a hue-rotation effect, just like
- * {@link org.lasarimanstudios.escapedungeon.entities.enemies.RgbGhost}.</p>
+ * <p>Pressing {@code Q} toggles between the default high range and a minimal range of 2.
+ * Unlike the standard {@link Sword}, this variant ignores line-of-sight checks and applies
+ * zero knockback.</p>
  */
 public class DevSword extends Sword {
 
 	private boolean highRange = true;
 
-	public DevSword(Array<Enemy> enemies, Array<Wall> walls, Texture texture, float attackDamage, float attackSpeed, float range, Texture arcTexture) {
-		super(enemies, walls, texture, attackDamage, attackSpeed, range, arcTexture);
+	/**
+	 * Creates a dev sword.
+	 *
+	 * @param enemies      enemies that can be hit
+	 * @param walls        walls (unused for line-of-sight in this variant)
+	 * @param texture      sword texture
+	 * @param attackDamage damage dealt per hit
+	 * @param attackSpeed  attack duration in seconds
+	 * @param range        initial range (uniformly scales the sprite)
+	 * @param knockback    knockback strength
+	 * @param arcTexture   arc trail texture, or {@code null} for a generated fallback
+	 */
+	public DevSword(Array<Enemy> enemies, Array<Wall> walls, Texture texture, float attackDamage, float attackSpeed, float range, float knockback, Texture arcTexture) {
+		super(enemies, walls, texture, attackDamage, attackSpeed, range, knockback, arcTexture);
 	}
 
+	/**
+	 * Updates the swing animation. Pressing {@code Q} toggles between high and low range.
+	 * Damage is applied without line-of-sight or knockback.
+	 *
+	 * @param delta time since last frame in seconds
+	 */
 	@Override
 	public void update(float delta) {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
@@ -42,10 +60,9 @@ public class DevSword extends Sword {
 		float t = MathUtils.clamp(elapsedTime / totalDuration, 0f, 1f);
 
 		float forwardPortion = 3f / 5f;
-		float angle;
 
 		float swingT = t / forwardPortion;
-		angle = MathUtils.lerp(startAngle, endAngle,
+		float angle = MathUtils.lerp(startAngle, endAngle,
 			MathUtils.sin(swingT * MathUtils.PI / 2f));
 		showArc = true;
 

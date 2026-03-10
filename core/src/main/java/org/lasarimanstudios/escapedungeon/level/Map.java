@@ -30,6 +30,12 @@ public class Map {
 	 * Creates a map.
 	 *
 	 * @param backgroundPath background texture internal path (e.g. {@code textures/maps/test.png})
+	 * @param walls          static wall obstacles
+	 * @param enemies        initial enemy list
+	 * @param width          world width in world units
+	 * @param height         world height in world units
+	 * @param startPosX      player start X position in world units
+	 * @param startPosY      player start Y position in world units
 	 */
 	public Map(String backgroundPath, Array<Wall> walls, Array<Enemy> enemies, float width, float height, float startPosX, float startPosY) {
 		this.backgroundPath = backgroundPath;
@@ -42,27 +48,35 @@ public class Map {
 	}
 
 	/**
-	 * @return background texture
+	 * Returns the background texture internal path.
+	 *
+	 * @return background texture path
 	 */
 	public String getBackgroundPath() {
 		return backgroundPath;
 	}
 
 	/**
-	 * @return walls in this map
+	 * Returns the walls in this map.
+	 *
+	 * @return wall array
 	 */
 	public Array<Wall> getWalls() {
 		return walls;
 	}
 
 	/**
-	 * @return world width in world units
+	 * Returns the world width in world units.
+	 *
+	 * @return world width
 	 */
 	public float getWidth() {
 		return width;
 	}
 
 	/**
+	 * Sets the world width.
+	 *
 	 * @param width world width in world units
 	 */
 	public void setWidth(float width) {
@@ -70,13 +84,17 @@ public class Map {
 	}
 
 	/**
-	 * @return world height in world units
+	 * Returns the world height in world units.
+	 *
+	 * @return world height
 	 */
 	public float getHeight() {
 		return height;
 	}
 
 	/**
+	 * Sets the world height.
+	 *
 	 * @param height world height in world units
 	 */
 	public void setHeight(float height) {
@@ -84,27 +102,35 @@ public class Map {
 	}
 
 	/**
-	 * @return player start X in world units
+	 * Returns the player start X position in world units.
+	 *
+	 * @return player start X
 	 */
 	public float getStartPosX() {
 		return startPosX;
 	}
 
 	/**
-	 * @return player start Y in world units
+	 * Returns the player start Y position in world units.
+	 *
+	 * @return player start Y
 	 */
 	public float getStartPosY() {
 		return startPosY;
 	}
 
 	/**
-	 * @return enemies present in the map
+	 * Returns the enemies present in the map.
+	 *
+	 * @return enemy array
 	 */
 	public Array<Enemy> getEnemies() {
 		return enemies;
 	}
 
 	/**
+	 * Replaces the enemy list.
+	 *
 	 * @param enemies new enemy list
 	 */
 	public void setEnemies(Array<Enemy> enemies) {

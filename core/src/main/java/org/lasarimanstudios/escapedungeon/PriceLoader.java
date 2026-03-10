@@ -37,9 +37,11 @@ public final class PriceLoader {
 
 	/**
 	 * Returns the price for the given sword type name, or 0 if not found.
+	 *
+	 * @param swordTypeName the {@link org.lasarimanstudios.escapedungeon.weapons.SwordType} enum name
+	 * @return price in currency units, or 0 if not defined
 	 */
 	public static int getPrice(String swordTypeName) {
 		return load().getOrDefault(swordTypeName, 0);
 	}
 }
-

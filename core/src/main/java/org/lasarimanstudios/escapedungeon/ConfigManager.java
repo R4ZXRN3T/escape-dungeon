@@ -170,6 +170,10 @@ public final class ConfigManager {
 		}
 	}
 
+	/**
+	 * Reads the config file from disk into the in-memory map. If the file is missing,
+	 * empty, or contains invalid JSON, defaults are applied (and persisted).
+	 */
 	private static void readConfigLocked() {
 		try {
 			if (!Files.exists(CONFIG_PATH) || Files.size(CONFIG_PATH) == 0) {
@@ -199,6 +203,10 @@ public final class ConfigManager {
 		}
 	}
 
+	/**
+	 * Writes the in-memory configuration to disk atomically. A temporary file is written
+	 * first and then moved into place to avoid corruption on crash.
+	 */
 	private static void writeConfigAtomicallyLocked() {
 		try {
 			Path parent = CONFIG_PATH.getParent();
@@ -222,12 +230,21 @@ public final class ConfigManager {
 		}
 	}
 
+	/**
+	 * Populates the in-memory map with default values for any keys not already present.
+	 */
 	private static void setDefaultsLocked() {
 		for (ConfigKey key : ConfigKey.values()) {
 			config.putIfAbsent(key, getDefault(key));
 		}
 	}
 
+	/**
+	 * Returns the default value for the given configuration key.
+	 *
+	 * @param key config key
+	 * @return the default value as a string
+	 */
 	private static String getDefault(ConfigKey key) {
 		return switch (key) {
 			case WINDOW_MODE -> "0";
@@ -281,7 +298,9 @@ public final class ConfigManager {
 		}
 
 		/**
-		 * @return JSON property name for this key
+		 * Returns the JSON property name for this key.
+		 *
+		 * @return JSON property name
 		 */
 		@Override
 		public String toString() {

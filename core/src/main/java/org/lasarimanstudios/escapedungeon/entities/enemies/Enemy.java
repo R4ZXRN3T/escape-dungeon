@@ -75,13 +75,6 @@ public abstract class Enemy extends Entity {
 		setOriginCenter();
 	}
 
-	/**
-	 * @return stable collision rectangle used for damage and pushback checks
-	 */
-	public Rectangle getCollisionBounds() {
-		return collisionBounds;
-	}
-
 	@Override
 	public Rectangle getBoundingRectangle() {
 		return collisionBounds;
@@ -173,6 +166,7 @@ public abstract class Enemy extends Entity {
 	 * <p>If the same weapon attack calls damage multiple times (e.g., once per frame while overlapping),
 	 * only the first call will be accepted.</p>
 	 */
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	protected boolean shouldAcceptDamageFromAttack(int attackInstanceId) {
 		return attackInstanceId != lastDamagingAttackInstanceId;
 	}
@@ -189,7 +183,7 @@ public abstract class Enemy extends Entity {
 	 *
 	 * @param damage           damage amount
 	 * @param knockback        knockback strength (interpretation depends on implementation)
-	 * @param hitAngle         direction of the hit (implementation-defined; {@link Goblin} expects radians)
+	 * @param hitAngle         direction of the hit in radians
 	 * @param attackInstanceId id that identifies the attacker weapon's current attack animation
 	 */
 	public abstract void takeDamage(float damage, float knockback, float hitAngle, int attackInstanceId);

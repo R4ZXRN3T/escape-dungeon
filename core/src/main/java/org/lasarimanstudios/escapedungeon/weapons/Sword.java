@@ -27,10 +27,6 @@ public class Sword extends Weapon {
 
 	protected static final float SOUND_DURATION = 0.342f;
 	private static final float ARC_DEG = 180f;
-	/**
-	 * Base size of the sword sprite in world units (both width and height, since textures are square).
-	 * The actual displayed size is {@code BASE_SIZE * range}.
-	 */
 	private static final float BASE_SIZE = 3f;
 	protected static Sound swingSound;
 	protected final Array<Enemy> enemies;
@@ -52,9 +48,8 @@ public class Sword extends Weapon {
 	 * @param range        effective range – uniformly scales the sword sprite
 	 * @param arcTexture   sword arc trail texture, or {@code null} to use a generated fallback
 	 */
-	public Sword(Array<Enemy> enemies, Array<Wall> walls, Texture texture, float attackDamage, float attackSpeed, float range, Texture arcTexture) {
-		super(texture, attackDamage, attackSpeed);
-		// Range uniformly scales both dimensions so the diagonal texture isn't distorted.
+	public Sword(Array<Enemy> enemies, Array<Wall> walls, Texture texture, float attackDamage, float attackSpeed, float range, float knockback, Texture arcTexture) {
+		super(texture, attackDamage, attackSpeed, knockback);
 		float size = BASE_SIZE * range;
 		setSize(size, size);
 		this.enemies = enemies;
@@ -62,7 +57,6 @@ public class Sword extends Weapon {
 
 		swingSound = Gdx.audio.newSound(Gdx.files.internal("sound/sword_swoosh.mp3"));
 
-		// Set up arc trail sprite.
 		Texture arcTex = arcTexture != null ? arcTexture : createFallbackArcTexture();
 		this.arcSprite = new Sprite(arcTex);
 		float arcSize = size * 1.3f;
@@ -116,26 +110,25 @@ public class Sword extends Weapon {
 
 		for (Enemy enemy : enemies)
 			if (enemy.getBoundingRectangle().overlaps(getBoundingRectangle()) && LineOfSight.hasLineOfSight(walls, getOriginX() + getX(), getOriginY() + getY(), enemy.getCenterX(), enemy.getCenterY()))
-				enemy.takeDamage(getAttackDamage(), 0f, angle, getAttackInstanceId());
+				enemy.takeDamage(getAttackDamage(), getKnockback(), angle, getAttackInstanceId());
 	}
 
 	/**
 	 * Draws the sword and, during the forward swing, a trailing arc effect behind the blade.
+	 *
+	 * @param batch the sprite batch to draw with
 	 */
 	@Override
 	public void draw(Batch batch) {
 		if (showArc) {
-			// Match the arc's origin to the sword's so they rotate around the same pivot.
 			arcSprite.setOrigin(getOriginX(), getOriginY());
 			arcSprite.setPosition(
 				getX() - (arcSprite.getWidth() - getWidth()) / 2f,
 				getY() - (arcSprite.getHeight() - getHeight()) / 2f
 			);
-			// Offset rotation slightly towards the start angle for a trailing effect.
 			float lag = (endAngle > startAngle) ? -20f : 20f;
 			arcSprite.setRotation(getRotation() + lag);
 
-			// Fade arc based on swing progress.
 			float totalDuration = getAttackSpeed();
 			float t = MathUtils.clamp(elapsedTime / totalDuration, 0f, 1f);
 			float forwardPortion = 3f / 5f;
@@ -172,6 +165,11 @@ public class Sword extends Weapon {
 		swingSound.play(0.5f, pitch, 0f);
 	}
 
+	/**
+	 * Updates the effective range by uniformly rescaling the sword and arc sprites.
+	 *
+	 * @param range new range multiplier
+	 */
 	public void setRange(float range) {
 		float size = BASE_SIZE * range;
 		setSize(size, size);
@@ -179,11 +177,21 @@ public class Sword extends Weapon {
 		this.arcSprite.setSize(arcSize, arcSize);
 	}
 
+	/**
+	 * Returns the X origin offset used to attach the sword to the player.
+	 *
+	 * @return attachment origin X in world units
+	 */
 	@Override
 	public float getAttachmentOriginX() {
 		return -1f * BASE_SIZE;
 	}
 
+	/**
+	 * Returns the Y origin offset used to attach the sword to the player.
+	 *
+	 * @return attachment origin Y in world units
+	 */
 	@Override
 	public float getAttachmentOriginY() {
 		return -1f * BASE_SIZE;

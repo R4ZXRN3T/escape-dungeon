@@ -10,7 +10,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -24,7 +27,9 @@ import org.lasarimanstudios.escapedungeon.weapons.SwordType;
 
 /**
  * Inventory screen that lists all swords.
- * The player can buy swords they don't own and equip swords they do own.
+ *
+ * <p>The player can buy swords they don't own and equip swords they do own.
+ * Purchases and equipment changes are persisted via {@link SaveManager}.</p>
  */
 public class EquipmentScreen extends ScreenAdapter {
 	private static final int BUTTON_WIDTH = 580;
@@ -37,10 +42,21 @@ public class EquipmentScreen extends ScreenAdapter {
 	private BitmapFont titleFont;
 	private Texture buttonBackground;
 
+	/**
+	 * Creates a new equipment screen.
+	 *
+	 * @param game the game instance used to navigate between screens
+	 */
 	public EquipmentScreen(DungeonGame game) {
 		this.game = game;
 	}
 
+	/**
+	 * Generates a {@link BitmapFont} from the bundled TTF file at the specified size.
+	 *
+	 * @param size desired font size in pixels
+	 * @return the generated bitmap font
+	 */
 	private static BitmapFont createFontFromTtf(int size) {
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ui/font.ttf"));
 		try {
@@ -56,6 +72,9 @@ public class EquipmentScreen extends ScreenAdapter {
 		}
 	}
 
+	/**
+	 * Initializes the Scene2D stage, skin, fonts, and builds the initial UI layout.
+	 */
 	@Override
 	public void show() {
 		stage = new Stage(new ScreenViewport());
@@ -87,6 +106,12 @@ public class EquipmentScreen extends ScreenAdapter {
 		rebuildUI();
 	}
 
+	/**
+	 * Clears the stage and rebuilds the entire equipment UI from scratch.
+	 *
+	 * <p>This is called both on initial show and after any purchase/equip action to
+	 * reflect the updated save state.</p>
+	 */
 	private void rebuildUI() {
 		stage.clear();
 
@@ -106,7 +131,6 @@ public class EquipmentScreen extends ScreenAdapter {
 		moneyLabel.setAlignment(Align.center);
 		root.add(moneyLabel).colspan(5).padBottom(20).row();
 
-		// Header row
 		root.add(new Label("Sword", skin)).padRight(20).align(Align.left);
 		root.add(new Label("Damage", skin)).padRight(20).align(Align.center);
 		root.add(new Label("Speed", skin)).padRight(20).align(Align.center);
@@ -119,20 +143,17 @@ public class EquipmentScreen extends ScreenAdapter {
 			boolean owned = ownershipKey != null && SaveManager.getBoolean(ownershipKey);
 			boolean equipped = sword.name().equals(equippedName);
 
-			// Name
 			Label nameLabel = new Label(sword.displayName, skin);
 			if (equipped) nameLabel.setColor(Color.GREEN);
 			else if (owned) nameLabel.setColor(Color.WHITE);
 			else nameLabel.setColor(Color.GRAY);
 			root.add(nameLabel).padRight(20).align(Align.left);
 
-			// Stats
 			String dmgText = sword.damage == Float.MAX_VALUE ? "INF" : String.valueOf((int) sword.damage);
 			root.add(new Label(dmgText, skin)).padRight(20).align(Align.center);
 			root.add(new Label(String.format("%.2f", sword.speed), skin)).padRight(20).align(Align.center);
 			root.add(new Label(String.format("%.1f", sword.range), skin)).padRight(20).align(Align.center);
 
-			// Action button
 			if (equipped) {
 				Label equippedLabel = new Label("[EQUIPPED]", skin);
 				equippedLabel.setColor(Color.GREEN);
@@ -177,7 +198,6 @@ public class EquipmentScreen extends ScreenAdapter {
 			root.row().padTop(8);
 		}
 
-		// Back button
 		root.row().padTop(30);
 		TextButton backBtn = new TextButton("BACK", skin);
 		backBtn.addListener(new ClickListener() {
@@ -189,6 +209,11 @@ public class EquipmentScreen extends ScreenAdapter {
 		root.add(backBtn).colspan(5).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).align(Align.center);
 	}
 
+	/**
+	 * Renders the equipment screen. Pressing {@code ESCAPE} returns to the menu.
+	 *
+	 * @param delta time in seconds since the last frame
+	 */
 	@Override
 	public void render(float delta) {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -200,11 +225,20 @@ public class EquipmentScreen extends ScreenAdapter {
 		stage.draw();
 	}
 
+	/**
+	 * Updates the stage viewport when the screen size changes.
+	 *
+	 * @param width  new width in pixels
+	 * @param height new height in pixels
+	 */
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
 	}
 
+	/**
+	 * Clears the input processor when the screen is hidden to prevent input leaking.
+	 */
 	@Override
 	public void hide() {
 		if (Gdx.input.getInputProcessor() == stage) {
@@ -212,6 +246,9 @@ public class EquipmentScreen extends ScreenAdapter {
 		}
 	}
 
+	/**
+	 * Disposes of GPU and UI resources owned by this screen.
+	 */
 	@Override
 	public void dispose() {
 		if (stage != null) stage.dispose();

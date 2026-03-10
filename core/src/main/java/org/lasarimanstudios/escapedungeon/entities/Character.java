@@ -1,7 +1,6 @@
 package org.lasarimanstudios.escapedungeon.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -38,10 +37,10 @@ public class Character extends Entity {
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
 	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
 	private static final float FRONT_ANGLE_OFFSET_DEG = -90f;
-	private static final float SPEED = 22f;                     // Character speed in units per second.
-	private static final float DIAGONAL_MULTIPLIER = 2f / 3f;   // To keep diagonal speed consistent with axial speed.
-	private static final float MAX_STEP_DISTANCE = 0.25f;       // Max distance per movement sub-step to avoid tunneling.
-	private static final float MAX_DELTA = 1f / 30f;            // Cap delta time to avoid large steps on frame drops.
+	private static final float SPEED = 22f;
+	private static final float DIAGONAL_MULTIPLIER = 2f / 3f;
+	private static final float MAX_STEP_DISTANCE = 0.25f;
+	private static final float MAX_DELTA = 1f / 30f;
 	private static int KEY_FORWARD;
 	private static int KEY_BACKWARD;
 	private static int KEY_LEFT;
@@ -50,15 +49,13 @@ public class Character extends Entity {
 	private final Vector3 mouseWorld = new Vector3();
 	private final Array<Wall> wallArray;
 	private final Array<Enemy> enemyArray;
-
-	// Stable collider that ignores sprite rotation.
 	private final Rectangle collider = new Rectangle();
 	private final Weapon weapon;
 	private final Vector2 weaponOffsetLocal = new Vector2(0f, 0f);
 	private final Vector2 weaponOffsetWorld = new Vector2();
 	private final GameAssets assets;
-	private float MaxHealth;
-	private float RemainingHealth;
+	private float maxHealth;
+	private float remainingHealth;
 	private float knockbackVx = 0f;
 	private float knockbackVy = 0f;
 	private float damageInvulnerabilityTime = 1f;
@@ -67,24 +64,24 @@ public class Character extends Entity {
 	private Direction facing = Direction.FRONT;
 	private float stateTimeSeconds = 0f;
 	private boolean walking = false;
-
 	private float currentAttackAngleDeg = 0f;
 
-	// Toggle: when true the player sprite faces the mouse cursor instead of movement direction.
-	// This is intended as a temporary testing hook and is easy to remove.
-	private boolean useMouseFacing = false;
-
-	// Optional: allow the player to reuse an enemy's sprite set (e.g. goblin) for visuals.
 	private CharacterSpriteSet playerSpriteSet;
 	private DirectionalAnimationSet playerWalkAnimations;
 
 	/**
-	 * New constructor: character visuals are provided via {@link GameAssets} so we can swap frames.
+	 * Creates a player character with visuals provided via {@link GameAssets}.
+	 *
+	 * @param wallArray  walls used for collision detection
+	 * @param enemyArray enemies used for contact-damage checks
+	 * @param assets     game asset registry providing character sprites
+	 * @param swordType  the type of sword the character starts with
+	 * @param maxHealth  initial maximum health
 	 */
-	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, SwordType swordType, float MaxHealth) {
+	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, SwordType swordType, float maxHealth) {
 		super(assets.getCharacterSpriteSet("character_01").getIdle(Direction.FRONT));
 		this.assets = assets;
-		setMaxHealth(MaxHealth);
+		setMaxHealth(maxHealth);
 		setRemainingHealth(getMaxHealth());
 		setSize(4.24f, 6f);
 		this.wallArray = wallArray;
@@ -102,17 +99,22 @@ public class Character extends Entity {
 		attachWeapon();
 	}
 
+	/**
+	 * Registers a listener that is notified when the character dies.
+	 *
+	 * @param deathListener the listener to register
+	 */
 	public void setDeathListener(DeathListener deathListener) {
 		this.deathListener = deathListener;
 	}
 
 
 	/**
-	 * Attempts to set the player's visuals to use the sprite set of an enemy type.
-	 * If the named enemy sprite set isn't available, this logs and leaves the default player
+	 * Attempts to set the player's visuals to use the sprite set of a character type.
+	 * If the named sprite set isn't available, this logs a warning and leaves the default
 	 * visuals intact.
 	 *
-	 * @param characterId folder name under textures/enemy/ (e.g. "goblin_01")
+	 * @param characterId folder name under {@code textures/character/} (e.g. {@code "character_01"})
 	 */
 	public void setPlayerSprite(String characterId) {
 		if (assets == null || characterId == null) return;
@@ -125,8 +127,10 @@ public class Character extends Entity {
 	}
 
 	/**
-	 * Directly assigns an {@link CharacterSpriteSet} to the player and builds walk animations.
+	 * Directly assigns a {@link CharacterSpriteSet} to the player and builds walk animations.
 	 * Pass {@code null} to reset to the default player artwork.
+	 *
+	 * @param set the sprite set to use, or {@code null} to reset
 	 */
 	public void setPlayerSpriteSet(CharacterSpriteSet set) {
 		this.playerSpriteSet = set;
@@ -136,12 +140,13 @@ public class Character extends Entity {
 		} else {
 			this.playerWalkAnimations = null;
 		}
-		// Reset animation time so newly assigned sprites start consistently.
 		this.stateTimeSeconds = 0f;
 	}
 
 	/**
-	 * @return the equipped weapon instance (never {@code null})
+	 * Returns the equipped weapon instance.
+	 *
+	 * @return the equipped weapon (never {@code null})
 	 */
 	public Weapon getWeapon() {
 		return weapon;
@@ -150,10 +155,10 @@ public class Character extends Entity {
 	/**
 	 * Applies damage to the player and pushes them away from the given enemy.
 	 *
-	 * <p>Damage is ignored during the invulnerability window. If health reaches zero, the application
-	 * exits immediately.</p>
+	 * <p>Damage is ignored during the invulnerability window. If health reaches zero the
+	 * character dies.</p>
 	 *
-	 * @param enemy     damaging enemy
+	 * @param enemy     the damaging enemy
 	 * @param damage    damage amount
 	 * @param knockback knockback strength applied as velocity
 	 */
@@ -182,7 +187,7 @@ public class Character extends Entity {
 	}
 
 	/**
-	 * Updates the player for a frame.
+	 * Updates the player for a single frame.
 	 *
 	 * <p>Handles movement, rotation, weapon attacks, and enemy contact damage.</p>
 	 *
@@ -193,12 +198,7 @@ public class Character extends Entity {
 		stateTimeSeconds += delta;
 		movement(delta);
 		rotateToMouse(camera);
-		// Toggle facing mode with key 'F' for quick testing. This is intentionally
-		// added as a small, easy-to-remove testing hook.
-		if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-			useMouseFacing = !useMouseFacing;
-			Gdx.app.log("Character", "useMouseFacing = " + useMouseFacing);
-		}
+
 		updateVisual();
 
 		if (Gdx.input.isButtonJustPressed(BUTTON_ATTACK)) {
@@ -210,29 +210,38 @@ public class Character extends Entity {
 		damageInvulnerabilityTime -= delta;
 		for (Enemy enemy : enemyArray) {
 			if (collider.overlaps(enemy.getBoundingRectangle())) {
-				takeDamage(enemy, 10, 150);
+				takeDamage(enemy, enemy.getAttackDamage(), 150);
 				break;
 			}
 		}
 	}
 
+	/**
+	 * Updates the sprite region based on the current facing direction and walking state.
+	 */
 	private void updateVisual() {
 		if (assets == null) return;
 
-		// If the player has been assigned an enemy sprite set, prefer using it.
 		if (playerSpriteSet != null) {
 			if (walking && playerWalkAnimations != null) {
 				TextureRegion frame = playerWalkAnimations.getKeyFrame(facing, stateTimeSeconds, true);
 				setRegion(frame);
-			} else setRegion(playerSpriteSet.getIdle(facing));
+			} else {
+				setRegion(playerSpriteSet.getIdle(facing));
+			}
 			return;
 		}
 
-		// Fallback: use the default player texture provided by GameAssets.
 		TextureRegion idle = assets.getCharacterSpriteSet("character_01").getIdle(facing);
 		setRegion(idle);
 	}
 
+	/**
+	 * Calculates the angle from the character's center to the mouse cursor in world space
+	 * and updates the attack angle and (optionally) the facing direction.
+	 *
+	 * @param camera the game camera for unprojecting screen coordinates
+	 */
 	private void rotateToMouse(OrthographicCamera camera) {
 		camera.unproject(mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 
@@ -244,19 +253,11 @@ public class Character extends Entity {
 
 		double degrees = Math.toDegrees(Math.atan2(dy, dx));
 		currentAttackAngleDeg = (float) degrees + FRONT_ANGLE_OFFSET_DEG;
-
-		// Determine a coarse 4-way facing from the raw angle (no offset). This is used
-		// only when useMouseFacing is enabled so the player 'looks' toward the cursor.
-		if (useMouseFacing) {
-			float absDx = Math.abs(dx);
-			float absDy = Math.abs(dy);
-
-			// XD wtf is this
-			// nested ternary operators are funny
-			facing = absDx > absDy ? dx > 0 ? Direction.RIGHT : Direction.LEFT : dy > 0 ? Direction.BACK : Direction.FRONT;
-		}
 	}
 
+	/**
+	 * Positions and rotates the weapon relative to the character's center.
+	 */
 	private void attachWeapon() {
 		float characterX = getX() + getWidth() * 0.5f;
 		float characterY = getY() + getHeight() * 0.5f;
@@ -271,7 +272,11 @@ public class Character extends Entity {
 		if (!weapon.isAttacking()) weapon.setRotation(currentAttackAngleDeg + 45f);
 	}
 
-
+	/**
+	 * Handles keyboard-driven movement and knockback decay for a single frame.
+	 *
+	 * @param delta time since last frame in seconds
+	 */
 	private void movement(float delta) {
 		delta = Math.min(delta, MAX_DELTA);
 
@@ -310,8 +315,7 @@ public class Character extends Entity {
 			for (int i = 0; i < steps; i++) moveWithCollisions(stepDx, stepDy, true);
 
 			walking = (moveX != 0f || moveY != 0f);
-			// Only update facing from movement if mouse-facing mode is disabled.
-			if (!useMouseFacing && walking) {
+			if (walking) {
 				if (Math.abs(moveX) > Math.abs(moveY)) facing = moveX > 0 ? Direction.RIGHT : Direction.LEFT;
 				else facing = moveY > 0 ? Direction.BACK : Direction.FRONT;
 			}
@@ -321,11 +325,12 @@ public class Character extends Entity {
 	/**
 	 * Attempts to move the character by the given delta while resolving collisions against walls.
 	 *
-	 * <p>Resolution is done per-axis (X then Y). If a move causes overlap with any wall, that axis movement
-	 * is reverted.</p>
+	 * <p>Resolution is done per-axis (X then Y). If a move causes overlap with any wall, that
+	 * axis movement is reverted. Optionally checks enemy overlap on the Y-axis step.</p>
 	 *
-	 * @param dx movement delta on X axis (world units)
-	 * @param dy movement delta on Y axis (world units)
+	 * @param dx           movement delta on X axis (world units)
+	 * @param dy           movement delta on Y axis (world units)
+	 * @param checkEnemies whether to test for enemy overlap after the Y-axis step
 	 */
 	private void moveWithCollisions(float dx, float dy, boolean checkEnemies) {
 		boolean ignoreEnemyCollision = Math.abs(knockbackVx) > 0f || Math.abs(knockbackVy) > 0f;
@@ -361,8 +366,6 @@ public class Character extends Entity {
 
 	/**
 	 * Updates the axis-aligned collider to match the sprite's current position and size.
-	 *
-	 * <p>Rotation does not affect the collider (AABB).</p>
 	 */
 	private void updateCollider() {
 		collider.set(getX(), getY(), getWidth(), getHeight());
@@ -371,19 +374,26 @@ public class Character extends Entity {
 	/**
 	 * Checks whether the character collider overlaps any wall collider.
 	 *
-	 * @return {@code true} if overlapping at least one wall; {@code false} otherwise
+	 * @return {@code true} if overlapping at least one wall
 	 */
 	private boolean overlapsAnyWall() {
-		// Wall collider is also an AABB rectangle.
 		for (Wall wall : wallArray) if (collider.overlaps(wall.getBoundingRectangle())) return true;
 		return false;
 	}
 
+	/**
+	 * Returns the first enemy whose bounding rectangle overlaps the character collider.
+	 *
+	 * @return the overlapping enemy, or {@code null} if none
+	 */
 	private Enemy getOverlappingEnemy() {
 		for (Enemy enemy : enemyArray) if (collider.overlaps(enemy.getBoundingRectangle())) return enemy;
 		return null;
 	}
 
+	/**
+	 * Marks the character as dead and notifies the registered {@link DeathListener}.
+	 */
 	private void die() {
 		if (isDead) return;
 		isDead = true;
@@ -391,53 +401,78 @@ public class Character extends Entity {
 	}
 
 	/**
+	 * Returns the maximum health.
+	 *
 	 * @return maximum health
 	 */
 	public float getMaxHealth() {
-		return MaxHealth;
+		return maxHealth;
 	}
 
 	/**
-	 * @param maxHealth maximum health
+	 * Sets the maximum health.
+	 *
+	 * @param maxHealth maximum health value
 	 */
 	public void setMaxHealth(float maxHealth) {
-		MaxHealth = maxHealth;
+		this.maxHealth = maxHealth;
 	}
 
 	/**
-	 * @return current remaining health
+	 * Returns the current remaining health.
+	 *
+	 * @return remaining health
 	 */
 	public float getRemainingHealth() {
-		return RemainingHealth;
+		return remainingHealth;
 	}
 
 	/**
-	 * @param remainingHealth new remaining health
+	 * Sets the current remaining health.
+	 *
+	 * @param remainingHealth new remaining health value
 	 */
 	public void setRemainingHealth(float remainingHealth) {
-		RemainingHealth = remainingHealth;
+		this.remainingHealth = remainingHealth;
 	}
 
 	/**
-	 * @return sprite center X coordinate
+	 * Returns the X coordinate of the sprite's center.
+	 *
+	 * @return center X in world units
 	 */
 	public float getCenterX() {
 		return getX() + getWidth() * 0.5f;
 	}
 
 	/**
-	 * @return sprite center Y coordinate
+	 * Returns the Y coordinate of the sprite's center.
+	 *
+	 * @return center Y in world units
 	 */
 	public float getCenterY() {
 		return getY() + getHeight() * 0.5f;
 	}
 
+	/**
+	 * Returns whether the character is dead.
+	 *
+	 * @return {@code true} if the character has died
+	 */
 	public boolean isDead() {
 		return isDead;
 	}
 
+	/**
+	 * Listener notified when the player character dies.
+	 */
 	@FunctionalInterface
 	public interface DeathListener {
+		/**
+		 * Called when the character dies.
+		 *
+		 * @param character the character that died
+		 */
 		void onDied(Character character);
 	}
 }
