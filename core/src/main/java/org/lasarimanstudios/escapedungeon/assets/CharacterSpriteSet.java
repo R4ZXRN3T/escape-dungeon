@@ -48,9 +48,9 @@ public class CharacterSpriteSet {
 	 * Builds an {@link EnemySpriteSet} by scanning the provided asset paths for files matching
 	 * the naming conventions described in the class Javadoc.
 	 *
-	 * @param assets   used to retrieve already-loaded textures
-	 * @param characterId  folder name under {@code textures/enemy/}, e.g. {@code "goblin-01"} or {@code "ghost"}
-	 * @param allPaths all auto-discovered texture paths (from {@link GameAssets#getLoadedPaths()})
+	 * @param assets      used to retrieve already-loaded textures
+	 * @param characterId folder name under {@code textures/enemy/}, e.g. {@code "goblin-01"} or {@code "ghost"}
+	 * @param allPaths    all auto-discovered texture paths (from {@link GameAssets#getLoadedPaths()})
 	 */
 	public static CharacterSpriteSet build(GameAssets assets, String characterId, List<String> allPaths) {
 		String prefix = "textures/character/" + characterId + "/";

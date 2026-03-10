@@ -28,6 +28,7 @@ public class DungeonGame extends Game {
 	@Override
 	public void create() {
 		ConfigManager.init();
+		SaveManager.init();
 		applySettings();
 		setScreen(new IntroScreen(this));
 	}
@@ -96,7 +97,7 @@ public class DungeonGame extends Game {
 	 * Switches to the inventory screen.
 	 */
 	public void openInventory() {
-		setScreen(new InventoryScreen(this));
+		setScreen(new EquipmentScreen(this));
 	}
 
 	/**

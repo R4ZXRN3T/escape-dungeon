@@ -1,25 +1,24 @@
 {
-    "background": "test.png",
-    "width": 1920,
-    "height": 1080,
-    "startPosX": 0,
-    "startPosY": 0,
-    "walls": [
-        {
-            "texture": "wall.png",
-            "width": 20,
-            "height": 5,
-            "posX": 30,
-            "posY": 30
-        }
-    ],
-    "enemies": [
-        {
-            "enemyType": "goblin",
-            "posX": 40,
-            "posY": 60,
-            "level": 1
-        }
-    ]
-    
+	"background": "test.png",
+	"width": 1920,
+	"height": 1080,
+	"startPosX": 0,
+	"startPosY": 0,
+	"walls": [
+		{
+			"texture": "wall.png",
+			"width": 20,
+			"height": 5,
+			"posX": 30,
+			"posY": 30
+		}
+	],
+	"enemies": [
+		{
+			"enemyType": "goblin",
+			"posX": 40,
+			"posY": 60,
+			"level": 1
+		}
+	]
 }

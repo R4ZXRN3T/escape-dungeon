@@ -34,9 +34,6 @@ public final class ConfigManager {
 	private static final Map<ConfigKey, String> config = new EnumMap<>(ConfigKey.class);
 	private static boolean initialized = false;
 
-	private ConfigManager() {
-	}
-
 	/**
 	 * Initializes the configuration system.
 	 *
@@ -154,16 +151,16 @@ public final class ConfigManager {
 	 */
 	public static Path getConfigFilePath() {
 		String os = System.getProperty("os.name", "").toLowerCase();
-		String fileName = "escape-dungeon/config.json";
+		String fileName = "config.json";
 
 		if (os.contains("win")) {
 			String appData = System.getenv("APPDATA");
 			if (appData != null && !appData.isBlank()) return Paths.get(appData, fileName);
-			return Paths.get(System.getProperty("user.home"), "AppData", "Roaming", fileName);
+			return Paths.get(System.getProperty("user.home"), "AppData", "Roaming", "escape-dungeon", fileName);
 		} else if (os.contains("mac")) {
-			return Paths.get(System.getProperty("user.home"), "Library", "Application Support", fileName);
+			return Paths.get(System.getProperty("user.home"), "Library", "Application Support", "escape-dungeon", fileName);
 		} else {
-			return Paths.get(System.getProperty("user.home"), ".config", fileName);
+			return Paths.get(System.getProperty("user.home"), ".config", "escape-dungeon", fileName);
 		}
 	}
 

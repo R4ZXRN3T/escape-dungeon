@@ -3,13 +3,13 @@ package org.lasarimanstudios.escapedungeon.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -30,24 +30,24 @@ public class MenuScreen extends ScreenAdapter {
 	private static final int BUTTON_WIDTH = 580;
 	private static final int BUTTON_HEIGHT = 96;
 	private final DungeonGame game;
+	private final Screen previousScreen;
+
 	private Stage stage;
 	private Skin skin;
 	private BitmapFont font;
 	private Texture buttonBackground;
+	private Texture logoTexture;
 
 	/**
 	 * Creates the menu screen.
 	 *
 	 * @param game game instance used to open other screens
+	 * @param previousScreen previous screen to return to (nullable)
 	 */
-	private final Screen previousScreen;
-
 	public MenuScreen(DungeonGame game, Screen previousScreen) {
 		this.game = game;
 		this.previousScreen = previousScreen;
 	}
-
-
 
 	/**
 	 * Loads the TTF and generates a bitmap font.
@@ -88,19 +88,27 @@ public class MenuScreen extends ScreenAdapter {
 
 		Table root = new Table();
 		root.setFillParent(true);
+		// keep the menu centered on screen; logo will sit above the buttons inside the table
+		root.center();
 		root.defaults().pad(10f);
 		stage.addActor(root);
+		// Load and add the game logo at the top of the menu. The texture is disposed in dispose().
+		logoTexture = new Texture(Gdx.files.internal("ui/logo.png"));
+		logoTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+		Image logoImage = new Image(logoTexture);
+		// constrain logo width to the button width and give a fixed height; adjust as needed
+		root.add(logoImage).width(BUTTON_WIDTH).height(150).padBottom(20).row();
 		if (previousScreen != null) {
 			root.add(makeTextOnlyButton("RESUME", () -> game.setScreen(previousScreen)))
 				.width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 		}
 		root.add(makeTextOnlyButton("NEW GAME", () -> game.openLevel("map_02"))).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
-		root.add(makeTextOnlyButton("INVENTORY", game::openInventory)).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 		if (previousScreen != null) {
 			root.add(makeTextOnlyButton("RETURN TO MENU", () -> game.setScreen(new MenuScreen(game, null))))
 				.width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 		}
 		if (previousScreen == null) {
+			root.add(makeTextOnlyButton("EQUIPMENT", game::openInventory)).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 			root.add(makeTextOnlyButton("SETTINGS", game::openSettings)).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 			root.add(makeTextOnlyButton("EXIT", () -> Gdx.app.exit())).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).row();
 		}
@@ -146,5 +154,6 @@ public class MenuScreen extends ScreenAdapter {
 		if (skin != null) skin.dispose();
 		if (font != null) font.dispose();
 		if (buttonBackground != null) buttonBackground.dispose();
+		if (logoTexture != null) logoTexture.dispose();
 	}
 }

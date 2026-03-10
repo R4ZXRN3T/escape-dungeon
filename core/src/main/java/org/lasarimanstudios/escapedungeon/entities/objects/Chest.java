@@ -48,7 +48,7 @@ public class Chest extends Entity {
 
 		opened = true;
 		setTexture(openTexture);
-		if (player.getRemainingHealth() < 100){
+		if (player.getRemainingHealth() < 100) {
 			player.setRemainingHealth(player.getRemainingHealth() + 10);
 		}
 	}

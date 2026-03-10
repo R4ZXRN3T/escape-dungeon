@@ -25,13 +25,14 @@ import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
  */
 public class Sword extends Weapon {
 
+	protected static final float SOUND_DURATION = 0.342f;
 	private static final float ARC_DEG = 180f;
 	/**
 	 * Base size of the sword sprite in world units (both width and height, since textures are square).
 	 * The actual displayed size is {@code BASE_SIZE * range}.
 	 */
 	private static final float BASE_SIZE = 3f;
-
+	protected static Sound swingSound;
 	protected final Array<Enemy> enemies;
 	protected final Array<Wall> walls;
 	protected final Sprite arcSprite;
@@ -39,8 +40,6 @@ public class Sword extends Weapon {
 	protected float endAngle;
 	protected float elapsedTime;
 	protected boolean showArc;
-	protected static Sound swingSound;
-	protected static final float SOUND_DURATION = 0.342f;
 
 	/**
 	 * Creates a sword.

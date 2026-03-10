@@ -10,7 +10,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.ConfigManager;
-import org.lasarimanstudios.escapedungeon.assets.*;
+import org.lasarimanstudios.escapedungeon.assets.CharacterSpriteSet;
+import org.lasarimanstudios.escapedungeon.assets.Direction;
+import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
+import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.weapons.SwordType;
 import org.lasarimanstudios.escapedungeon.weapons.Weapon;
@@ -102,7 +105,6 @@ public class Character extends Entity {
 	public void setDeathListener(DeathListener deathListener) {
 		this.deathListener = deathListener;
 	}
-
 
 
 	/**
@@ -355,7 +357,6 @@ public class Character extends Entity {
 			}
 		}
 	}
-
 
 
 	/**

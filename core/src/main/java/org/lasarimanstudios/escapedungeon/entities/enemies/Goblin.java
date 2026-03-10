@@ -1,17 +1,15 @@
 package org.lasarimanstudios.escapedungeon.entities.enemies;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
 import org.lasarimanstudios.escapedungeon.assets.GameAssets;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
 import org.lasarimanstudios.escapedungeon.world.LineOfSight;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
-
-
 
 
 /**
@@ -21,14 +19,13 @@ import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
  * invulnerable and receives knockback velocity that decays over time.</p>
  */
 public class Goblin extends Enemy {
-	private final Array<Wall> wallArray;
-	private final Rectangle collider = new Rectangle();
 	private static final float BASE_HEALTH = 30f;
 	private static final float BASE_ATTACK_DAMAGE = 10f;
 	private static final float BASE_SPEED = 10f;
-
 	private static final float KNOCKBACK_DAMPING_PER_SECOND = 18f;
 	private static final float KNOCKBACK_VELOCITY_EPS = 0.05f;
+	private final Array<Wall> wallArray;
+	private final Rectangle collider = new Rectangle();
 	private final EnemySpriteSet spriteSet;
 	private final DirectionalAnimationSet walkAnimations;
 	private float damageInvulnerabilityTime = 0.3f;
@@ -124,6 +121,7 @@ public class Goblin extends Enemy {
 	private void updateCollider() {
 		collider.set(getX(), getY(), getWidth(), getHeight());
 	}
+
 	private boolean overlapsAnyWall() {
 		for (Wall wall : wallArray) {
 			if (collider.overlaps(wall.getBoundingRectangle())) {
@@ -165,6 +163,7 @@ public class Goblin extends Enemy {
 			}
 		}
 	}
+
 	/**
 	 * Notifies the death listener.
 	 */
