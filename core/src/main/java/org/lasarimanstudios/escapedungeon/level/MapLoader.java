@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 
 import org.json.JSONObject;
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Ghost;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Goblin;
@@ -25,7 +25,7 @@ public class MapLoader {
 	 * @return parsed map instance
 	 * @throws RuntimeException if reading or parsing fails
 	 */
-	public static Map loadMap(String mapName, GameAssets assets) {
+	public static Map loadMap(String mapName, AssetManager assets) {
 		try {
 			String jsonText = Gdx.files.internal("levels/" + mapName + ".json").readString();
 			JSONObject mapJson = new JSONObject(jsonText);
@@ -53,7 +53,7 @@ public class MapLoader {
 	 * @param assets  shared asset registry used to load wall textures
 	 * @return walls array
 	 */
-	private static Array<Wall> getWalls(JSONObject mapJson, GameAssets assets) {
+	private static Array<Wall> getWalls(JSONObject mapJson, AssetManager assets) {
 		Array<Wall> wallArray = new Array<>();
 
 		for (Object wallValueObject : mapJson.getJSONArray("walls")) {
@@ -78,7 +78,7 @@ public class MapLoader {
 	 * @param assets  shared asset registry used to load enemy textures
 	 * @return enemies array
 	 */
-	private static Array<Enemy> getEnemies(JSONObject mapJson, GameAssets assets, Array<Wall> wallArray) {
+	private static Array<Enemy> getEnemies(JSONObject mapJson, AssetManager assets, Array<Wall> wallArray) {
 		Array<Enemy> enemyArray = new Array<>();
 
 		for (Object enemyValueObject : mapJson.getJSONArray("enemies")) {
@@ -107,7 +107,7 @@ public class MapLoader {
 	 * @return the new enemy instance
 	 * @throws RuntimeException if {@code enemyType} is unknown
 	 */
-	private static Enemy getNewEnemy(GameAssets assets, Array<Wall> wallArray, String enemyType, float enemyPosX, float enemyPosY, int level) {
+	private static Enemy getNewEnemy(AssetManager assets, Array<Wall> wallArray, String enemyType, float enemyPosX, float enemyPosY, int level) {
 		return switch (enemyType) {
 			case "goblin" -> new Goblin(assets, wallArray, enemyPosX, enemyPosY, level);
 			case "ghost" -> new Ghost(assets, enemyPosX, enemyPosY, level);

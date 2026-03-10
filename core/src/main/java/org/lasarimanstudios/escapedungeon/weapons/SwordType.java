@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.PriceLoader;
 import org.lasarimanstudios.escapedungeon.SaveManager;
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
@@ -24,25 +24,25 @@ import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
  * }</pre>
  */
 public enum SwordType {
-	BASIC("Basic Sword", GameAssets.TEX_WEAPON_SWORD_BASIC, 8f, 0.55f, 1.5f, 0.75f),
-	IRON("Iron Sword", GameAssets.TEX_WEAPON_SWORD_IRON, 12f, 0.50f, 1.5f, 1f),
-	BLUE("Blue Sword", GameAssets.TEX_WEAPON_SWORD_BLUE, 15f, 0.45f, 1.5f, 1.3f),
-	YELLOW("Yellow Sword", GameAssets.TEX_WEAPON_SWORD_YELLOW, 14f, 0.35f, 1.5f, 1.1f),
-	PINK("Pink Sword", GameAssets.TEX_WEAPON_SWORD_PINK, 18f, 0.50f, 1.5f, 1.5f),
-	RAINBOW("Rainbow Sword", GameAssets.TEX_WEAPON_SWORD_RAINBOW, 20f, 0.45f, 2.0f, 1.7f),
-	GOLD("Gold Sword", GameAssets.TEX_WEAPON_SWORD_GOLD, 25f, 0.40f, 1.5f, 1.6f),
-	FAT("Fat Sword", GameAssets.TEX_WEAPON_SWORD_FAT, 30f, 0.60f, 2.5f, 3f),
+	BASIC("Basic Sword", AssetManager.TEX_WEAPON_SWORD_BASIC, 8f, 0.55f, 1.5f, 0.75f),
+	IRON("Iron Sword", AssetManager.TEX_WEAPON_SWORD_IRON, 12f, 0.50f, 1.5f, 1f),
+	BLUE("Blue Sword", AssetManager.TEX_WEAPON_SWORD_BLUE, 15f, 0.45f, 1.5f, 1.3f),
+	YELLOW("Yellow Sword", AssetManager.TEX_WEAPON_SWORD_YELLOW, 14f, 0.35f, 1.5f, 1.1f),
+	PINK("Pink Sword", AssetManager.TEX_WEAPON_SWORD_PINK, 18f, 0.50f, 1.5f, 1.5f),
+	RAINBOW("Rainbow Sword", AssetManager.TEX_WEAPON_SWORD_RAINBOW, 20f, 0.45f, 2.0f, 1.7f),
+	GOLD("Gold Sword", AssetManager.TEX_WEAPON_SWORD_GOLD, 25f, 0.40f, 1.5f, 1.6f),
+	FAT("Fat Sword", AssetManager.TEX_WEAPON_SWORD_FAT, 30f, 0.60f, 2.5f, 3f),
 
-	RGB_SABER("RGB Saber", GameAssets.TEX_WEAPON_RGB_SABER, 30f, 0.30f, 1.5f, 2f) {
+	RGB_SABER("RGB Saber", AssetManager.TEX_WEAPON_RGB_SABER, 30f, 0.30f, 1.5f, 2f) {
 		@Override
-		public Sword create(Array<Enemy> enemies, Array<Wall> walls, GameAssets assets) {
+		public Sword create(Array<Enemy> enemies, Array<Wall> walls, AssetManager assets) {
 			return new RgbSaber(enemies, walls, assets.getTexture(texturePath), damage, speed, range, knockback, assets.getArcTexture());
 		}
 	},
 
-	DEV("Dev Sword", GameAssets.TEX_WEAPON_SWORD_DEV, Float.MAX_VALUE, 0.35f, 20f, 10f) {
+	DEV("Dev Sword", AssetManager.TEX_WEAPON_SWORD_DEV, Float.MAX_VALUE, 0.35f, 20f, 10f) {
 		@Override
-		public Sword create(Array<Enemy> enemies, Array<Wall> walls, GameAssets assets) {
+		public Sword create(Array<Enemy> enemies, Array<Wall> walls, AssetManager assets) {
 			return new DevSword(enemies, walls, assets.getTexture(texturePath), damage, speed, range, knockback, assets.getArcTexture());
 		}
 	};
@@ -108,7 +108,7 @@ public enum SwordType {
 	 * @param assets  game asset registry providing textures
 	 * @return a new sword instance
 	 */
-	public Sword create(Array<Enemy> enemies, Array<Wall> walls, GameAssets assets) {
+	public Sword create(Array<Enemy> enemies, Array<Wall> walls, AssetManager assets) {
 		return new Sword(enemies, walls, assets.getTexture(texturePath), damage, speed, range, knockback, assets.getArcTexture());
 	}
 }

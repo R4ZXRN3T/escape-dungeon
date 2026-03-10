@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Goblin;
@@ -19,12 +19,12 @@ import org.lasarimanstudios.escapedungeon.level.Map;
  */
 public class World {
 	private final Map map;
-	private final GameAssets assets;
+	private final AssetManager assets;
 	private final Array<BloodPuddle> bloodPuddles = new Array<>();
 	private final Array<Chest> chests = new Array<>();
 	private Character playerCharacter;
 
-	public World(Map map, GameAssets assets) {
+	public World(Map map, AssetManager assets) {
 		this.map = map;
 		this.assets = assets;
 	}
@@ -81,11 +81,11 @@ public class World {
 		float x = enemy.getX();
 		float y = enemy.getY();
 
-		bloodPuddles.add(new BloodPuddle(assets.getTexture(GameAssets.TEX_BLOOD_PUDDLE), x, y, 5f));
+		bloodPuddles.add(new BloodPuddle(assets.getTexture(AssetManager.TEX_BLOOD_PUDDLE), x, y, 5f));
 		map.getEnemies().removeValue(enemy, true);
 
 		if (MathUtils.random(2) == 0) {
-			chests.add(new Chest(assets.getTexture(GameAssets.TEX_CHEST_CLOSED), (assets.getTexture(GameAssets.TEX_CHEST_OPEN)), x, y, 20f));
+			chests.add(new Chest(assets.getTexture(AssetManager.TEX_CHEST_CLOSED), (assets.getTexture(AssetManager.TEX_CHEST_OPEN)), x, y, 20f));
 		}
 	}
 
@@ -93,6 +93,6 @@ public class World {
 		float x = character.getX();
 		float y = character.getY();
 
-		bloodPuddles.add(new BloodPuddle(assets.getTexture(GameAssets.TEX_BLOOD_PUDDLE), x, y, 5f));
+		bloodPuddles.add(new BloodPuddle(assets.getTexture(AssetManager.TEX_BLOOD_PUDDLE), x, y, 5f));
 	}
 }

@@ -9,10 +9,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.ConfigManager;
+import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.assets.CharacterSpriteSet;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.weapons.SwordType;
 import org.lasarimanstudios.escapedungeon.weapons.Weapon;
@@ -53,7 +53,7 @@ public class Character extends Entity {
 	private final Weapon weapon;
 	private final Vector2 weaponOffsetLocal = new Vector2(0f, 0f);
 	private final Vector2 weaponOffsetWorld = new Vector2();
-	private final GameAssets assets;
+	private final AssetManager assets;
 	private float maxHealth;
 	private float remainingHealth;
 	private float knockbackVx = 0f;
@@ -70,7 +70,7 @@ public class Character extends Entity {
 	private DirectionalAnimationSet playerWalkAnimations;
 
 	/**
-	 * Creates a player character with visuals provided via {@link GameAssets}.
+	 * Creates a player character with visuals provided via {@link AssetManager}.
 	 *
 	 * @param wallArray  walls used for collision detection
 	 * @param enemyArray enemies used for contact-damage checks
@@ -78,7 +78,7 @@ public class Character extends Entity {
 	 * @param swordType  the type of sword the character starts with
 	 * @param maxHealth  initial maximum health
 	 */
-	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, GameAssets assets, SwordType swordType, float maxHealth) {
+	public Character(Array<Wall> wallArray, Array<Enemy> enemyArray, AssetManager assets, SwordType swordType, float maxHealth) {
 		super(assets.getCharacterSpriteSet("character_01").getIdle(Direction.FRONT));
 		this.assets = assets;
 		setMaxHealth(maxHealth);

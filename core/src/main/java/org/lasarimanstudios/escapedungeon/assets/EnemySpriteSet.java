@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * A set of directional idle and walk textures for a single enemy type.
  *
- * <p>Instances are built by {@link GameAssets#getEnemySpriteSet(String)} which auto-discovers
+ * <p>Instances are built by {@link AssetManager#getEnemySpriteSet(String)} which auto-discovers
  * textures from the loaded asset list using a naming convention:</p>
  *
  * <h3>Naming conventions</h3>
@@ -56,11 +56,11 @@ public class EnemySpriteSet {
 	 *
 	 * @param assets   used to retrieve already-loaded textures
 	 * @param enemyId  folder name under {@code textures/enemy/}, e.g. {@code "goblin-01"} or {@code "ghost"}
-	 * @param allPaths all auto-discovered texture paths (from {@link GameAssets#getLoadedPaths()})
+	 * @param allPaths all auto-discovered texture paths (from {@link AssetManager#getLoadedPaths()})
 	 * @return the built sprite set (never {@code null})
 	 * @throws IllegalArgumentException if no idle frames are found for the given enemy id
 	 */
-	public static EnemySpriteSet build(GameAssets assets, String enemyId, List<String> allPaths) {
+	public static EnemySpriteSet build(AssetManager assets, String enemyId, List<String> allPaths) {
 		String prefix = "textures/enemy/" + enemyId + "/";
 
 		List<String> enemyPaths = new ArrayList<>();

@@ -4,10 +4,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 import org.lasarimanstudios.escapedungeon.world.LineOfSight;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
@@ -46,7 +46,7 @@ public class Goblin extends Enemy {
 	 * @param posY      initial Y position in world units
 	 * @param level     enemy level for stat scaling
 	 */
-	public Goblin(GameAssets assets, Array<Wall> wallArray, float posX, float posY, int level) {
+	public Goblin(AssetManager assets, Array<Wall> wallArray, float posX, float posY, int level) {
 		super(assets.getEnemySpriteSet("goblin_01").getFrontIdleTexture(), 3.23f, 5f, posX, posY);
 		this.wallArray = wallArray;
 		this.spriteSet = assets.getEnemySpriteSet("goblin_01");

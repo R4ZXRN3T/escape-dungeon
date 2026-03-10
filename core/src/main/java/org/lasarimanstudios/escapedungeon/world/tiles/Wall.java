@@ -3,12 +3,12 @@ package org.lasarimanstudios.escapedungeon.world.tiles;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 
 /**
  * Static wall/obstacle sprite.
  *
- * <p>Textures are provided externally (typically via {@link GameAssets})
+ * <p>Textures are provided externally (typically via {@link AssetManager})
  * and are therefore not owned/disposed by this class.</p>
  */
 public class Wall extends Sprite {

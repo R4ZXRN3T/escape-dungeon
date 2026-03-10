@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.graphics.HueShader;
 
 /**
@@ -43,7 +43,7 @@ public class RgbGhost extends Enemy {
 	 * @param posY   initial Y position in world units
 	 * @param level  enemy level for stat scaling
 	 */
-	public RgbGhost(GameAssets assets, float posX, float posY, int level) {
+	public RgbGhost(AssetManager assets, float posX, float posY, int level) {
 		super(assets.getEnemySpriteSet("ghost").getFrontIdleTexture(), 6.46f, 10f, posX, posY);
 		this.spriteSet = assets.getEnemySpriteSet("ghost");
 		// Ghost only has idle frames per direction, so walk animation falls back to idle.

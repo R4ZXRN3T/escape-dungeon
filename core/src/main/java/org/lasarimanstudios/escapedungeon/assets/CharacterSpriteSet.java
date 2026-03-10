@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * A set of directional idle and walk textures for a single character type.
  *
- * <p>Instances are built by {@link GameAssets#getCharacterSpriteSet(String)} which auto-discovers
+ * <p>Instances are built by {@link AssetManager#getCharacterSpriteSet(String)} which auto-discovers
  * textures from the loaded asset list using a naming convention:</p>
  *
  * <h3>Naming conventions</h3>
@@ -55,11 +55,11 @@ public class CharacterSpriteSet {
 	 *
 	 * @param assets      used to retrieve already-loaded textures
 	 * @param characterId folder name under {@code textures/character/}, e.g. {@code "knight"}
-	 * @param allPaths    all auto-discovered texture paths (from {@link GameAssets#getLoadedPaths()})
+	 * @param allPaths    all auto-discovered texture paths (from {@link AssetManager#getLoadedPaths()})
 	 * @return the built sprite set (never {@code null})
 	 * @throws IllegalArgumentException if no idle frames are found for the given character id
 	 */
-	public static CharacterSpriteSet build(GameAssets assets, String characterId, List<String> allPaths) {
+	public static CharacterSpriteSet build(AssetManager assets, String characterId, List<String> allPaths) {
 		String prefix = "textures/character/" + characterId + "/";
 
 		List<String> characterPaths = new ArrayList<>();

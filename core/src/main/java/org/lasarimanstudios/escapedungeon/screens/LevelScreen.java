@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import org.lasarimanstudios.escapedungeon.DungeonGame;
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
+import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.level.Map;
@@ -45,7 +45,7 @@ public class LevelScreen extends ScreenAdapter {
 	private final Viewport viewport;
 	private final OrthographicCamera camera;
 	private final Character characterSprite;
-	private final GameAssets assets;
+	private final AssetManager assets;
 	private final World world;
 	private final HealthBarHUD healthBarHUD;
 	private boolean deathHandled = false;
@@ -60,7 +60,7 @@ public class LevelScreen extends ScreenAdapter {
 	 * @param map    the map to play
 	 * @param assets shared asset registry
 	 */
-	public LevelScreen(DungeonGame game, Map map, GameAssets assets) {
+	public LevelScreen(DungeonGame game, Map map, AssetManager assets) {
 		this.game = game;
 		this.map = map;
 		this.assets = assets;
@@ -209,7 +209,7 @@ public class LevelScreen extends ScreenAdapter {
 	}
 
 	/**
-	 * Disposes GPU resources owned by this screen, including the shared {@link GameAssets}.
+	 * Disposes GPU resources owned by this screen, including the shared {@link AssetManager}.
 	 */
 	@Override
 	public void dispose() {

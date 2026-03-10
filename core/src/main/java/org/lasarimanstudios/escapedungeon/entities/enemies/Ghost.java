@@ -2,10 +2,10 @@ package org.lasarimanstudios.escapedungeon.entities.enemies;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.assets.Direction;
 import org.lasarimanstudios.escapedungeon.assets.DirectionalAnimationSet;
 import org.lasarimanstudios.escapedungeon.assets.EnemySpriteSet;
-import org.lasarimanstudios.escapedungeon.assets.GameAssets;
 
 /**
  * Ghost enemy that follows the player character.
@@ -42,7 +42,7 @@ public class Ghost extends Enemy {
 	 * @param posY   initial Y position in world units
 	 * @param level  enemy level for stat scaling
 	 */
-	public Ghost(GameAssets assets, float posX, float posY, int level) {
+	public Ghost(AssetManager assets, float posX, float posY, int level) {
 		super(assets.getEnemySpriteSet("ghost").getFrontIdleTexture(), WIDTH, HEIGHT, posX, posY);
 		this.spriteSet = assets.getEnemySpriteSet("ghost");
 		this.walkAnimations = spriteSet.createWalkAnimations(0.18f);

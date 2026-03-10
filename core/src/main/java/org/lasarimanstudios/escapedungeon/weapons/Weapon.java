@@ -14,7 +14,7 @@ public abstract class Weapon extends Sprite {
 	private final float attackDamage;
 	private final float attackSpeed;
 	private boolean attacking;
-	private float knockback;
+	private final float knockback;
 	/**
 	 * Monotonically increasing id that identifies the current/most recent attack.
 	 *
