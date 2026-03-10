@@ -14,11 +14,13 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import org.lasarimanstudios.escapedungeon.DungeonGame;
+import org.lasarimanstudios.escapedungeon.SaveManager;
 import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
 import org.lasarimanstudios.escapedungeon.level.Map;
 import org.lasarimanstudios.escapedungeon.ui.HealthBarHUD;
+import org.lasarimanstudios.escapedungeon.ui.MoneyHUD;
 import org.lasarimanstudios.escapedungeon.weapons.SwordType;
 import org.lasarimanstudios.escapedungeon.world.World;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
@@ -48,7 +50,10 @@ public class LevelScreen extends ScreenAdapter {
 	private final AssetManager assets;
 	private final World world;
 	private final HealthBarHUD healthBarHUD;
+	private final MoneyHUD moneyHUD;
 	private boolean deathHandled = false;
+
+	private int currentMoney;
 
 	/**
 	 * Creates a new level screen for the given map.
@@ -65,7 +70,7 @@ public class LevelScreen extends ScreenAdapter {
 		this.map = map;
 		this.assets = assets;
 
-		world = new World(map, assets);
+        world = new org.lasarimanstudios.escapedungeon.world.World(map, assets, this);
 
 		spriteBatch = new SpriteBatch();
 
@@ -88,8 +93,22 @@ public class LevelScreen extends ScreenAdapter {
 
 		characterSprite.setDeathListener(this::onPlayerDied);
 
+		currentMoney = 0;
+
 		healthBarHUD = new HealthBarHUD();
+		moneyHUD = new MoneyHUD();
 		camera.update();
+	}
+
+	/**
+	 * Add a certain amount of money to memory.
+	 *
+	 * <p>This does not persist. If the player dies and doesn't finish the level, this money amount will be reset</p>
+	 *
+	 * @param amount amount of money to add (can be negative)
+	 */
+	public void addMoney(int amount) {
+		this.currentMoney += amount;
 	}
 
 	/**
@@ -117,6 +136,7 @@ public class LevelScreen extends ScreenAdapter {
 		viewport.update(width, height, true);
 		camera.update();
 		healthBarHUD.resize(width, height);
+		moneyHUD.resize(width, height);
 	}
 
 	/**
@@ -141,7 +161,8 @@ public class LevelScreen extends ScreenAdapter {
 				enemy.update(delta);
 			}
 			if (map.getEnemies().isEmpty()) {
-				game.setScreen(new WinScreen(game));
+				SaveManager.addMoney(currentMoney);
+				game.setScreen(new WinScreen(game, currentMoney));
 				return;
 			}
 
@@ -156,6 +177,7 @@ public class LevelScreen extends ScreenAdapter {
 
 		if (!deathHandled) {
 			healthBarHUD.render(spriteBatch, characterSprite);
+			moneyHUD.render(spriteBatch, currentMoney);
 		}
 	}
 
@@ -215,6 +237,7 @@ public class LevelScreen extends ScreenAdapter {
 	public void dispose() {
 		spriteBatch.dispose();
 		healthBarHUD.dispose();
+		moneyHUD.dispose();
 
 		assets.dispose();
 	}

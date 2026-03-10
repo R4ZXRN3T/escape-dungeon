@@ -158,6 +158,20 @@ public final class SaveManager {
 	}
 
 	/**
+	 * Add a certain amount of money to memory.
+	 *
+	 * <p>This does not persist automatically. Call {@link #save()} to write to disk.</p>
+	 *
+	 * @param amount amount of money to add (can be negative)
+	 */
+	public static void addMoney(int amount) {
+		ensureInitialized();
+		synchronized (LOCK) {
+			saveData.put(SaveKey.MONEY, getInt(SaveKey.MONEY, Integer.MIN_VALUE, Integer.MAX_VALUE) + amount + "");
+		}
+	}
+
+	/**
 	 * Returns the save file location for the current operating system.
 	 *
 	 * @return path to {@code escape-dungeon/save.json}

@@ -13,6 +13,7 @@ import org.lasarimanstudios.escapedungeon.entities.enemies.Goblin;
 import org.lasarimanstudios.escapedungeon.entities.objects.BloodPuddle;
 import org.lasarimanstudios.escapedungeon.entities.objects.Chest;
 import org.lasarimanstudios.escapedungeon.level.Map;
+import org.lasarimanstudios.escapedungeon.screens.LevelScreen;
 
 /**
  * Runtime world state that owns dynamic entities like puddles/chests and provides update & drawing.
@@ -23,10 +24,12 @@ public class World {
 	private final Array<BloodPuddle> bloodPuddles = new Array<>();
 	private final Array<Chest> chests = new Array<>();
 	private Character playerCharacter;
+	private final LevelScreen levelScreen;
 
-	public World(Map map, AssetManager assets) {
+	public World(Map map, AssetManager assets, LevelScreen levelScreen) {
 		this.map = map;
 		this.assets = assets;
+		this.levelScreen = levelScreen;
 	}
 
 	/**
@@ -60,7 +63,7 @@ public class World {
 
 		for (int i = chests.size - 1; i >= 0; i--) {
 			Chest c = chests.get(i);
-			c.update(delta, playerCharacter);
+			c.update(delta, playerCharacter, levelScreen);
 			if (c.isExpired()) chests.removeIndex(i);
 		}
 

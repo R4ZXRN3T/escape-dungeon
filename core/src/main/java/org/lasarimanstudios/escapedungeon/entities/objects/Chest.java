@@ -6,13 +6,16 @@ import com.badlogic.gdx.graphics.Texture;
 
 import org.lasarimanstudios.escapedungeon.entities.Character;
 import org.lasarimanstudios.escapedungeon.entities.Entity;
+import org.lasarimanstudios.escapedungeon.screens.LevelScreen;
+
+import java.security.SecureRandom;
 
 /**
  * A chest entity that exists for a limited time.
  *
  * <p>The chest can be opened by the player when nearby, restoring some health.
  * It expires after a configured duration. The owning world/system is responsible for calling
- * {@link #update(float, Character)} every frame and removing the chest once {@link #isExpired()}
+ * {@link #update(float, Character, LevelScreen)} every frame and removing the chest once {@link #isExpired()}
  * returns {@code true}.</p>
  */
 public class Chest extends Entity {
@@ -51,11 +54,22 @@ public class Chest extends Entity {
 	 *
 	 * @param player the player character to heal
 	 */
-	public void open(Character player) {
+	public void open(Character player, LevelScreen levelScreen) {
 		if (opened) return;
 
 		opened = true;
 		setTexture(openTexture);
+		returnLoot(player, levelScreen);
+	}
+
+	private static void returnLoot(Character player, LevelScreen levelScreen) {
+		SecureRandom rng = new SecureRandom();
+		int randomNumber = rng.nextInt(1, 100);
+
+		if (randomNumber == 1) levelScreen.addMoney(200);
+		else if (randomNumber >= 90) player.setRemainingHealth(player.getMaxHealth());
+		else levelScreen.addMoney(rng.nextInt(1, 20));
+
 		if (player.getRemainingHealth() < 100) {
 			player.setRemainingHealth(player.getRemainingHealth() + 10);
 		}
@@ -68,7 +82,7 @@ public class Chest extends Entity {
 	 * @param delta  time since last frame in seconds
 	 * @param player the player character
 	 */
-	public void update(float delta, Character player) {
+	public void update(float delta, Character player, LevelScreen levelScreen) {
 		if (expired) return;
 
 		elapsedTime += delta;
@@ -79,7 +93,7 @@ public class Chest extends Entity {
 
 		if (!opened && isPlayerNear(player)) {
 			if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-				open(player);
+				open(player, levelScreen);
 			}
 		}
 	}
