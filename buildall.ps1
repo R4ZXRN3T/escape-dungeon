@@ -2,6 +2,7 @@ $ErrorActionPreference = 'Stop'
 
 $repoRoot = $PSScriptRoot
 $distDir = Join-Path $repoRoot "lwjgl3/build/construo/dist"
+$jarDir = Join-Path $repoRoot "lwjgl3/build/libs"
 $finalDir = Join-Path $repoRoot "final"
 $assetsDir = Join-Path $repoRoot "assets"
 $releaseVersion = "1.0.0"
@@ -41,6 +42,7 @@ if (-not $sevenZipExe) {
 & (Join-Path $repoRoot "gradlew.bat") lwjgl3:packageMacX64
 & (Join-Path $repoRoot "gradlew.bat") lwjgl3:packageLinuxX64
 & (Join-Path $repoRoot "gradlew.bat") lwjgl3:packageWinX64
+& (Join-Path $repoRoot "gradlew.bat") lwjgl3:jar
 
 Move-Item -Path (Join-Path $distDir "*.zip") -Destination $repoRoot -Force
 
@@ -88,6 +90,42 @@ foreach ($zip in $zipFiles) {
     } finally {
         Pop-Location
     }
+}
+
+$jarArtifactBaseName = "EscapeDungeon-$releaseVersion-portable"
+$jarTargetDir = Join-Path $finalDir $jarArtifactBaseName
+New-Item -ItemType Directory -Path $jarTargetDir -Force | Out-Null
+
+$jarName = "EscapeDungeon-$releaseVersion.jar"
+if (-not (Test-Path $jarDir)) {
+    throw "Jar output directory not found: '$jarDir'."
+}
+$jarFile = Get-ChildItem -Path $jarDir -Filter $jarName -File | Select-Object -First 1
+if (-not $jarFile) {
+    throw "Could not find built jar '$jarName' in '$jarDir'."
+}
+
+Copy-Item -Path $jarFile.FullName -Destination (Join-Path $jarTargetDir $jarFile.Name) -Force
+
+$jarAssetsDestination = Join-Path $jarTargetDir "assets"
+if (Test-Path $jarAssetsDestination) {
+    Remove-Item -Path $jarAssetsDestination -Recurse -Force
+}
+Copy-Item -Path $assetsDir -Destination $jarAssetsDestination -Recurse -Force
+
+$jarRepackedZip = Join-Path $finalDir ($jarArtifactBaseName + ".zip")
+if (Test-Path $jarRepackedZip) {
+    Remove-Item -Path $jarRepackedZip -Force
+}
+
+Push-Location $jarTargetDir
+try {
+    & $sevenZipExe a "-tzip" "-mm=LZMA" "-mx=9" "-md=3840m" "-mfb=273" "-mmt=3" "--" $jarRepackedZip ".\\*"
+    if ($LASTEXITCODE -ne 0) {
+        throw "7-Zip failed for jar package with exit code $LASTEXITCODE"
+    }
+} finally {
+    Pop-Location
 }
 
 $answer = Read-Host "Do you want to delete build files? This will make the next build take longer. (y/N)"

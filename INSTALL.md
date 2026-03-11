@@ -63,7 +63,7 @@ Pre-built packages are available in the [GitHub Releases](https://github.com/R4Z
 
 ## 2. Windows Installer
 
-A Windows installer is included in the releases (`Escape-Dungeon_setup.exe`). Optionally, it can be generated using [Inno Setup](https://jrsoftware.org/isinfo.php) and the included `EscapeDungen_setup.iss` script (see [Section 6](#6-building-the-windows-installer))
+A Windows installer is included in the releases (`EscapeDungeon_setup.exe`). Optionally, it can be generated using [Inno Setup](https://jrsoftware.org/isinfo.php) and the included `EscapeDungen_setup.iss` script (see [Section 6](#6-building-the-windows-installer))
 
 1. Run **`Escape-Dungeon_setup.exe`**.
 2. Follow the on-screen wizard.

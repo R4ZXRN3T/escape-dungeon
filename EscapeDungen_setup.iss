@@ -21,6 +21,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\escape-dungeon
 UninstallDisplayIcon={app}\{#MyAppExeName}
+LicenseFile=LICENSE
 ; "ArchitecturesAllowed=x64compatible" specifies that Setup cannot run
 ; on anything but x64 and Windows 11 on Arm.
 ArchitecturesAllowed=x64compatible
@@ -33,7 +34,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
 ;PrivilegesRequired=lowest
 OutputDir=D:\Projekte\Java Programme\escape-dungeon\final
-OutputBaseFilename=Escape-Dungeon_setup
+OutputBaseFilename=EscapeDungeon_setup
 WizardStyle=modern dynamic windows11
 
 ; Compression  settings
@@ -109,4 +110,3 @@ begin
     end;
   end;
 end;
-
