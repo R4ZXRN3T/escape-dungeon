@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 import org.lasarimanstudios.escapedungeon.entities.enemies.Enemy;
+import org.lasarimanstudios.escapedungeon.roguelike.PlayerStats;
 import org.lasarimanstudios.escapedungeon.world.LineOfSight;
 import org.lasarimanstudios.escapedungeon.world.tiles.Wall;
 
@@ -36,6 +37,7 @@ public class Sword extends Weapon {
 	protected float endAngle;
 	protected float elapsedTime;
 	protected boolean showArc;
+	private final float baseRange;
 
 	/**
 	 * Creates a sword.
@@ -50,6 +52,7 @@ public class Sword extends Weapon {
 	 */
 	public Sword(Array<Enemy> enemies, Array<Wall> walls, Texture texture, float attackDamage, float attackSpeed, float range, float knockback, Texture arcTexture) {
 		super(texture, attackDamage, attackSpeed, knockback);
+		this.baseRange = range;
 		float size = BASE_SIZE * range;
 		setSize(size, size);
 		this.enemies = enemies;
@@ -175,6 +178,17 @@ public class Sword extends Weapon {
 		setSize(size, size);
 		float arcSize = size * 1.3f;
 		this.arcSprite.setSize(arcSize, arcSize);
+	}
+
+	/**
+	 * Applies player stats and adjusts weapon range based on perk bonuses.
+	 */
+	@Override
+	public void setPlayerStats(PlayerStats playerStats) {
+		super.setPlayerStats(playerStats);
+		if (playerStats != null) {
+			setRange(playerStats.applyRange(baseRange));
+		}
 	}
 
 	/**

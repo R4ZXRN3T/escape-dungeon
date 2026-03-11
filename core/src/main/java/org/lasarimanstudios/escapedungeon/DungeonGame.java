@@ -8,6 +8,7 @@ import org.lasarimanstudios.escapedungeon.ConfigManager.ConfigKey;
 import org.lasarimanstudios.escapedungeon.assets.AssetManager;
 import org.lasarimanstudios.escapedungeon.level.Map;
 import org.lasarimanstudios.escapedungeon.level.MapLoader;
+import org.lasarimanstudios.escapedungeon.roguelike.PlayerStats;
 import org.lasarimanstudios.escapedungeon.screens.*;
 
 /**
@@ -82,15 +83,37 @@ public class DungeonGame extends Game {
 	}
 
 	/**
-	 * Loads a map and switches to the gameplay screen.
+	 * Loads a map and switches to the gameplay screen with fresh per-run stats.
 	 *
 	 * @param mapName map identifier without file extension (e.g. {@code "map_01"})
 	 */
 	public void openLevel(String mapName) {
+		openLevelWithStats(mapName, new PlayerStats(), 0);
+	}
+
+	/**
+	 * Loads a map and switches to the gameplay screen, carrying over per-run stats.
+	 *
+	 * @param mapName     map identifier without file extension
+	 * @param playerStats current run stats (perks, bonuses)
+	 * @param earnedMoney money earned so far in this run
+	 */
+	public void openLevelWithStats(String mapName, PlayerStats playerStats, int earnedMoney) {
 		AssetManager assets = new AssetManager();
 		assets.load();
 		Map map = MapLoader.loadMap(mapName, assets);
-		setScreen(new LevelScreen(this, map, assets));
+		setScreen(new LevelScreen(this, map, mapName, assets, playerStats, earnedMoney));
+	}
+
+	/**
+	 * Opens the perk upgrade screen between levels.
+	 *
+	 * @param playerStats current run stats
+	 * @param nextMapName next map to load after perk selection
+	 * @param earnedMoney money earned so far in this run
+	 */
+	public void openUpgradeScreen(PlayerStats playerStats, String nextMapName, int earnedMoney) {
+		setScreen(new UpgradeScreen(this, playerStats, nextMapName, earnedMoney));
 	}
 
 	/**
