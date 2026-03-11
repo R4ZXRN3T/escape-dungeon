@@ -35,11 +35,6 @@ All controls can be rebound in the **Settings** screen.
 
 ## 🚀 Getting Started
 
-### Prerequisites
-
-- **Java 17** or later (a JDK, not just a JRE)
-- **Gradle** is included via the wrapper — no separate installation needed
-
 ### Installation
 
 For installation and packaging instructions, see **[INSTALL.md](INSTALL.md)**.
