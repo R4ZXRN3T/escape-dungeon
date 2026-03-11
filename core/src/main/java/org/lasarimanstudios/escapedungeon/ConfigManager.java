@@ -154,8 +154,6 @@ public final class ConfigManager {
 		String fileName = "config.json";
 
 		if (os.contains("win")) {
-			String appData = System.getenv("APPDATA");
-			if (appData != null && !appData.isBlank()) return Paths.get(appData, fileName);
 			return Paths.get(System.getProperty("user.home"), "AppData", "Roaming", "escape-dungeon", fileName);
 		} else if (os.contains("mac")) {
 			return Paths.get(System.getProperty("user.home"), "Library", "Application Support", "escape-dungeon", fileName);
