@@ -162,7 +162,7 @@ lwjgl3/build/libs/EscapeDungeon-1.0.0.jar
 
 ## 5. Creating Distribution Packages
 
-Distribution packages bundle the game JAR with a platform-specific Java 17 runtime so end users don't need Java installed. This uses the [Construo](https://github.com/fourlastor-jams/construo) Gradle plugin.
+Distribution packages bundle the game JAR with a platform-specific Java 17 runtime so end users don't need Java installed. This uses the [Construo](https://github.com/fourlastor-alexandria/construo) Gradle plugin.
 
 ### Build Individual Platforms
 
